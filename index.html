@@ -34,7 +34,7 @@
         </td>
       </tr>
       <tr style="padding:0px">
-        <td style="padding:12px 0 0 0">
+        <td style="padding:0px 0 0 0">
 
           <!-- ===== HEADER / BIO ===== -->
           <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
@@ -512,7 +512,14 @@
       mouse.active = false;
     });
 
-    function draw() {
+    var TARGET_FPS = 30;
+    var frameInterval = 1000 / TARGET_FPS;
+    var lastFrame = 0;
+
+    function draw(timestamp) {
+      if (animRunning) requestAnimationFrame(draw);
+      if (timestamp - lastFrame < frameInterval) return;
+      lastFrame = timestamp;
       lerpColor();
       ctx.clearRect(0, 0, w, h);
 
@@ -651,9 +658,8 @@
         ctx.fill();
       }
 
-      if (animRunning) requestAnimationFrame(draw);
     }
-    draw();
+    requestAnimationFrame(draw);
     </script>
   </body>
 </html>
