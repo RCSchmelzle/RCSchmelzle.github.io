@@ -366,3 +366,209 @@ body.dark-mode table[style*="border-spacing:0px 10px"] > tbody > tr + tr > td:la
   border-top-color: #2a2a40;
 }
 
+/* ===== Tile Mode ===== */
+
+/* Convert content tables to block masonry */
+body.tile-mode table[style*="border-spacing:0px 10px"],
+body.tile-mode table[style*="border-spacing:0px 4px"] {
+  display: block !important;
+}
+
+body.tile-mode table[style*="border-spacing:0px 10px"] > tbody,
+body.tile-mode table[style*="border-spacing:0px 4px"] > tbody {
+  display: block;
+  column-count: 3;
+  column-gap: 16px;
+}
+
+/* Each row becomes a compact card */
+body.tile-mode table[style*="border-spacing:0px 10px"] > tbody > tr,
+body.tile-mode table[style*="border-spacing:0px 4px"] > tbody > tr {
+  display: block;
+  break-inside: avoid;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+  margin-bottom: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.6s ease;
+}
+
+body.tile-mode table[style*="border-spacing:0px 10px"] > tbody > tr:hover,
+body.tile-mode table[style*="border-spacing:0px 4px"] > tbody > tr:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+}
+
+/* Cells become block */
+body.tile-mode table[style*="border-spacing:0px 10px"] > tbody > tr > td,
+body.tile-mode table[style*="border-spacing:0px 4px"] > tbody > tr > td {
+  display: block !important;
+  width: 100% !important;
+}
+
+/* Image cell: prominent */
+body.tile-mode table[style*="border-spacing:0px 10px"] > tbody > tr > td:first-child {
+  padding: 0 !important;
+}
+
+body.tile-mode .one {
+  width: 100%;
+  height: 150px;
+  border-radius: 0;
+}
+
+body.tile-mode .img-placeholder {
+  width: 100%;
+  height: 150px;
+  border-radius: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+body.tile-mode .logo-placeholder {
+  width: 100%;
+  height: 100px;
+  border-radius: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+body.tile-mode .gallery-placeholder {
+  height: 130px;
+  border-radius: 0;
+}
+
+/* Text cell: collapsed by default, show only title */
+body.tile-mode table[style*="border-spacing:0px 10px"] > tbody > tr > td:last-child {
+  padding: 12px 14px !important;
+  border-top: none;
+}
+
+/* Hide everything in the text cell except papertitle */
+body.tile-mode table[style*="border-spacing:0px 10px"] > tbody > tr > td:last-child > *:not(a):not(span),
+body.tile-mode table[style*="border-spacing:0px 10px"] > tbody > tr > td:last-child > br,
+body.tile-mode table[style*="border-spacing:0px 10px"] > tbody > tr > td:last-child > em,
+body.tile-mode table[style*="border-spacing:0px 10px"] > tbody > tr > td:last-child > p {
+  display: none;
+}
+
+/* Always show the papertitle */
+body.tile-mode table[style*="border-spacing:0px 10px"] > tbody > tr > td:last-child .papertitle {
+  display: inline !important;
+  font-size: 13px;
+}
+
+body.tile-mode table[style*="border-spacing:0px 10px"] > tbody > tr > td:last-child > a {
+  display: inline !important;
+}
+
+/* Expand arrow indicator */
+body.tile-mode .tile-arrow {
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  color: #a0aec0;
+  padding: 4px 0 8px;
+  transition: transform 0.3s ease;
+}
+
+body.tile-mode tr.tile-expanded .tile-arrow {
+  transform: rotate(180deg);
+}
+
+/* Expanded card: show everything */
+body.tile-mode tr.tile-expanded > td:last-child > * {
+  display: block !important;
+}
+
+body.tile-mode tr.tile-expanded > td:last-child > a,
+body.tile-mode tr.tile-expanded > td:last-child > span {
+  display: inline !important;
+}
+
+body.tile-mode tr.tile-expanded > td:last-child > br {
+  display: inline !important;
+}
+
+body.tile-mode tr.tile-expanded > td:last-child > em {
+  display: inline !important;
+}
+
+/* Expanded: partially obscure the image */
+body.tile-mode tr.tile-expanded > td:first-child {
+  position: relative;
+}
+
+body.tile-mode tr.tile-expanded > td:first-child::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.5);
+  transition: opacity 0.3s ease;
+}
+
+/* Remove text-mode dividers */
+body.tile-mode table[style*="border-spacing:0px 10px"] > tbody > tr + tr > td:last-child {
+  border-top: none;
+}
+
+/* Honors cards */
+body.tile-mode table[style*="border-spacing:0px 4px"] > tbody > tr > td:first-child {
+  padding: 14px 14px 2px !important;
+  font-weight: 600;
+}
+
+body.tile-mode table[style*="border-spacing:0px 4px"] > tbody > tr > td:last-child {
+  padding: 2px 14px 14px !important;
+  text-align: left !important;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* ===== Tile + Dark Mode ===== */
+body.dark-mode.tile-mode table[style*="border-spacing:0px 10px"] > tbody > tr,
+body.dark-mode.tile-mode table[style*="border-spacing:0px 4px"] > tbody > tr {
+  background: rgba(30, 34, 51, 0.8);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 0 1px rgba(100,130,170,0.1);
+}
+
+body.dark-mode.tile-mode table[style*="border-spacing:0px 10px"] > tbody > tr:hover,
+body.dark-mode.tile-mode table[style*="border-spacing:0px 4px"] > tbody > tr:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 2px rgba(100,130,170,0.15);
+}
+
+body.dark-mode.tile-mode tr.tile-expanded > td:first-child::after {
+  background: rgba(15, 17, 24, 0.5);
+}
+
+body.dark-mode.tile-mode .tile-arrow {
+  color: #718096;
+}
+
+body.dark-mode.tile-mode .img-placeholder,
+body.dark-mode.tile-mode .logo-placeholder,
+body.dark-mode.tile-mode .gallery-placeholder {
+  background: #252a3a;
+}
+
+/* ===== Tile Responsive ===== */
+@media (max-width: 1000px) {
+  body.tile-mode table[style*="border-spacing:0px 10px"] > tbody,
+  body.tile-mode table[style*="border-spacing:0px 4px"] > tbody {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 600px) {
+  body.tile-mode table[style*="border-spacing:0px 10px"] > tbody,
+  body.tile-mode table[style*="border-spacing:0px 4px"] > tbody {
+    column-count: 1;
+  }
+}
+

@@ -29,6 +29,7 @@
             <span style="display:inline-block;margin-left:16px;border-left:1px solid #e0e0e0;padding-left:16px;">
               <a href="#" id="toggle-anim" title="Pause/Play animation" onclick="toggleAnim();return false;" style="font-size:15px;">&#9208;</a>
               <a href="#" id="toggle-dark" title="Toggle dark mode" onclick="toggleDark();return false;" style="font-size:15px;margin-left:8px;">&#9790;</a>
+              <!-- <a href="#" id="toggle-tile" title="Toggle tile view" onclick="toggleTile();return false;" style="font-size:15px;margin-left:8px;">&#9638;</a> -->
             </span>
           </nav>
         </td>
@@ -425,6 +426,35 @@
     var nodeRGB = {r:100, g:130, b:170};
     var targetRGB = {r:100, g:130, b:170};
     var nodeColor = 'rgba(100,130,170,';
+
+    var tileInited = false;
+    function toggleTile() {
+      document.body.classList.toggle('tile-mode');
+      var isTile = document.body.classList.contains('tile-mode');
+      document.getElementById('toggle-tile').innerHTML = isTile ? '&#9776;' : '&#9638;';
+
+      if (!tileInited && isTile) {
+        tileInited = true;
+        // Add arrows and click handlers to all content rows
+        var tables = document.querySelectorAll('table[style*="border-spacing:0px 10px"]');
+        tables.forEach(function(table) {
+          var rows = table.querySelectorAll('tbody > tr');
+          rows.forEach(function(tr) {
+            // Add arrow element
+            var arrow = document.createElement('div');
+            arrow.className = 'tile-arrow';
+            arrow.innerHTML = '&#9660;';
+            tr.appendChild(arrow);
+
+            tr.addEventListener('click', function(e) {
+              // Don't toggle if clicking a link
+              if (e.target.tagName === 'A') return;
+              tr.classList.toggle('tile-expanded');
+            });
+          });
+        });
+      }
+    }
 
     function toggleDark() {
       document.body.classList.toggle('dark-mode');
