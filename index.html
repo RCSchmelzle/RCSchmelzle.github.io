@@ -76,12 +76,12 @@
           <table style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
 
             <tr>
-              <td style="padding:16px;width:20%;vertical-align:middle">
-                <div class="one">
-                  <div class="img-placeholder">Publication</div>
-                </div>
+              <td style="padding:16px;width:30%;vertical-align:middle;">
+                <video style="width:100%;border-radius:6px;" autoplay loop muted playsinline>
+                  <source src="images/telepresence-demo.mp4" type="video/mp4">
+                </video>
               </td>
-              <td style="padding:8px;width:80%;vertical-align:middle">
+              <td style="padding:8px;width:65%;vertical-align:middle">
                 <a href="https://ieeexplore.ieee.org/document/10557509">
                   <span class="papertitle">Learning View Synthesis for Desktop Telepresence With Few RGBD Cameras</span>
                 </a>
@@ -99,6 +99,8 @@
                 <a href="https://ieeexplore.ieee.org/document/10557509">paper</a>
                 /
                 <a href="https://doi.org/10.1109/TVCG.2024.3411626">doi</a>
+                /
+                <a href="https://arxiv.org/abs/2301.08800">arXiv</a>
                 <p></p>
                 <p>
                   A high-quality view synthesis method using commodity RGBD cameras for desktop telepresence. Introduces Multi-Layer Point Cloud (MPC) representation with a temporally-aware neural renderer and Spatial Skip Connections for real-time novel view synthesis.
@@ -176,7 +178,7 @@
               </td>
             </tr>
           </tbody></table>
-          <table style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+          <table class="timeline" style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
@@ -244,7 +246,7 @@
               </td>
             </tr>
           </tbody></table>
-          <table style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+          <table class="timeline" style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
@@ -472,7 +474,7 @@
     }
 
     var c = document.getElementById('bg-canvas');
-    var ctx = c.getContext('2d');
+    var ctx = c.getContext('2d', { willReadFrequently: true });
     var w, h;
     var nodes = [];
 
@@ -494,20 +496,55 @@
     resize();
     window.addEventListener('resize', resize);
 
-    var isMobile = window.innerWidth < 768;
-    var BASE_NODES = isMobile ? 120 : 300;
-    var EDGE_NODES = isMobile ? 30 : 80;
+    // Skip animation entirely on mobile
+    if (window.innerWidth < 1080) {
+      c.style.display = 'none';
+      // dummy draw so toggles don't error
+      function draw() {}
+    } else {
+
+    // Calculate gutter area (outside content column + 50px bleed)
+    var cw = document.getElementById('content-wrap');
+    var cwRect = cw.getBoundingClientRect();
+    var PAD = 0;
+    var contentLeft = cwRect.left;
+    var contentRight = cwRect.right;
+
+    // Gutter area = left strip + right strip (full height)
+    var gutterArea = (contentLeft + (w - contentRight)) * h;
+    // Scale nodes: ~1 node per 4000 sq px of gutter, min 60, max 400
+    var BASE_NODES = Math.max(60, Math.min(400, Math.round(gutterArea / 4000)));
+    var EDGE_NODES = Math.round(BASE_NODES * 0.25);
+
+    function spawnInGutter() {
+      // Pick left or right gutter, weighted by size
+      var lw = Math.max(0, contentLeft);
+      var rw = Math.max(0, w - contentRight);
+      var totalW = lw + rw;
+      if (totalW < 10) return { x: rand() * w, y: rand() * h };
+      var x, y;
+      // Bias toward content edges using power curve
+      var t = 1 - Math.pow(rand(), 1.5);
+      if (rand() < lw / totalW) {
+        x = t * contentLeft;
+      } else {
+        x = contentRight + (1 - t) * (w - contentRight);
+      }
+      y = rand() * h;
+      return { x: x, y: y };
+    }
 
     for (var i = 0; i < BASE_NODES; i++) {
+      var pos = spawnInGutter();
       nodes.push({
-        x: rand() * w,
-        y: rand() * h,
+        x: pos.x,
+        y: pos.y,
         vx: (rand() - 0.5) * 0.03,
         vy: (rand() - 0.5) * 0.03,
         r: rand() * 9 + 1
       });
     }
-    // Extra nodes along edges
+    // Extra nodes along outer edges
     for (var i = 0; i < EDGE_NODES; i++) {
       var side = Math.floor(rand() * 4);
       var ex, ey;
@@ -523,6 +560,7 @@
       });
     }
 
+    var triAlphas = {};
     var mouse = {x: -1000, y: -1000, active: false};
     var MOUSE_RADIUS = 150;
 
@@ -557,8 +595,20 @@
       for (var i = 0; i < nodes.length; i++) {
         nodes[i].x += nodes[i].vx;
         nodes[i].y += nodes[i].vy;
-        if (nodes[i].x < -50 || nodes[i].x > w + 50) nodes[i].vx *= -1;
+        // Bounce off viewport edges and content column
+        if (nodes[i].x < -50) nodes[i].vx = Math.abs(nodes[i].vx);
+        if (nodes[i].x > w + 50) nodes[i].vx = -Math.abs(nodes[i].vx);
         if (nodes[i].y < -50 || nodes[i].y > h + 50) nodes[i].vy *= -1;
+        // Soft repel from content column edges
+        if (nodes[i].x > contentLeft && nodes[i].x < contentRight) {
+          var distL = nodes[i].x - contentLeft;
+          var distR = contentRight - nodes[i].x;
+          if (distL < distR) {
+            nodes[i].vx -= 0.001;
+          } else {
+            nodes[i].vx += 0.001;
+          }
+        }
 
 
         // Gentle repulsion from cursor when over background
@@ -628,10 +678,13 @@
         adjSet[i] = new Set(adj[i]);
       }
 
-      // Draw filled triangles — opacity based on max edge distance
+      // Draw filled triangles — smooth fade in/out
       var triCount = [];
       for (var i = 0; i < nodes.length; i++) triCount[i] = 0;
       var TRI_CAP = 8;
+      var activeTris = {};
+      var FADE_IN = 0.04;
+      var FADE_OUT = 0.06;
       for (var i = 0; i < nodes.length; i++) {
         if (triCount[i] >= TRI_CAP) continue;
         for (var ai = 0; ai < adj[i].length; ai++) {
@@ -645,16 +698,9 @@
               var d2 = Math.sqrt(Math.pow(nodes[j].x-nodes[k].x,2)+Math.pow(nodes[j].y-nodes[k].y,2));
               var d3 = Math.sqrt(Math.pow(nodes[i].x-nodes[k].x,2)+Math.pow(nodes[i].y-nodes[k].y,2));
               var maxD = Math.max(d1, d2, d3);
-              var alpha = 0.22 * Math.pow(1 - maxD / CONN, 2);
-              if (alpha > 0) {
-                ctx.beginPath();
-                ctx.moveTo(nodes[i].x, nodes[i].y);
-                ctx.lineTo(nodes[j].x, nodes[j].y);
-                ctx.lineTo(nodes[k].x, nodes[k].y);
-                ctx.closePath();
-                ctx.fillStyle = nodeColor + alpha + ')';
-                ctx.fill();
-              }
+              var targetAlpha = 0.22 * Math.pow(1 - maxD / CONN, 2);
+              var tkey = i + ',' + j + ',' + k;
+              activeTris[tkey] = { i:i, j:j, k:k, target: targetAlpha };
               triCount[i]++;
               triCount[j]++;
               triCount[k]++;
@@ -662,6 +708,32 @@
             }
           }
           if (triCount[i] >= TRI_CAP) break;
+        }
+      }
+      // Update and draw cached triangles
+      for (var tkey in triAlphas) {
+        if (activeTris[tkey]) {
+          triAlphas[tkey] += (activeTris[tkey].target - triAlphas[tkey]) * FADE_IN;
+        } else {
+          triAlphas[tkey] *= (1 - FADE_OUT);
+          if (triAlphas[tkey] < 0.002) { delete triAlphas[tkey]; continue; }
+        }
+        var parts = tkey.split(',');
+        var ti = parseInt(parts[0]), tj = parseInt(parts[1]), tk = parseInt(parts[2]);
+        if (triAlphas[tkey] > 0.002) {
+          ctx.beginPath();
+          ctx.moveTo(nodes[ti].x, nodes[ti].y);
+          ctx.lineTo(nodes[tj].x, nodes[tj].y);
+          ctx.lineTo(nodes[tk].x, nodes[tk].y);
+          ctx.closePath();
+          ctx.fillStyle = nodeColor + triAlphas[tkey] + ')';
+          ctx.fill();
+        }
+      }
+      // Add new triangles not yet cached
+      for (var tkey in activeTris) {
+        if (!(tkey in triAlphas)) {
+          triAlphas[tkey] = 0.002;
         }
       }
 
@@ -691,6 +763,8 @@
 
     }
     requestAnimationFrame(draw);
+
+    } // end else (not mobile)
     </script>
   </body>
 </html>
