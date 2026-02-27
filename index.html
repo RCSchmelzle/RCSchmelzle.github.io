@@ -13,6 +13,8 @@
   </head>
 
   <body>
+    <div id="bg-wrap"><canvas id="bg-canvas"></canvas></div>
+    <div id="content-wrap">
     <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
       <tr>
         <td style="padding:0px">
@@ -24,6 +26,10 @@
             <a href="#teaching">Teaching</a>
             <a href="#honors">Honors</a>
             <a href="#gallery">Design</a>
+            <span style="display:inline-block;margin-left:16px;border-left:1px solid #e0e0e0;padding-left:16px;">
+              <a href="#" id="toggle-anim" title="Pause/Play animation" onclick="toggleAnim();return false;" style="font-size:15px;">&#9208;</a>
+              <a href="#" id="toggle-dark" title="Toggle dark mode" onclick="toggleDark();return false;" style="font-size:15px;margin-left:8px;">&#9790;</a>
+            </span>
           </nav>
         </td>
       </tr>
@@ -70,7 +76,7 @@
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle">
                 <div class="one">
-                  <img src='images/telepresence.jpg' width=100% alt="Desktop telepresence system">
+                  <div class="img-placeholder">Publication</div>
                 </div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
@@ -113,7 +119,7 @@
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle">
                 <div class="one">
-                  <img src='images/teleoperation.jpg' width=100% alt="Robotic teleoperation">
+                  <div class="img-placeholder">Teleoperation</div>
                 </div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
@@ -129,7 +135,7 @@
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle">
                 <div class="one">
-                  <img src='images/audio_glasses.jpg' width=100% alt="Audio glasses prototype">
+                  <div class="img-placeholder">AR Glasses</div>
                 </div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
@@ -145,7 +151,7 @@
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle">
                 <div class="one">
-                  <img src='images/depth_estimation.jpg' width=100% alt="Depth estimation">
+                  <div class="img-placeholder">Depth Est.</div>
                 </div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
@@ -172,7 +178,7 @@
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
-                <img src='images/unc_logo.png' width=80 alt="UNC">
+                <div class="logo-placeholder">UNC</div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
                 <span class="papertitle">Graduate Researcher</span>
@@ -186,7 +192,7 @@
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
-                <img src='images/unc_logo.png' width=80 alt="UNC">
+                <div class="logo-placeholder">UNC</div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
                 <span class="papertitle">Graduate Researcher</span>
@@ -200,7 +206,7 @@
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
-                <img src='images/unc_logo.png' width=80 alt="UNC">
+                <div class="logo-placeholder">UNC</div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
                 <span class="papertitle">Undergraduate Researcher</span>
@@ -214,7 +220,7 @@
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
-                <img src='images/ford_logo.png' width=80 alt="Ford">
+                <div class="logo-placeholder">Ford</div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
                 <span class="papertitle">Software Engineering Intern</span>
@@ -240,7 +246,7 @@
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
-                <img src='images/unc_logo.png' width=80 alt="UNC">
+                <div class="logo-placeholder">UNC</div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
                 <span class="papertitle">Ph.D. in Computer Science</span>
@@ -256,7 +262,7 @@
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
-                <img src='images/unc_logo.png' width=80 alt="UNC">
+                <div class="logo-placeholder">UNC</div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
                 <span class="papertitle">M.S. in Computer Science</span>
@@ -272,7 +278,7 @@
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
-                <img src='images/unc_logo.png' width=80 alt="UNC">
+                <div class="logo-placeholder">UNC</div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
                 <span class="papertitle">B.S. in Computer Science &amp; Communication Studies</span>
@@ -300,7 +306,7 @@
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
-                <img src='images/unc_logo.png' width=80 alt="UNC">
+                <div class="logo-placeholder">UNC</div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
                 <span class="papertitle">Teaching Assistant &mdash; COMP 992 Master's Writing Advisory</span>
@@ -311,7 +317,7 @@
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
-                <img src='images/unc_logo.png' width=80 alt="UNC">
+                <div class="logo-placeholder">UNC</div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
                 <span class="papertitle">Graduate Teaching Assistant &mdash; COMP 380/380H Technology, Ethics, &amp; Culture</span>
@@ -322,7 +328,7 @@
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
-                <img src='images/unc_logo.png' width=80 alt="UNC">
+                <div class="logo-placeholder">UNC</div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
                 <span class="papertitle">Undergraduate Learning Assistant &mdash; COMP 283 Discrete Structures</span>
@@ -377,15 +383,15 @@
             <!-- Example row of 3 items -->
             <tr>
               <td style="padding:8px;width:33%;vertical-align:top;text-align:center">
-                <img src='images/gallery/placeholder1.jpg' style="width:100%;border-radius:8px;" alt="Gallery piece 1">
+                <div class="gallery-placeholder">Image 1</div>
                 <p style="font-size:12px;margin-top:4px;">Caption here</p>
               </td>
               <td style="padding:8px;width:33%;vertical-align:top;text-align:center">
-                <img src='images/gallery/placeholder2.jpg' style="width:100%;border-radius:8px;" alt="Gallery piece 2">
+                <div class="gallery-placeholder">Image 2</div>
                 <p style="font-size:12px;margin-top:4px;">Caption here</p>
               </td>
               <td style="padding:8px;width:33%;vertical-align:top;text-align:center">
-                <img src='images/gallery/placeholder3.jpg' style="width:100%;border-radius:8px;" alt="Gallery piece 3">
+                <div class="gallery-placeholder">Image 3</div>
                 <p style="font-size:12px;margin-top:4px;">Caption here</p>
               </td>
             </tr>
@@ -406,5 +412,209 @@
         </td>
       </tr>
     </table>
+    </div>
+    <script>
+    // --- Toggle functions ---
+    var animRunning = true;
+    function toggleAnim() {
+      animRunning = !animRunning;
+      document.getElementById('toggle-anim').innerHTML = animRunning ? '&#9208;' : '&#9654;';
+      if (animRunning) requestAnimationFrame(draw);
+    }
+
+    var nodeRGB = {r:100, g:130, b:170};
+    var targetRGB = {r:100, g:130, b:170};
+    var nodeColor = 'rgba(100,130,170,';
+
+    function toggleDark() {
+      document.body.classList.toggle('dark-mode');
+      var isDark = document.body.classList.contains('dark-mode');
+      document.getElementById('toggle-dark').innerHTML = isDark ? '&#9788;' : '&#9790;';
+      targetRGB = isDark ? {r:130, g:160, b:200} : {r:100, g:130, b:170};
+    }
+
+    function lerpColor() {
+      nodeRGB.r += (targetRGB.r - nodeRGB.r) * 0.02;
+      nodeRGB.g += (targetRGB.g - nodeRGB.g) * 0.02;
+      nodeRGB.b += (targetRGB.b - nodeRGB.b) * 0.02;
+      nodeColor = 'rgba(' + Math.round(nodeRGB.r) + ',' + Math.round(nodeRGB.g) + ',' + Math.round(nodeRGB.b) + ',';
+    }
+
+    var c = document.getElementById('bg-canvas');
+    var ctx = c.getContext('2d');
+    var w, h;
+    var nodes = [];
+
+    // Seeded PRNG (mulberry32)
+    function mulberry32(a) {
+      return function() {
+        a |= 0; a = a + 0x6D2B79F5 | 0;
+        var t = Math.imul(a ^ a >>> 15, 1 | a);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      }
+    }
+    var rand = mulberry32(42);
+
+    function resize() {
+      w = c.width = window.innerWidth;
+      h = c.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    for (var i = 0; i < 300; i++) {
+      nodes.push({
+        x: rand() * w,
+        y: rand() * h,
+        vx: (rand() - 0.5) * 0.03,
+        vy: (rand() - 0.5) * 0.03,
+        r: rand() * 9 + 1
+      });
+    }
+    // Extra nodes along edges
+    for (var i = 0; i < 80; i++) {
+      var side = Math.floor(rand() * 4);
+      var ex, ey;
+      if (side === 0) { ex = rand() * w; ey = rand() * 60; }         // top
+      else if (side === 1) { ex = rand() * w; ey = h - rand() * 60; } // bottom
+      else if (side === 2) { ex = rand() * 60; ey = rand() * h; }     // left
+      else { ex = w - rand() * 60; ey = rand() * h; }                 // right
+      nodes.push({
+        x: ex, y: ey,
+        vx: (rand() - 0.5) * 0.03,
+        vy: (rand() - 0.5) * 0.03,
+        r: rand() * 9 + 1
+      });
+    }
+
+    var mouse = {x: -1000, y: -1000, active: false};
+    var MOUSE_RADIUS = 150;
+
+    document.addEventListener('mousemove', function(e) {
+      var cw = document.getElementById('content-wrap');
+      var rect = cw.getBoundingClientRect();
+      // Only respond when cursor is outside the content column
+      if (e.clientX < rect.left || e.clientX > rect.right) {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        mouse.active = true;
+      } else {
+        mouse.active = false;
+      }
+    });
+
+    document.addEventListener('mouseleave', function() {
+      mouse.active = false;
+    });
+
+    function draw() {
+      lerpColor();
+      ctx.clearRect(0, 0, w, h);
+
+      for (var i = 0; i < nodes.length; i++) {
+        nodes[i].x += nodes[i].vx;
+        nodes[i].y += nodes[i].vy;
+        if (nodes[i].x < -50 || nodes[i].x > w + 50) nodes[i].vx *= -1;
+        if (nodes[i].y < -50 || nodes[i].y > h + 50) nodes[i].vy *= -1;
+
+
+        // Gentle repulsion from cursor when over background
+        if (mouse.active) {
+          var mdx = nodes[i].x - mouse.x;
+          var mdy = nodes[i].y - mouse.y;
+          var mdist = Math.sqrt(mdx*mdx + mdy*mdy);
+          if (mdist < MOUSE_RADIUS && mdist > 0) {
+            var force = (1 - mdist / MOUSE_RADIUS) * 0.003;
+            nodes[i].vx += (mdx / mdist) * force;
+            nodes[i].vy += (mdy / mdist) * force;
+          }
+        }
+
+        // Dampen velocity so mouse pushes don't accumulate forever
+        nodes[i].vx *= 0.999;
+        nodes[i].vy *= 0.999;
+      }
+
+      // Build adjacency list
+      var adj = [];
+      for (var i = 0; i < nodes.length; i++) adj[i] = [];
+      for (var i = 0; i < nodes.length; i++) {
+        for (var j = i + 1; j < nodes.length; j++) {
+          var dx = nodes[i].x - nodes[j].x;
+          var dy = nodes[i].y - nodes[j].y;
+          if (dx*dx + dy*dy < 170*170) {
+            adj[i].push(j);
+            adj[j].push(i);
+          }
+        }
+      }
+
+      // Draw filled triangles — opacity based on max edge distance
+      var CONN = 170;
+      var triCount = [];
+      for (var i = 0; i < nodes.length; i++) triCount[i] = 0;
+      var TRI_CAP = 8;
+      for (var i = 0; i < nodes.length; i++) {
+        if (triCount[i] >= TRI_CAP) continue;
+        for (var ai = 0; ai < adj[i].length; ai++) {
+          var j = adj[i][ai];
+          if (j <= i || triCount[j] >= TRI_CAP) continue;
+          for (var aj = 0; aj < adj[j].length; aj++) {
+            var k = adj[j][aj];
+            if (k <= j || triCount[k] >= TRI_CAP) continue;
+            if (adj[i].indexOf(k) !== -1) {
+              var d1 = Math.sqrt(Math.pow(nodes[i].x-nodes[j].x,2)+Math.pow(nodes[i].y-nodes[j].y,2));
+              var d2 = Math.sqrt(Math.pow(nodes[j].x-nodes[k].x,2)+Math.pow(nodes[j].y-nodes[k].y,2));
+              var d3 = Math.sqrt(Math.pow(nodes[i].x-nodes[k].x,2)+Math.pow(nodes[i].y-nodes[k].y,2));
+              var maxD = Math.max(d1, d2, d3);
+              var alpha = 0.22 * Math.pow(1 - maxD / CONN, 2);
+              if (alpha > 0) {
+                ctx.beginPath();
+                ctx.moveTo(nodes[i].x, nodes[i].y);
+                ctx.lineTo(nodes[j].x, nodes[j].y);
+                ctx.lineTo(nodes[k].x, nodes[k].y);
+                ctx.closePath();
+                ctx.fillStyle = nodeColor + alpha + ')';
+                ctx.fill();
+              }
+              triCount[i]++;
+              triCount[j]++;
+              triCount[k]++;
+              if (triCount[i] >= TRI_CAP) break;
+            }
+          }
+          if (triCount[i] >= TRI_CAP) break;
+        }
+      }
+
+      // Draw lines
+      for (var i = 0; i < nodes.length; i++) {
+        for (var ai = 0; ai < adj[i].length; ai++) {
+          var j = adj[i][ai];
+          if (j <= i) continue;
+          var dx = nodes[i].x - nodes[j].x;
+          var dy = nodes[i].y - nodes[j].y;
+          var dist = Math.sqrt(dx*dx + dy*dy);
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.strokeStyle = nodeColor + (0.1 * (1 - dist/170)) + ')';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
+      }
+
+      for (var i = 0; i < nodes.length; i++) {
+        ctx.beginPath();
+        ctx.arc(nodes[i].x, nodes[i].y, nodes[i].r, 0, Math.PI*2);
+        ctx.fillStyle = nodeColor + '0.12)';
+        ctx.fill();
+      }
+
+      if (animRunning) requestAnimationFrame(draw);
+    }
+    draw();
+    </script>
   </body>
 </html>
