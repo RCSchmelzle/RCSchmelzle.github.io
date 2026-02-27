@@ -36,7 +36,7 @@
         </td>
       </tr>
       <tr style="padding:0px">
-        <td style="padding:12px 0 0 0">
+        <td style="padding:100px 0 0 0">
 
           <!-- ===== HEADER / BIO ===== -->
           <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
@@ -567,7 +567,7 @@
           var mdy = nodes[i].y - mouse.y;
           var mdist = Math.sqrt(mdx*mdx + mdy*mdy);
           if (mdist < MOUSE_RADIUS && mdist > 0) {
-            var force = (1 - mdist / MOUSE_RADIUS) * 0.04;
+            var force = (1 - mdist / MOUSE_RADIUS) * 0.08;
             nodes[i].vx += (mdx / mdist) * force;
             nodes[i].vy += (mdy / mdist) * force;
           }
