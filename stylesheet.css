@@ -139,7 +139,9 @@ nav {
   background-color: #ffffff;
   border-bottom: none;
   padding: 12px 0 11px 0;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-family: 'Lato', Verdana, Helvetica, sans-serif;
   font-size: 13px;
   letter-spacing: 0.4px;
@@ -166,9 +168,23 @@ nav::after {
 nav a {
   color: #4a5568;
   text-decoration: none;
-  margin: 0 16px;
   cursor: pointer;
+  position: relative;
+  padding: 0 16px;
   transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+/* Vertical bars between nav links — absolutely positioned at left edge */
+nav > a + a::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 12px;
+  background: #d0d0d0;
+  transition: background 0.6s ease;
 }
 
 nav a:hover {
@@ -318,6 +334,10 @@ body.dark-mode nav::after {
 
 body.dark-mode nav a {
   color: #a0aec0;
+}
+
+body.dark-mode nav > a + a::before {
+  background: #4a5568;
 }
 
 body.dark-mode nav a:hover {
@@ -577,7 +597,35 @@ body.dark-mode.tile-mode .gallery-placeholder {
   }
 }
 
-/* Mobile — stack everything vertically */
+/* Smaller desktop (1080–1400px) */
+@media (max-width: 1400px) {
+  #content-wrap {
+    max-width: 700px;
+    padding: 0 60px;
+  }
+  body, td, th, tr, p, a {
+    font-size: 13px;
+  }
+  strong {
+    font-size: 13px;
+  }
+  .papertitle {
+    font-size: 13px;
+  }
+  h2 {
+    font-size: 18px;
+  }
+  .name {
+    font-size: 30px;
+  }
+  nav {
+    font-size: 12px;
+  }
+  nav a {
+    padding: 0 12px;
+  }
+}
+
 /* Tablet / small laptop */
 @media (max-width: 1080px) {
   #content-wrap {
@@ -595,7 +643,10 @@ body.dark-mode.tile-mode .gallery-placeholder {
     padding: 8px 10px 7px;
   }
   nav a {
-    margin: 0 8px;
+    padding: 0 8px;
+  }
+  nav > a + a::before {
+    display: none;
   }
   #toggle-anim {
     display: none !important;
@@ -630,7 +681,7 @@ body.dark-mode.tile-mode .gallery-placeholder {
   }
 
   nav a {
-    margin: 0 6px;
+    padding: 0 6px;
   }
 
   /* Stack table rows vertically */
@@ -695,6 +746,12 @@ body.dark-mode.tile-mode .gallery-placeholder {
   }
   nav {
     font-size: 16px;
+  }
+  nav a {
+    padding: 0 24px;
+  }
+  nav > a + a::before {
+    height: 14px;
   }
   h2 {
     font-size: 26px;

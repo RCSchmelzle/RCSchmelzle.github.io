@@ -19,7 +19,7 @@
       <tr>
         <td style="padding:0px">
           <nav>
-            <a href="#" onclick="window.scrollTo({top:0});return false;" style="font-weight:700;letter-spacing:0.5px;margin-right:20px;">RS</a>
+            <a href="#" onclick="window.scrollTo({top:0});return false;" style="font-weight:700;letter-spacing:0.5px;">RS</a>
             <a href="#publications">Publications</a>
             <a href="#projects">Projects</a>
             <a href="#experience">Experience</a>
@@ -561,7 +561,7 @@
     }
 
     var triAlphas = {};
-    var mouse = {x: -1000, y: -1000, active: false};
+    var mouse = {x: -1000, y: -1000, active: false, clicking: false};
     var MOUSE_RADIUS = 150;
 
     document.addEventListener('mousemove', function(e) {
@@ -577,18 +577,72 @@
       }
     });
 
+    document.addEventListener('mousedown', function(e) {
+      if (mouse.active) mouse.clicking = true;
+    });
+
+    document.addEventListener('mouseup', function() {
+      mouse.clicking = false;
+    });
+
     document.addEventListener('mouseleave', function() {
       mouse.active = false;
+      mouse.clicking = false;
     });
 
     var TARGET_FPS = 30;
     var frameInterval = 1000 / TARGET_FPS;
     var lastFrame = 0;
 
+    // Adaptive performance: fade out nodes if framerate drops
+    var fpsHistory = [];
+    var FPS_SAMPLES = 90;
+    var FPS_THRESHOLD = 15; // start culling below this
+    var culling = false;
+    var lastCullTime = 0;
+    var CULL_COOLDOWN = 5000; // ms between cull rounds
+
     function draw(timestamp) {
       if (animRunning) requestAnimationFrame(draw);
       if (timestamp - lastFrame < frameInterval) return;
+      var dt = timestamp - lastFrame;
       lastFrame = timestamp;
+
+      // Track FPS and cull nodes if too slow
+      // Only record plausible frame times (skip first frame and outliers)
+      if (dt > 0 && dt < 500) {
+        fpsHistory.push(1000 / dt);
+        if (fpsHistory.length > FPS_SAMPLES) fpsHistory.shift();
+        if (fpsHistory.length >= FPS_SAMPLES && timestamp - lastCullTime > CULL_COOLDOWN) {
+          var avgFps = 0;
+          for (var f = 0; f < fpsHistory.length; f++) avgFps += fpsHistory[f];
+          avgFps /= fpsHistory.length;
+          if (avgFps < FPS_THRESHOLD && nodes.length > 30) {
+            lastCullTime = timestamp;
+            // Mark ~10% of nodes for fade-out
+            var toKill = Math.max(3, Math.round(nodes.length * 0.1));
+            for (var ki = nodes.length - 1; ki >= 0 && toKill > 0; ki--) {
+              if (!nodes[ki].dying) {
+                nodes[ki].dying = true;
+                nodes[ki].alpha = 1.0;
+                toKill--;
+              }
+            }
+            fpsHistory = []; // reset after culling
+          }
+        }
+      }
+
+      // Fade out dying nodes slowly and remove when invisible
+      for (var di = nodes.length - 1; di >= 0; di--) {
+        if (nodes[di].dying) {
+          nodes[di].alpha -= 0.005;
+          if (nodes[di].alpha <= 0) {
+            nodes.splice(di, 1);
+          }
+        }
+      }
+
       lerpColor();
       ctx.clearRect(0, 0, w, h);
 
@@ -611,15 +665,16 @@
         }
 
 
-        // Gentle repulsion from cursor when over background
+        // Mouse interaction: repel by default, attract on click
         if (mouse.active) {
           var mdx = nodes[i].x - mouse.x;
           var mdy = nodes[i].y - mouse.y;
           var mdist = Math.sqrt(mdx*mdx + mdy*mdy);
           if (mdist < MOUSE_RADIUS && mdist > 0) {
             var force = (1 - mdist / MOUSE_RADIUS) * 0.08;
-            nodes[i].vx += (mdx / mdist) * force;
-            nodes[i].vy += (mdy / mdist) * force;
+            var dir = mouse.clicking ? -1 : 1;
+            nodes[i].vx += (mdx / mdist) * force * dir;
+            nodes[i].vy += (mdy / mdist) * force * dir;
           }
         }
 
@@ -636,6 +691,7 @@
       var rows = Math.ceil((h + 100) / cellSize) + 1;
       var grid = {};
       for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].dying) continue; // exclude dying nodes from connections
         var cx = Math.floor((nodes[i].x + 50) / cellSize);
         var cy = Math.floor((nodes[i].y + 50) / cellSize);
         var key = cx + ',' + cy;
@@ -739,25 +795,29 @@
 
       // Draw lines
       for (var i = 0; i < nodes.length; i++) {
+        var ai_alpha = nodes[i].dying ? nodes[i].alpha : 1;
         for (var ai = 0; ai < adj[i].length; ai++) {
           var j = adj[i][ai];
           if (j <= i) continue;
+          var aj_alpha = nodes[j].dying ? nodes[j].alpha : 1;
+          var lineAlpha = Math.min(ai_alpha, aj_alpha);
           var dx = nodes[i].x - nodes[j].x;
           var dy = nodes[i].y - nodes[j].y;
           var dist = Math.sqrt(dx*dx + dy*dy);
           ctx.beginPath();
           ctx.moveTo(nodes[i].x, nodes[i].y);
           ctx.lineTo(nodes[j].x, nodes[j].y);
-          ctx.strokeStyle = nodeColor + (0.1 * (1 - dist/170)) + ')';
+          ctx.strokeStyle = nodeColor + (0.1 * (1 - dist/170) * lineAlpha) + ')';
           ctx.lineWidth = 3;
           ctx.stroke();
         }
       }
 
       for (var i = 0; i < nodes.length; i++) {
+        var nAlpha = nodes[i].dying ? nodes[i].alpha : 1;
         ctx.beginPath();
         ctx.arc(nodes[i].x, nodes[i].y, nodes[i].r, 0, Math.PI*2);
-        ctx.fillStyle = nodeColor + '0.12)';
+        ctx.fillStyle = nodeColor + (0.12 * nAlpha) + ')';
         ctx.fill();
       }
 
