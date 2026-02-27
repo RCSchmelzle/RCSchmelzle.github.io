@@ -463,7 +463,11 @@
     resize();
     window.addEventListener('resize', resize);
 
-    for (var i = 0; i < 300; i++) {
+    var isMobile = window.innerWidth < 768;
+    var BASE_NODES = isMobile ? 120 : 300;
+    var EDGE_NODES = isMobile ? 30 : 80;
+
+    for (var i = 0; i < BASE_NODES; i++) {
       nodes.push({
         x: rand() * w,
         y: rand() * h,
@@ -473,7 +477,7 @@
       });
     }
     // Extra nodes along edges
-    for (var i = 0; i < 80; i++) {
+    for (var i = 0; i < EDGE_NODES; i++) {
       var side = Math.floor(rand() * 4);
       var ex, ey;
       if (side === 0) { ex = rand() * w; ey = rand() * 60; }         // top
@@ -536,22 +540,57 @@
         nodes[i].vy *= 0.999;
       }
 
-      // Build adjacency list
+      // Build adjacency list via spatial grid
+      var CONN = 170;
+      var CONN2 = CONN * CONN;
+      var cellSize = CONN;
+      var cols = Math.ceil((w + 100) / cellSize) + 1;
+      var rows = Math.ceil((h + 100) / cellSize) + 1;
+      var grid = {};
+      for (var i = 0; i < nodes.length; i++) {
+        var cx = Math.floor((nodes[i].x + 50) / cellSize);
+        var cy = Math.floor((nodes[i].y + 50) / cellSize);
+        var key = cx + ',' + cy;
+        if (!grid[key]) grid[key] = [];
+        grid[key].push(i);
+      }
       var adj = [];
       for (var i = 0; i < nodes.length; i++) adj[i] = [];
-      for (var i = 0; i < nodes.length; i++) {
-        for (var j = i + 1; j < nodes.length; j++) {
-          var dx = nodes[i].x - nodes[j].x;
-          var dy = nodes[i].y - nodes[j].y;
-          if (dx*dx + dy*dy < 170*170) {
-            adj[i].push(j);
-            adj[j].push(i);
+      var visited = {};
+      for (var key in grid) {
+        var parts = key.split(',');
+        var cx = parseInt(parts[0]);
+        var cy = parseInt(parts[1]);
+        var cell = grid[key];
+        for (var ox = -1; ox <= 1; ox++) {
+          for (var oy = -1; oy <= 1; oy++) {
+            var nk = (cx+ox) + ',' + (cy+oy);
+            var neighbor = grid[nk];
+            if (!neighbor) continue;
+            for (var a = 0; a < cell.length; a++) {
+              var i = cell[a];
+              for (var b = 0; b < neighbor.length; b++) {
+                var j = neighbor[b];
+                if (j <= i) continue;
+                var dx = nodes[i].x - nodes[j].x;
+                var dy = nodes[i].y - nodes[j].y;
+                if (dx*dx + dy*dy < CONN2) {
+                  adj[i].push(j);
+                  adj[j].push(i);
+                }
+              }
+            }
           }
         }
       }
 
+      // Build adjacency sets for fast triangle lookup
+      var adjSet = [];
+      for (var i = 0; i < nodes.length; i++) {
+        adjSet[i] = new Set(adj[i]);
+      }
+
       // Draw filled triangles — opacity based on max edge distance
-      var CONN = 170;
       var triCount = [];
       for (var i = 0; i < nodes.length; i++) triCount[i] = 0;
       var TRI_CAP = 8;
@@ -563,7 +602,7 @@
           for (var aj = 0; aj < adj[j].length; aj++) {
             var k = adj[j][aj];
             if (k <= j || triCount[k] >= TRI_CAP) continue;
-            if (adj[i].indexOf(k) !== -1) {
+            if (adjSet[i].has(k)) {
               var d1 = Math.sqrt(Math.pow(nodes[i].x-nodes[j].x,2)+Math.pow(nodes[i].y-nodes[j].y,2));
               var d2 = Math.sqrt(Math.pow(nodes[j].x-nodes[k].x,2)+Math.pow(nodes[j].y-nodes[k].y,2));
               var d3 = Math.sqrt(Math.pow(nodes[i].x-nodes[k].x,2)+Math.pow(nodes[i].y-nodes[k].y,2));
