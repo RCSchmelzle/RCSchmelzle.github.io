@@ -708,21 +708,39 @@ body.dark-mode.tile-mode .gallery-placeholder {
     height: 60px;
   }
 
-  /* Bio section: photo centered on top, then name+bio */
-  table[style*="border-spacing:0px;border-collapse:separate"] > tbody > tr {
+  /* Bio section: Name → Photo → Bio */
+  .bio-row {
     display: flex !important;
-    flex-direction: column-reverse;
+    flex-direction: column;
+    align-items: center;
   }
 
-  table[style*="border-spacing:0px;border-collapse:separate"] > tbody > tr > td {
-    display: block !important;
+  .bio-text {
+    display: contents !important;
+  }
+
+  .bio-name {
+    order: 1;
+    width: 100%;
+    text-align: center;
+  }
+
+  .bio-photo {
+    order: 2;
     width: 100% !important;
     text-align: center !important;
+    padding: 0 2.5% !important;
   }
 
-  table[style*="border-spacing:0px;border-collapse:separate"] > tbody > tr > td:last-child img {
+  .bio-photo img {
     width: 160px !important;
     margin: 0 auto 12px;
+  }
+
+  .bio-body {
+    order: 3;
+    width: 100%;
+    text-align: center;
   }
 
   .name {

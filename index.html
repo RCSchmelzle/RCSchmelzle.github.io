@@ -14,6 +14,54 @@
 
   <body>
     <div id="bg-wrap"><canvas id="bg-canvas"></canvas></div>
+
+    <!-- Node interaction hint -->
+    <div id="node-hint" style="
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-family: 'Lato', sans-serif;
+      font-size: 14px;
+      color: #4a5568;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(40px);
+      animation: hintIn 0.5s ease 1.5s forwards;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    ">
+      <span>Hover to repel &middot; Click to attract</span>
+      <button onclick="this.parentElement.style.opacity='0';this.parentElement.style.transform='translateY(40px)';setTimeout(function(){document.getElementById('node-hint').remove()},300)" style="
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #a0aec0;
+        font-size: 16px;
+        line-height: 1;
+        padding: 0 2px;
+      ">&times;</button>
+    </div>
+    <style>
+      @keyframes hintIn {
+        to { opacity: 1; transform: translateY(0); }
+      }
+      body.dark-mode #node-hint {
+        background: rgba(15, 17, 24, 0.85);
+        color: #a0aec0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      }
+      body.dark-mode #node-hint button {
+        color: #4a5568;
+      }
+    </style>
     <div id="content-wrap">
     <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
       <tr>
@@ -40,26 +88,30 @@
 
           <!-- ===== HEADER / BIO ===== -->
           <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-            <tr style="padding:0px">
-              <td style="padding:2.5%;width:63%;vertical-align:middle">
-                <p class="name" style="text-align: center;">
-                  Ryan Schmelzle
-                </p>
-                <p>
-                  I'm a PhD student in <a href="https://cs.unc.edu/">Computer Science at UNC Chapel Hill</a>, advised by <a href="https://www.danszafir.com/">Dan Szafir</a>. My research spans computer vision, graphics, and robotics, with a focus on 3D reconstruction, neural rendering, view synthesis, and perception systems for teleoperation.
-                </p>
-                <p>
-                  I currently work in <a href="https://iron.cs.unc.edu/">IRON Labs</a>, where I'm building vision-driven perception and teleoperation systems with a Boston Dynamics SPOT quadruped for search-and-rescue scenarios. Previously, I worked in the <a href="https://visual.cs.unc.edu/">Visual Computing &amp; Augmented Intelligence Lab</a> on AR glasses and spatial audio, and in the <a href="https://telepresence.web.unc.edu/">Graphics &amp; Virtual Reality Group</a> under <a href="https://henryfuchs.web.unc.edu/">Henry Fuchs</a> on neural telepresence.
-                </p>
-                <p style="text-align:center">
-                  <a href="mailto:rysch01@cs.unc.edu">Email</a> &nbsp;/&nbsp;
-                  <a href="data/RyanSchmelzle-CV.pdf">CV</a> &nbsp;/&nbsp;
-                  <a href="https://scholar.google.com/citations?user=UNmSPfAAAAAJ&hl=en">Scholar</a> &nbsp;/&nbsp;
-                  <a href="https://www.linkedin.com/in/rysch01/">LinkedIn</a> &nbsp;/&nbsp;
-                  <a href="https://github.com/RCSchmelzle">GitHub</a>
-                </p>
+            <tr style="padding:0px" class="bio-row">
+              <td style="padding:2.5%;width:63%;vertical-align:middle" class="bio-text">
+                <div class="bio-name">
+                  <p class="name" style="text-align: center;">
+                    Ryan Schmelzle
+                  </p>
+                </div>
+                <div class="bio-body">
+                  <p>
+                    I'm a PhD student in <a href="https://cs.unc.edu/">Computer Science at UNC Chapel Hill</a>, advised by <a href="https://www.danszafir.com/">Dan Szafir</a>. My research spans computer vision, graphics, and robotics, with a focus on 3D reconstruction, neural rendering, view synthesis, and perception systems for teleoperation.
+                  </p>
+                  <p>
+                    I currently work in <a href="https://iron.cs.unc.edu/">IRON Labs</a>, where I'm building vision-driven perception and teleoperation systems with a Boston Dynamics SPOT quadruped for search-and-rescue scenarios. Previously, I worked in the <a href="https://visual.cs.unc.edu/">Visual Computing &amp; Augmented Intelligence Lab</a> on AR glasses and spatial audio, and in the <a href="https://telepresence.web.unc.edu/">Graphics &amp; Virtual Reality Group</a> under <a href="https://henryfuchs.web.unc.edu/">Henry Fuchs</a> on neural telepresence.
+                  </p>
+                  <p style="text-align:center">
+                    <a href="mailto:rysch01@cs.unc.edu">Email</a> &nbsp;/&nbsp;
+                    <a href="data/RyanSchmelzle-CV.pdf">CV</a> &nbsp;/&nbsp;
+                    <a href="https://scholar.google.com/citations?user=UNmSPfAAAAAJ&hl=en">Scholar</a> &nbsp;/&nbsp;
+                    <a href="https://www.linkedin.com/in/rysch01/">LinkedIn</a> &nbsp;/&nbsp;
+                    <a href="https://github.com/RCSchmelzle">GitHub</a>
+                  </p>
+                </div>
               </td>
-              <td style="padding:2.5%;width:37%;max-width:37%">
+              <td style="padding:2.5%;width:37%;max-width:37%" class="bio-photo">
                 <a href="images/RyanSchmelzle.jpeg"><img style="width:100%;max-width:100%;object-fit: cover; border-radius: 50%;" alt="profile photo" src="images/RyanSchmelzle.jpeg" class="hoverZoomLink"></a>
               </td>
             </tr>
@@ -114,7 +166,7 @@
           <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
             <tr>
               <td style="padding:16px;width:100%;vertical-align:middle">
-                <h2 id="projects">Projects</h2>
+                <h2 id="projects">Research</h2>
               </td>
             </tr>
           </tbody></table>
@@ -139,6 +191,23 @@
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle">
                 <div class="one">
+                  <div class="img-placeholder">Telepresence</div>
+                </div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">Desktop Telepresence</span>
+                <br>
+                <em>Visual Computing &amp; Augmented Intelligence Lab, UNC Chapel Hill</em> &mdash; 2023
+                <p>
+                  Contributed to a real-time view synthesis system for desktop telepresence using sparse commodity RGBD cameras. The system constructs a Multi-Layer Point Cloud representation and renders novel viewpoints through a temporally-aware neural renderer with Spatial Skip Connections. Published in IEEE TVCG 2025.
+                </p>
+                <p><em>Tools: PyTorch, CUDA, Azure Kinect, Open3D</em></p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle">
+                <div class="one">
                   <div class="img-placeholder">AR Glasses</div>
                 </div>
               </td>
@@ -152,6 +221,35 @@
               </td>
             </tr>
 
+          </tbody></table>
+
+          <!-- ===== PERSONAL PROJECTS ===== -->
+          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+            <tr>
+              <td style="padding:16px;width:100%;vertical-align:middle">
+                <h2 id="personal-projects">Personal Projects</h2>
+              </td>
+            </tr>
+          </tbody></table>
+          <table style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle">
+                <div class="one">
+                  <div class="img-placeholder">Parallax</div>
+                </div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">Parallax &mdash; Desktop VR Engine</span>
+                <br>
+                <em>Personal Project</em> &mdash; 2025
+                <p>
+                  A real-time rendering system to simulate depth on a standard flat display. Webcam-based face tracking drives off-axis perspective projection, updating the camera pose and lighting based on viewer position and window location. The result is a dynamic parallax illusion with two modes: &ldquo;diorama mode&rdquo; to visualize a recessed miniature scene on screen and &ldquo;pane mode&rdquo; to make the screen act as a window into a larger virtual scene.
+                </p>
+                <p><em>Tools: YuNet face detection, Numba CUDA, PyQt5, custom GPU path tracer</em></p>
+              </td>
+            </tr>
+
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle">
                 <div class="one">
@@ -159,12 +257,50 @@
                 </div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
-                <span class="papertitle">Autoencoder-Based Neural Depth Estimation</span>
+                <span class="papertitle">Monocular Depth Estimation</span>
                 <br>
-                <em>Personal Project</em> &mdash; 2024
+                <em>Personal Project</em> &mdash; 2024&ndash;2025
                 <p>
-                  Designed and trained an autoencoder-based monocular depth estimation pipeline using CNNs in TensorFlow/Keras. Created a pipeline for generating synthetic datasets using Blender with variable simulated conditions for training.
+                  A deep learning pipeline for predicting dense per-pixel depth maps from single RGB images. A ResNet-34 U-Net encoder-decoder with bottleneck self-attention is trained through a 3-stage refinement process &mdash; backbone training with a multi-term composite loss, edge sharpening via superpixel consistency, and pixel-level polishing with backbone skip connections. Experiments include sim-to-real transfer learning from Apple Hypersim synthetic scenes to NYU Depth V2 and ablations on transformer attention at the encoder bottleneck.
                 </p>
+                <p><em>Tools: PyTorch, CUDA, TensorBoard, scikit-image</em></p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle">
+                <div class="one">
+                  <div class="img-placeholder">Ray Tracer</div>
+                </div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">Ray Tracer</span>
+                <br>
+                <em>Personal Project</em> &mdash; 2025
+                <p>
+                  A real-time GPU ray tracer that supports Phong shading with shadow rays, specular reflections, ambient occlusion, and one-bounce Monte Carlo global illumination with progressive frame accumulation for color bleeding. An interactive viewer provides orbit and first-person camera controls, per-light HSV color editing, and anti-aliasing (FXAA, SSAA).
+                </p>
+                <p><em>Tools: Numba CUDA, Cython, NumPy</em></p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle">
+                <div class="one">
+                  <div class="img-placeholder">MIPS</div>
+                </div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">MIPS Processor &amp; Point Cloud Renderer</span>
+                <br>
+                <em>UNC COMP 541</em> &mdash; 2023
+                <p>
+                  Built a custom 32-bit MIPS processor from scratch in SystemVerilog, including the ALU, register file, datapath, control unit, and peripheral drivers. As a final application, designed a real-time 3D point cloud renderer entirely in MIPS assembly language and deployed it on a Nexys FPGA.
+                </p>
+                <p>
+                  The renderer loads a simplified Stanford bunny model and performs vertex transformations and orthographic projection using fixed-point multiplication directly on the processor. Camera orientation is driven by accelerometer tilt, and the resulting image is written to a 40&times;30 screen buffer for display output.
+                </p>
+                <p><em>Tools: SystemVerilog, MIPS assembly, Vivado, MARS, Nexys FPGA</em></p>
               </td>
             </tr>
 
@@ -182,10 +318,10 @@
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
-                <div class="logo-placeholder">UNC</div>
+                <img src="images/Old Well Tokens_PhD.png" alt="UNC Old Well Token — Ph.D." style="width:100%;max-width:140px;border-radius:6px;">
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
-                <span class="papertitle">Graduate Researcher</span>
+                <span class="papertitle">Graduate Researcher (Doctoral)</span>
                 <br>
                 <a href="https://iron.cs.unc.edu/">IRON Labs</a>, UNC Chapel Hill &mdash; Jan. 2025&ndash;Present
                 <p>
@@ -196,10 +332,10 @@
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
-                <div class="logo-placeholder">UNC</div>
+                <img src="images/Old Well Tokens_Masters.png" alt="UNC Old Well Token — M.S." style="width:100%;max-width:140px;border-radius:6px;">
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
-                <span class="papertitle">Graduate Researcher</span>
+                <span class="papertitle">Graduate Researcher (Masters)</span>
                 <br>
                 <a href="https://visual.cs.unc.edu/">Visual Computing &amp; Augmented Intelligence Lab</a>, UNC Chapel Hill &mdash; Sep. 2023&ndash;Dec. 2024
                 <p>
@@ -210,7 +346,7 @@
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
-                <div class="logo-placeholder">UNC</div>
+                <img src="images/Old Well Tokens_Undergrad.png" alt="UNC Old Well Token — B.S." style="width:100%;max-width:140px;border-radius:6px;">
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
                 <span class="papertitle">Undergraduate Researcher</span>
@@ -250,7 +386,7 @@
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
-                <div class="logo-placeholder">UNC</div>
+                <img src="images/Old Well Tokens_PhD.png" alt="UNC Old Well Token — Ph.D." style="width:100%;max-width:140px;border-radius:6px;">
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
                 <span class="papertitle">Ph.D. in Computer Science</span>
@@ -266,7 +402,7 @@
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
-                <div class="logo-placeholder">UNC</div>
+                <img src="images/Old Well Tokens_Masters.png" alt="UNC Old Well Token — M.S." style="width:100%;max-width:140px;border-radius:6px;">
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
                 <span class="papertitle">M.S. in Computer Science</span>
@@ -282,7 +418,7 @@
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
-                <div class="logo-placeholder">UNC</div>
+                <img src="images/Old Well Tokens_Undergrad.png" alt="UNC Old Well Token — B.S." style="width:100%;max-width:140px;border-radius:6px;">
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
                 <span class="papertitle">B.S. in Computer Science &amp; Communication Studies</span>
@@ -426,8 +562,10 @@
       if (animRunning) requestAnimationFrame(draw);
     }
 
-    var nodeRGB = {r:100, g:130, b:170};
-    var targetRGB = {r:100, g:130, b:170};
+    var nodeRGB = {r:130, g:160, b:200};
+    var targetRGB = {r:130, g:160, b:200};
+    document.body.classList.add('dark-mode');
+    document.getElementById('toggle-dark').innerHTML = '&#9788;';
     var nodeColor = 'rgba(100,130,170,';
 
     var tileInited = false;
