@@ -706,9 +706,7 @@ body.dark-mode.tile-mode .gallery-placeholder {
     padding-top: 16px !important;
     margin-top: 8px;
   }
-  table[style*="border-spacing:0px 10px"] > tbody > tr + tr > td:last-child {
-    border-top: none !important;
-  }
+  /* Keep subtle thin line under image on mobile */
   body.dark-mode table[style*="border-spacing:0px 10px"] > tbody > tr + tr > td:first-child {
     border-top-color: #2a2a40;
   }
