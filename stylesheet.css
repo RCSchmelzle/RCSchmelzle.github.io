@@ -676,12 +676,15 @@ body.dark-mode.tile-mode .gallery-placeholder {
   }
 
   nav {
-    padding: 10px 8px 8px;
-    font-size: 11px;
+    padding: 8px 6px 6px;
+    font-size: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2px 0;
   }
 
   nav a {
-    padding: 0 6px;
+    padding: 2px 5px;
   }
 
   /* Stack table rows vertically */
@@ -689,13 +692,35 @@ body.dark-mode.tile-mode .gallery-placeholder {
   table[style*="border-spacing:0px 4px"] > tbody > tr > td {
     display: block !important;
     width: 100% !important;
-    padding: 8px 0 !important;
+    padding: 4px 0 !important;
+  }
+
+  /* Keep icon and description visually connected */
+  table[style*="border-spacing:0px 10px"] > tbody > tr > td:first-child {
+    padding-bottom: 0 !important;
+  }
+
+  /* Thicker divider between projects, not between icon and text */
+  table[style*="border-spacing:0px 10px"] > tbody > tr + tr > td:first-child {
+    border-top: 2px solid #e0e0e0;
+    padding-top: 12px !important;
+  }
+  table[style*="border-spacing:0px 10px"] > tbody > tr + tr > td:last-child {
+    border-top: none !important;
+  }
+  body.dark-mode table[style*="border-spacing:0px 10px"] > tbody > tr + tr > td:first-child {
+    border-top-color: #2a2a40;
   }
 
   /* Images/logos full width on mobile */
   .one {
     width: 100%;
-    margin-bottom: 8px;
+    margin-bottom: 0;
+  }
+
+  /* More spacing under name above photo */
+  .bio-name {
+    margin-bottom: 12px;
   }
 
   .img-placeholder {
