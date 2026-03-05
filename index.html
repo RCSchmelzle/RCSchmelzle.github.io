@@ -103,7 +103,7 @@
                 </div>
                 <div class="bio-body">
                   <p>
-                    I'm a PhD student in <a href="https://cs.unc.edu/">Computer Science at UNC Chapel Hill</a>, advised by <a href="https://www.danszafir.com/">Dan Szafir</a>. My research spans computer vision, graphics, and robotics, with a focus on 3D reconstruction, neural rendering, view synthesis, and perception systems for teleoperation.
+                    I'm a PhD student in <a href="https://cs.unc.edu/">Computer Science at UNC Chapel Hill</a>, advised by <a href="https://www.danszafir.com/">Dan Szafir</a>. My research spans computer vision, graphics, and robotics, with a focus on 3D reconstruction, neural rendering, view synthesis, and perception systems for teleoperation and telepresence.
                   </p>
                   <p>
                     I currently work in <a href="https://iron.cs.unc.edu/">IRON Labs</a>, where I'm building vision-driven perception and teleoperation systems with a Boston Dynamics SPOT quadruped for search-and-rescue scenarios. Previously, I worked in the <a href="https://visual.cs.unc.edu/">Visual Computing &amp; Augmented Intelligence Lab</a> on AR glasses and spatial audio, and in the <a href="https://telepresence.web.unc.edu/">Graphics &amp; Virtual Reality Group</a> under <a href="https://henryfuchs.web.unc.edu/">Henry Fuchs</a> on neural telepresence.
@@ -191,7 +191,7 @@
                 <br>
                 <em>IRON Labs, UNC Chapel Hill</em> &mdash; Ongoing
                 <p>
-                  Developing a vision-driven robotic teleoperation system supporting neural scene reconstruction and remote environment inspection on a Boston Dynamics SPOT quadruped. Building <strong>Vyse</strong>, a real-time task-dispatch framework for coordinating distributed imaging workloads and data management. Designing reconfigurable vision-analysis pipelines for quality assessment, error detection, and anomaly recognition.
+                  Evaluating photorealistic neural scene reconstruction models for robotic teleoperation under a proposed conceptual framework, examining how reconstruction fidelity impacts human decision-making and task outcomes in time-sensitive operations across remote or inhospitable environments. Building <strong>Vyse</strong>, a real-time task-dispatch framework for coordinating distributed imaging workloads on a Boston Dynamics SPOT quadruped.
                 </p>
               </td>
             </tr>
@@ -226,7 +226,7 @@
                 <br>
                 <em>Visual Computing &amp; Augmented Intelligence Lab, UNC Chapel Hill</em> &mdash; 2023&ndash;2024
                 <p>
-                  Led development on prototype AR glasses integrating computer vision and digital signal processing. Designed a novel spatial audio filtering method and implemented it on a real-time audio-processing pipeline. Ongoing work in hardware design for visual localization integration and object recognition.
+                  Led development on prototype AR glasses integrating computer vision and digital signal processing to isolate specific speakers in loud environments based on their spatial location. Designed a novel spatial audio filtering method and implemented it on a real-time audio-processing pipeline. Ongoing work in hardware design for visual localization integration and object recognition.
                 </p>
               </td>
             </tr>
@@ -256,7 +256,7 @@
                 <p>
                   A real-time rendering system to simulate depth on a standard flat display. Webcam-based face tracking drives off-axis perspective projection, updating the camera pose and lighting based on viewer position and window location. The result is a dynamic parallax illusion with two modes: &ldquo;diorama mode&rdquo; to visualize a recessed miniature scene on screen and &ldquo;pane mode&rdquo; to make the screen act as a window into a larger virtual scene.
                 </p>
-                <p><em>Tools: YuNet face detection, Numba CUDA, PyQt5, custom GPU path tracer</em></p>
+                <p><em>Tools: NumPy, Numba CUDA, PyQt5, custom GPU path tracer, OpenCV (YuNet face detection, MiDaS depth estimation)</em></p>
               </td>
             </tr>
 
@@ -273,9 +273,9 @@
                 <br>
                 <em>Personal Project</em> &mdash; 2024&ndash;2025
                 <p>
-                  A deep learning pipeline for predicting dense per-pixel depth maps from single RGB images. A ResNet-34 U-Net encoder-decoder with bottleneck self-attention is trained through a 3-stage refinement process &mdash; backbone training with a multi-term composite loss, edge sharpening via superpixel consistency, and pixel-level polishing with backbone skip connections. Experiments include sim-to-real transfer learning from Apple Hypersim synthetic scenes to NYU Depth V2 and ablations on transformer attention at the encoder bottleneck.
+                  A deep learning pipeline for predicting dense per-pixel depth maps from single RGB images. A ResNet-34 U-Net encoder-decoder with bottleneck self-attention is trained through a 3-stage refinement process that stacks loss functions on a composite base loss (depth MSE, gradient matching, sharpness, fidelity, smoothness). Then the frozen backbone undergoes edge refinement with superpixel consistency and pixel-level polish via skip connections with losses on normals, latent RGB features, and edge sharpening. Includes a convergence dashboard with ablation tests on <a href="https://cs.nyu.edu/~fergus/datasets/nyu_depth_v2.html">NYU Depth V2</a> and additional tests with <a href="https://github.com/apple/ml-hypersim">Apple Hypersim</a> synthetic scenes and personal Blender-generated datasets. Best variant: 0.154 abs_rel and 0.784 &delta;&#x2081; accuracy.
                 </p>
-                <p><em>Tools: PyTorch, CUDA, TensorBoard, scikit-image</em></p>
+                <p><em>Tools: PyTorch, CUDA, TensorBoard, LPIPS, scikit-image</em></p>
               </td>
             </tr>
 
@@ -290,9 +290,9 @@
                 <br>
                 <em>Personal Project</em> &mdash; 2025
                 <p>
-                  A real-time GPU ray tracer that supports Phong shading with shadow rays, specular reflections, ambient occlusion, and one-bounce Monte Carlo global illumination with progressive frame accumulation for color bleeding. An interactive viewer provides orbit and first-person camera controls, per-light HSV color editing, and anti-aliasing (FXAA, SSAA).
+                  A real-time GPU ray tracer that supports Phong shading with shadow rays, specular reflections, ambient occlusion, and one-bounce Monte Carlo global illumination with progressive frame accumulation for color bleeding and soft lighting. BVH structure for accelerated traversal, OBJ mesh loading, antialiasing (FXAA, SSAA), and an interactive PyQt5 viewer that supports orbit and first-person camera controls, per-light HSV color editing, and keyframed camera animations. Also supports export to Looking Glass Factory quilt format.
                 </p>
-                <p><em>Tools: Numba CUDA, Cython, NumPy</em></p>
+                <p><em>Tools: Numba CUDA, Cython, PyQt5, NumPy, Pillow</em></p>
               </td>
             </tr>
 
@@ -339,7 +339,7 @@
                 <br>
                 <a href="https://iron.cs.unc.edu/">IRON Labs</a>, UNC Chapel Hill &mdash; Jan. 2025&ndash;Present
                 <p>
-                  Leading development of a robotic teleoperation and perception pipeline integrating computer vision, neural scene reconstruction, and image analysis. Designing and evaluating learning-based scene representations for visual inspection, remote navigation, and error detection.
+                  Leading development of a robotic teleoperation and perception pipeline for search-and-rescue scenarios, integrating computer vision, neural scene reconstruction, and image analysis on a Boston Dynamics SPOT quadruped. Designing and evaluating learning-based scene representations for visual inspection, remote navigation, and error detection.
                 </p>
               </td>
             </tr>
@@ -353,7 +353,7 @@
                 <br>
                 <a href="https://visual.cs.unc.edu/">Visual Computing &amp; Augmented Intelligence Lab</a>, UNC Chapel Hill &mdash; Sep. 2023&ndash;Dec. 2024
                 <p>
-                  Research in audio processing systems and computational perception for AR use cases. Explored digital signal processing methods for real-time spatial audio filtering.
+                  Research in audio processing systems and computational perception for AR use cases, focused on isolating individual speakers in noisy environments using spatial audio filtering. Designed and prototyped custom AR glasses hardware integrating microphone arrays and real-time DSP pipelines. Ongoing.
                 </p>
               </td>
             </tr>
@@ -367,7 +367,7 @@
                 <br>
                 <a href="https://telepresence.web.unc.edu/">Graphics &amp; Virtual Reality Group</a>, UNC Chapel Hill &mdash; Jan. 2022&ndash;May 2023
                 <p>
-                  Contributed to neural rendering research for high-speed telepresence on sparse RGBD camera setups under Henry Fuchs. Assisted with dataset preparation, baseline implementation, and experimental evaluation; co-authored an IEEE TVCG paper on few-camera neural telepresence systems.
+                  Contributed to neural rendering research for high-speed telepresence using few-camera, consumer-friendly RGBD setups under Henry Fuchs. Assisted with dataset preparation, baseline implementation, and experimental evaluation; co-authored an IEEE TVCG paper on accessible neural telepresence systems.
                 </p>
               </td>
             </tr>
@@ -512,7 +512,7 @@
               <td style="padding:16px;width:100%;vertical-align:middle">
                 <h2 id="gallery">Design &amp; Fabrication</h2>
                 <p>
-                  With 14 years of Blender and 10 years of Illustrator experience, I enjoy exploring the creative side of representing the world. Left: experiments in particle simulations and material shading in Blender. Right: personal photography, computational filtering, and laser-etched fabrication.
+                  With 14 years of Blender and 10 years of Illustrator experience, I enjoy exploring the creative side of representing the world with multimedia design at the intersection of art and technology.
                 </p>
               </td>
             </tr>
@@ -522,9 +522,11 @@
             <tr>
               <td style="padding:8px;width:50%;vertical-align:middle;text-align:center">
                 <img src="images/gallery/instagram-design.jpg" alt="Design work" style="width:100%;border-radius:4px;object-fit:cover;">
+                <p style="font-size:12px;margin-top:6px;color:#718096;">Particle simulations and material shading in Blender</p>
               </td>
               <td style="padding:8px;width:50%;vertical-align:middle;text-align:center">
                 <img src="images/gallery/spiral.jpg" alt="Spiral design" style="width:100%;border-radius:4px;object-fit:cover;">
+                <p style="font-size:12px;margin-top:6px;color:#718096;">Photography, computational filtering, and laser-etched fabrication</p>
               </td>
             </tr>
 
