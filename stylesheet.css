@@ -306,9 +306,9 @@ span.highlight {
   font-size: 12px;
 }
 
-/* Subtle dividers between items — inset so they don't go edge-to-edge */
+/* Subtle dividers between items — mobile only, above icon */
 table[style*="border-spacing:0px 10px"] > tbody > tr + tr > td:last-child {
-  border-top: 1px solid #f0f0f0;
+  border-top: none;
 }
 
 /* Dark mode — full page */
@@ -388,7 +388,7 @@ body.dark-mode .gallery-placeholder {
 }
 
 body.dark-mode table[style*="border-spacing:0px 10px"] > tbody > tr + tr > td:last-child {
-  border-top-color: #2a2a40;
+  border-top: none;
 }
 
 /* ===== Tile Mode ===== */
@@ -673,6 +673,8 @@ body.dark-mode.tile-mode .gallery-placeholder {
   table {
     width: 100% !important;
     table-layout: fixed;
+    margin: 0 !important;
+    border-spacing: 0 !important;
   }
 
   nav {
@@ -700,20 +702,16 @@ body.dark-mode.tile-mode .gallery-placeholder {
     padding: 4px 0 !important;
   }
 
-  /* Keep icon and description connected */
+  /* Space around icon */
   table[style*="border-spacing:0px 10px"] > tbody > tr > td:first-child {
-    padding-bottom: 0 !important;
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
   }
 
-  /* Thick divider between projects */
+  /* Divider above icon between entries */
   table[style*="border-spacing:0px 10px"] > tbody > tr + tr > td:first-child {
-    border-top: 2px solid #e0e0e0;
-    padding-top: 16px !important;
-    margin-top: 8px;
-  }
-  /* Keep subtle thin line under image on mobile */
-  body.dark-mode table[style*="border-spacing:0px 10px"] > tbody > tr + tr > td:first-child {
-    border-top-color: #2a2a40;
+    border-top: 1px solid rgba(150,150,150,0.3);
+    padding-top: 20px !important;
   }
 
   /* Images/logos full width on mobile */
