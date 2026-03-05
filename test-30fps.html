@@ -1,0 +1,666 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>Ryan Schmelzle — 30fps test</title>
+
+    <meta name="author" content="Ryan Schmelzle">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="stylesheet.css">
+
+  </head>
+
+  <body>
+    <div id="bg-wrap"><canvas id="bg-canvas"></canvas></div>
+    <div id="content-wrap">
+    <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+      <tr>
+        <td style="padding:0px">
+          <nav>
+            <a href="#publications">Publications</a>
+            <a href="#projects">Projects</a>
+            <a href="#experience">Experience</a>
+            <a href="#education">Education</a>
+            <a href="#teaching">Teaching</a>
+            <a href="#honors">Honors</a>
+            <a href="#gallery">Design</a>
+            <span style="display:inline-block;margin-left:16px;border-left:1px solid #e0e0e0;padding-left:16px;">
+              <a href="#" id="toggle-anim" title="Pause/Play animation" onclick="toggleAnim();return false;" style="font-size:15px;">&#9208;</a>
+              <a href="#" id="toggle-dark" title="Toggle dark mode" onclick="toggleDark();return false;" style="font-size:15px;margin-left:8px;">&#9790;</a>
+            </span>
+          </nav>
+        </td>
+      </tr>
+      <tr style="padding:0px">
+        <td style="padding:12px 0 0 0">
+
+          <!-- ===== HEADER / BIO ===== -->
+          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+            <tr style="padding:0px">
+              <td style="padding:2.5%;width:63%;vertical-align:middle">
+                <p class="name" style="text-align: center;">
+                  Ryan Schmelzle
+                </p>
+                <p>
+                  I'm a PhD student in <a href="https://cs.unc.edu/">Computer Science at UNC Chapel Hill</a>, advised by <a href="https://www.danszafir.com/">Dan Szafir</a>. My research spans computer vision, graphics, and robotics, with a focus on 3D reconstruction, neural rendering, view synthesis, and perception systems for teleoperation.
+                </p>
+                <p>
+                  I currently work in <a href="https://iron.cs.unc.edu/">IRON Labs</a>, where I'm building vision-driven perception and teleoperation systems with a Boston Dynamics SPOT quadruped for search-and-rescue scenarios. Previously, I worked in the <a href="https://visual.cs.unc.edu/">Visual Computing &amp; Augmented Intelligence Lab</a> on AR glasses and spatial audio, and in the <a href="https://telepresence.web.unc.edu/">Graphics &amp; Virtual Reality Group</a> under <a href="https://henryfuchs.web.unc.edu/">Henry Fuchs</a> on neural telepresence.
+                </p>
+                <p style="text-align:center">
+                  <a href="mailto:rysch01@cs.unc.edu">Email</a> &nbsp;/&nbsp;
+                  <a href="data/RyanSchmelzle-CV.pdf">CV</a> &nbsp;/&nbsp;
+                  <a href="https://scholar.google.com/citations?user=UNmSPfAAAAAJ&hl=en">Scholar</a> &nbsp;/&nbsp;
+                  <a href="https://www.linkedin.com/in/rysch01/">LinkedIn</a> &nbsp;/&nbsp;
+                  <a href="https://github.com/RCSchmelzle">GitHub</a>
+                </p>
+              </td>
+              <td style="padding:2.5%;width:37%;max-width:37%">
+                <a href="images/RyanSchmelzle.jpeg"><img style="width:100%;max-width:100%;object-fit: cover; border-radius: 50%;" alt="profile photo" src="images/RyanSchmelzle.jpeg" class="hoverZoomLink"></a>
+              </td>
+            </tr>
+          </tbody></table>
+
+          <!-- ===== PUBLICATIONS ===== -->
+          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+            <tr>
+              <td style="padding:16px;width:100%;vertical-align:middle">
+                <h2 id="publications">Publications</h2>
+              </td>
+            </tr>
+          </tbody></table>
+          <table style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle">
+                <div class="one">
+                  <div class="img-placeholder">Publication</div>
+                </div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <a href="https://ieeexplore.ieee.org/document/10557509">
+                  <span class="papertitle">Learning View Synthesis for Desktop Telepresence With Few RGBD Cameras</span>
+                </a>
+                <br>
+                Shengze Wang,
+                Ziheng Wang,
+                <strong>Ryan Schmelzle</strong>,
+                Liujie Zheng,
+                YoungJoong Kwon,
+                <a href="https://ronisen.github.io/">Roni Sengupta</a>,
+                <a href="https://henryfuchs.web.unc.edu/">Henry Fuchs</a>
+                <br>
+                <em>IEEE Transactions on Visualization and Computer Graphics (TVCG)</em>, 2025
+                <br>
+                <a href="https://ieeexplore.ieee.org/document/10557509">paper</a>
+                /
+                <a href="https://doi.org/10.1109/TVCG.2024.3411626">doi</a>
+                <p></p>
+                <p>
+                  A high-quality view synthesis method using commodity RGBD cameras for desktop telepresence. Introduces Multi-Layer Point Cloud (MPC) representation with a temporally-aware neural renderer and Spatial Skip Connections for real-time novel view synthesis.
+                </p>
+              </td>
+            </tr>
+
+          </tbody></table>
+
+          <!-- ===== PROJECTS ===== -->
+          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+            <tr>
+              <td style="padding:16px;width:100%;vertical-align:middle">
+                <h2 id="projects">Projects</h2>
+              </td>
+            </tr>
+          </tbody></table>
+          <table style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle">
+                <div class="one">
+                  <div class="img-placeholder">Teleoperation</div>
+                </div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">Real-Time Robotic Teleoperation &amp; Neural Scene Reconstruction</span>
+                <br>
+                <em>IRON Labs, UNC Chapel Hill</em> &mdash; Ongoing
+                <p>
+                  Developing a vision-driven robotic teleoperation system supporting neural scene reconstruction and remote environment inspection on a Boston Dynamics SPOT quadruped. Building <strong>Vyse</strong>, a real-time task-dispatch framework for coordinating distributed imaging workloads and data management. Designing reconfigurable vision-analysis pipelines for quality assessment, error detection, and anomaly recognition.
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle">
+                <div class="one">
+                  <div class="img-placeholder">AR Glasses</div>
+                </div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">Prototype Audio-Visual AR Glasses</span>
+                <br>
+                <em>Visual Computing &amp; Augmented Intelligence Lab, UNC Chapel Hill</em> &mdash; 2023&ndash;2024
+                <p>
+                  Led development on prototype AR glasses integrating computer vision and digital signal processing. Designed a novel spatial audio filtering method and implemented it on a real-time audio-processing pipeline. Ongoing work in hardware design for visual localization integration and object recognition.
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle">
+                <div class="one">
+                  <div class="img-placeholder">Depth Est.</div>
+                </div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">Autoencoder-Based Neural Depth Estimation</span>
+                <br>
+                <em>Personal Project</em> &mdash; 2024
+                <p>
+                  Designed and trained an autoencoder-based monocular depth estimation pipeline using CNNs in TensorFlow/Keras. Created a pipeline for generating synthetic datasets using Blender with variable simulated conditions for training.
+                </p>
+              </td>
+            </tr>
+
+          </tbody></table>
+
+          <!-- ===== EXPERIENCE ===== -->
+          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+            <tr>
+              <td style="padding:16px;width:100%;vertical-align:middle">
+                <h2 id="experience">Experience</h2>
+              </td>
+            </tr>
+          </tbody></table>
+          <table style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
+                <div class="logo-placeholder">UNC</div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">Graduate Researcher</span>
+                <br>
+                <a href="https://iron.cs.unc.edu/">IRON Labs</a>, UNC Chapel Hill &mdash; Jan. 2025&ndash;Present
+                <p>
+                  Leading development of a robotic teleoperation and perception pipeline integrating computer vision, neural scene reconstruction, and image analysis. Designing and evaluating learning-based scene representations for visual inspection, remote navigation, and error detection.
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
+                <div class="logo-placeholder">UNC</div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">Graduate Researcher</span>
+                <br>
+                <a href="https://visual.cs.unc.edu/">Visual Computing &amp; Augmented Intelligence Lab</a>, UNC Chapel Hill &mdash; Sep. 2023&ndash;Dec. 2024
+                <p>
+                  Research in audio processing systems and computational perception for AR use cases. Explored digital signal processing methods for real-time spatial audio filtering.
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
+                <div class="logo-placeholder">UNC</div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">Undergraduate Researcher</span>
+                <br>
+                <a href="https://telepresence.web.unc.edu/">Graphics &amp; Virtual Reality Group</a>, UNC Chapel Hill &mdash; Jan. 2022&ndash;May 2023
+                <p>
+                  Contributed to neural rendering research for high-speed telepresence on sparse RGBD camera setups under Henry Fuchs. Assisted with dataset preparation, baseline implementation, and experimental evaluation; co-authored an IEEE TVCG paper on few-camera neural telepresence systems.
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
+                <div class="logo-placeholder">Ford</div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">Software Engineering Intern</span>
+                <br>
+                Ford Motor Company (Remote) &mdash; May 2022&ndash;Aug. 2022
+                <p>
+                  Developed and maintained components for a data-driven vehicle recommendation platform. Implemented backend services, frontend interfaces, and database solutions using Java, JavaScript, SQL, and Vue.js. Worked within CI/CD pipelines and code-quality frameworks.
+                </p>
+              </td>
+            </tr>
+
+          </tbody></table>
+
+          <!-- ===== EDUCATION ===== -->
+          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+            <tr>
+              <td style="padding:16px;width:100%;vertical-align:middle">
+                <h2 id="education">Education</h2>
+              </td>
+            </tr>
+          </tbody></table>
+          <table style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
+                <div class="logo-placeholder">UNC</div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">Ph.D. in Computer Science</span>
+                <br>
+                University of North Carolina at Chapel Hill &mdash; Aug. 2023&ndash;Expected May 2028
+                <p>
+                  Advisor: <a href="https://www.danszafir.com/">Dr. Daniel Szafir</a>
+                  <br>
+                  Focus: Human&ndash;robot interaction, neural rendering, robotics.
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
+                <div class="logo-placeholder">UNC</div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">M.S. in Computer Science</span>
+                <br>
+                University of North Carolina at Chapel Hill &mdash; Aug. 2023&ndash;Dec. 2024
+                <p>
+                  Advisors: <a href="https://henryfuchs.web.unc.edu/">Dr. Henry Fuchs</a> and <a href="https://www.cs.unc.edu/~cpk/">Dr. Praneeth Chakravarthula</a>
+                  <br>
+                  Focus: Audio processing, computational perception, augmented reality.
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
+                <div class="logo-placeholder">UNC</div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">B.S. in Computer Science &amp; Communication Studies</span>
+                <br>
+                University of North Carolina at Chapel Hill &mdash; Aug. 2019&ndash;May 2023
+                <p>
+                  GPA: 3.92 / 4.0 &nbsp;|&nbsp; Phi Beta Kappa &nbsp;|&nbsp; Honors Carolina &nbsp;|&nbsp; Highest Distinction &nbsp;|&nbsp; Dean's List
+                  <br>
+                  Concentration in Media and Technology Studies &nbsp;|&nbsp; Minor in Data Science
+                </p>
+              </td>
+            </tr>
+
+          </tbody></table>
+
+          <!-- ===== TEACHING ===== -->
+          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+            <tr>
+              <td style="padding:16px;width:100%;vertical-align:middle">
+                <h2 id="teaching">Teaching</h2>
+              </td>
+            </tr>
+          </tbody></table>
+          <table style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
+                <div class="logo-placeholder">UNC</div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">Teaching Assistant &mdash; COMP 992 Master's Writing Advisory</span>
+                <br>
+                University of North Carolina at Chapel Hill
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
+                <div class="logo-placeholder">UNC</div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">Graduate Teaching Assistant &mdash; COMP 380/380H Technology, Ethics, &amp; Culture</span>
+                <br>
+                University of North Carolina at Chapel Hill &mdash; Aug. 2024&ndash;Present (~4 semesters)
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
+                <div class="logo-placeholder">UNC</div>
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">Undergraduate Learning Assistant &mdash; COMP 283 Discrete Structures</span>
+                <br>
+                University of North Carolina at Chapel Hill &mdash; Fall 2020
+              </td>
+            </tr>
+
+          </tbody></table>
+
+          <!-- ===== HONORS & AWARDS ===== -->
+          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+            <tr>
+              <td style="padding:16px;width:100%;vertical-align:middle">
+                <h2 id="honors">Honors &amp; Awards</h2>
+              </td>
+            </tr>
+          </tbody></table>
+          <table style="width:100%;border:0px;border-spacing:0px 4px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+            <tr>
+              <td style="padding:4px 16px;width:75%;vertical-align:middle">Rising Star Scholarship &mdash; Visual Effects &amp; Computer Graphics</td>
+              <td style="padding:4px 16px;width:25%;vertical-align:middle;text-align:right"><em>Savannah College of Art and Design</em></td>
+            </tr>
+            <tr>
+              <td style="padding:4px 16px;width:75%;vertical-align:middle">NC Fellow</td>
+              <td style="padding:4px 16px;width:25%;vertical-align:middle;text-align:right"><em>UNC Chapel Hill, 2020&ndash;Present</em></td>
+            </tr>
+            <tr>
+              <td style="padding:4px 16px;width:75%;vertical-align:middle">Phi Beta Kappa</td>
+              <td style="padding:4px 16px;width:25%;vertical-align:middle;text-align:right"><em>UNC Chapel Hill, 2023</em></td>
+            </tr>
+            <tr>
+              <td style="padding:4px 16px;width:75%;vertical-align:middle">National Merit Scholar</td>
+              <td style="padding:4px 16px;width:25%;vertical-align:middle;text-align:right"><em>2019</em></td>
+            </tr>
+          </tbody></table>
+
+          <!-- ===== GALLERY ===== -->
+          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+            <tr>
+              <td style="padding:16px;width:100%;vertical-align:middle">
+                <h2 id="gallery">Design &amp; Fabrication</h2>
+                <p>
+                  A selection of multimedia design work, including laser etching, photography, visual effects, and 3D modeling.
+                </p>
+              </td>
+            </tr>
+          </tbody></table>
+          <table style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+
+            <!-- Gallery items — add your images to images/gallery/ and update the src paths -->
+            <!-- Example row of 3 items -->
+            <tr>
+              <td style="padding:8px;width:33%;vertical-align:top;text-align:center">
+                <div class="gallery-placeholder">Image 1</div>
+                <p style="font-size:12px;margin-top:4px;">Caption here</p>
+              </td>
+              <td style="padding:8px;width:33%;vertical-align:top;text-align:center">
+                <div class="gallery-placeholder">Image 2</div>
+                <p style="font-size:12px;margin-top:4px;">Caption here</p>
+              </td>
+              <td style="padding:8px;width:33%;vertical-align:top;text-align:center">
+                <div class="gallery-placeholder">Image 3</div>
+                <p style="font-size:12px;margin-top:4px;">Caption here</p>
+              </td>
+            </tr>
+
+          </tbody></table>
+
+          <!-- ===== FOOTER ===== -->
+          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+            <tr>
+              <td style="padding:0px">
+                <br>
+                <p style="text-align:right;font-size:small;">
+                  Big thanks to <a href="https://github.com/jonbarron/jonbarron.github.io">Jon Barron</a> for the template!
+                </p>
+              </td>
+            </tr>
+          </tbody></table>
+        </td>
+      </tr>
+    </table>
+    </div>
+    <script>
+    // --- Toggle functions ---
+    var animRunning = true;
+    function toggleAnim() {
+      animRunning = !animRunning;
+      document.getElementById('toggle-anim').innerHTML = animRunning ? '&#9208;' : '&#9654;';
+      if (animRunning) requestAnimationFrame(draw);
+    }
+
+
+    var nodeRGB = {r:100, g:130, b:170};
+    var targetRGB = {r:100, g:130, b:170};
+    var nodeColor = 'rgba(100,130,170,';
+
+    function toggleDark() {
+      document.body.classList.toggle('dark-mode');
+      var isDark = document.body.classList.contains('dark-mode');
+      document.getElementById('toggle-dark').innerHTML = isDark ? '&#9788;' : '&#9790;';
+      targetRGB = isDark ? {r:130, g:160, b:200} : {r:100, g:130, b:170};
+    }
+
+    function lerpColor() {
+      nodeRGB.r += (targetRGB.r - nodeRGB.r) * 0.02;
+      nodeRGB.g += (targetRGB.g - nodeRGB.g) * 0.02;
+      nodeRGB.b += (targetRGB.b - nodeRGB.b) * 0.02;
+      nodeColor = 'rgba(' + Math.round(nodeRGB.r) + ',' + Math.round(nodeRGB.g) + ',' + Math.round(nodeRGB.b) + ',';
+    }
+
+    var c = document.getElementById('bg-canvas');
+    var ctx = c.getContext('2d');
+    var w, h;
+    var nodes = [];
+
+    // Seeded PRNG (mulberry32)
+    function mulberry32(a) {
+      return function() {
+        a |= 0; a = a + 0x6D2B79F5 | 0;
+        var t = Math.imul(a ^ a >>> 15, 1 | a);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      }
+    }
+    var rand = mulberry32(42);
+
+    function resize() {
+      w = c.width = window.innerWidth;
+      h = c.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    var isMobile = window.innerWidth < 768;
+    var BASE_NODES = isMobile ? 120 : 300;
+    var EDGE_NODES = isMobile ? 30 : 80;
+
+    for (var i = 0; i < BASE_NODES; i++) {
+      nodes.push({
+        x: rand() * w,
+        y: rand() * h,
+        vx: (rand() - 0.5) * 0.03,
+        vy: (rand() - 0.5) * 0.03,
+        r: rand() * 9 + 1
+      });
+    }
+    // Extra nodes along edges
+    for (var i = 0; i < EDGE_NODES; i++) {
+      var side = Math.floor(rand() * 4);
+      var ex, ey;
+      if (side === 0) { ex = rand() * w; ey = rand() * 60; }         // top
+      else if (side === 1) { ex = rand() * w; ey = h - rand() * 60; } // bottom
+      else if (side === 2) { ex = rand() * 60; ey = rand() * h; }     // left
+      else { ex = w - rand() * 60; ey = rand() * h; }                 // right
+      nodes.push({
+        x: ex, y: ey,
+        vx: (rand() - 0.5) * 0.03,
+        vy: (rand() - 0.5) * 0.03,
+        r: rand() * 9 + 1
+      });
+    }
+
+    var mouse = {x: -1000, y: -1000, active: false};
+    var MOUSE_RADIUS = 150;
+
+    document.addEventListener('mousemove', function(e) {
+      var cw = document.getElementById('content-wrap');
+      var rect = cw.getBoundingClientRect();
+      // Only respond when cursor is outside the content column
+      if (e.clientX < rect.left || e.clientX > rect.right) {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        mouse.active = true;
+      } else {
+        mouse.active = false;
+      }
+    });
+
+    document.addEventListener('mouseleave', function() {
+      mouse.active = false;
+    });
+
+    var TARGET_FPS = 30;
+    var frameInterval = 1000 / TARGET_FPS;
+    var lastFrame = 0;
+
+    function draw(timestamp) {
+      if (animRunning) requestAnimationFrame(draw);
+      if (timestamp - lastFrame < frameInterval) return;
+      lastFrame = timestamp;
+      lerpColor();
+      ctx.clearRect(0, 0, w, h);
+
+      for (var i = 0; i < nodes.length; i++) {
+        nodes[i].x += nodes[i].vx;
+        nodes[i].y += nodes[i].vy;
+        if (nodes[i].x < -50 || nodes[i].x > w + 50) nodes[i].vx *= -1;
+        if (nodes[i].y < -50 || nodes[i].y > h + 50) nodes[i].vy *= -1;
+
+
+        // Gentle repulsion from cursor when over background
+        if (mouse.active) {
+          var mdx = nodes[i].x - mouse.x;
+          var mdy = nodes[i].y - mouse.y;
+          var mdist = Math.sqrt(mdx*mdx + mdy*mdy);
+          if (mdist < MOUSE_RADIUS && mdist > 0) {
+            var force = (1 - mdist / MOUSE_RADIUS) * 0.003;
+            nodes[i].vx += (mdx / mdist) * force;
+            nodes[i].vy += (mdy / mdist) * force;
+          }
+        }
+
+        // Dampen velocity so mouse pushes don't accumulate forever
+        nodes[i].vx *= 0.999;
+        nodes[i].vy *= 0.999;
+      }
+
+      // Build adjacency list via spatial grid
+      var CONN = 170;
+      var CONN2 = CONN * CONN;
+      var cellSize = CONN;
+      var cols = Math.ceil((w + 100) / cellSize) + 1;
+      var rows = Math.ceil((h + 100) / cellSize) + 1;
+      var grid = {};
+      for (var i = 0; i < nodes.length; i++) {
+        var cx = Math.floor((nodes[i].x + 50) / cellSize);
+        var cy = Math.floor((nodes[i].y + 50) / cellSize);
+        var key = cx + ',' + cy;
+        if (!grid[key]) grid[key] = [];
+        grid[key].push(i);
+      }
+      var adj = [];
+      for (var i = 0; i < nodes.length; i++) adj[i] = [];
+      var visited = {};
+      for (var key in grid) {
+        var parts = key.split(',');
+        var cx = parseInt(parts[0]);
+        var cy = parseInt(parts[1]);
+        var cell = grid[key];
+        for (var ox = -1; ox <= 1; ox++) {
+          for (var oy = -1; oy <= 1; oy++) {
+            var nk = (cx+ox) + ',' + (cy+oy);
+            var neighbor = grid[nk];
+            if (!neighbor) continue;
+            for (var a = 0; a < cell.length; a++) {
+              var i = cell[a];
+              for (var b = 0; b < neighbor.length; b++) {
+                var j = neighbor[b];
+                if (j <= i) continue;
+                var dx = nodes[i].x - nodes[j].x;
+                var dy = nodes[i].y - nodes[j].y;
+                if (dx*dx + dy*dy < CONN2) {
+                  adj[i].push(j);
+                  adj[j].push(i);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Build adjacency sets for fast triangle lookup
+      var adjSet = [];
+      for (var i = 0; i < nodes.length; i++) {
+        adjSet[i] = new Set(adj[i]);
+      }
+
+      // Draw filled triangles — opacity based on max edge distance
+      var triCount = [];
+      for (var i = 0; i < nodes.length; i++) triCount[i] = 0;
+      var TRI_CAP = 8;
+      for (var i = 0; i < nodes.length; i++) {
+        if (triCount[i] >= TRI_CAP) continue;
+        for (var ai = 0; ai < adj[i].length; ai++) {
+          var j = adj[i][ai];
+          if (j <= i || triCount[j] >= TRI_CAP) continue;
+          for (var aj = 0; aj < adj[j].length; aj++) {
+            var k = adj[j][aj];
+            if (k <= j || triCount[k] >= TRI_CAP) continue;
+            if (adjSet[i].has(k)) {
+              var d1 = Math.sqrt(Math.pow(nodes[i].x-nodes[j].x,2)+Math.pow(nodes[i].y-nodes[j].y,2));
+              var d2 = Math.sqrt(Math.pow(nodes[j].x-nodes[k].x,2)+Math.pow(nodes[j].y-nodes[k].y,2));
+              var d3 = Math.sqrt(Math.pow(nodes[i].x-nodes[k].x,2)+Math.pow(nodes[i].y-nodes[k].y,2));
+              var maxD = Math.max(d1, d2, d3);
+              var alpha = 0.22 * Math.pow(1 - maxD / CONN, 2);
+              if (alpha > 0) {
+                ctx.beginPath();
+                ctx.moveTo(nodes[i].x, nodes[i].y);
+                ctx.lineTo(nodes[j].x, nodes[j].y);
+                ctx.lineTo(nodes[k].x, nodes[k].y);
+                ctx.closePath();
+                ctx.fillStyle = nodeColor + alpha + ')';
+                ctx.fill();
+              }
+              triCount[i]++;
+              triCount[j]++;
+              triCount[k]++;
+              if (triCount[i] >= TRI_CAP) break;
+            }
+          }
+          if (triCount[i] >= TRI_CAP) break;
+        }
+      }
+
+      // Draw lines
+      for (var i = 0; i < nodes.length; i++) {
+        for (var ai = 0; ai < adj[i].length; ai++) {
+          var j = adj[i][ai];
+          if (j <= i) continue;
+          var dx = nodes[i].x - nodes[j].x;
+          var dy = nodes[i].y - nodes[j].y;
+          var dist = Math.sqrt(dx*dx + dy*dy);
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.strokeStyle = nodeColor + (0.1 * (1 - dist/170)) + ')';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
+      }
+
+      for (var i = 0; i < nodes.length; i++) {
+        ctx.beginPath();
+        ctx.arc(nodes[i].x, nodes[i].y, nodes[i].r, 0, Math.PI*2);
+        ctx.fillStyle = nodeColor + '0.12)';
+        ctx.fill();
+      }
+
+    }
+    requestAnimationFrame(draw);
+    </script>
+  </body>
+</html>

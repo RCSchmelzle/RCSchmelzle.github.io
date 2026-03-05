@@ -723,8 +723,10 @@ body.dark-mode.tile-mode .gallery-placeholder {
     margin-bottom: 12px;
   }
 
-  /* Honors: match padding on mobile */
-  table > tbody > tr > td[style*="padding:2px 16px"] {
+  /* Honors & gallery: match horizontal padding on mobile */
+  table > tbody > tr > td[style*="padding:2px 16px"],
+  table > tbody > tr > td[style*="padding:16px"],
+  table > tbody > tr > td[style*="padding:8px"] {
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
