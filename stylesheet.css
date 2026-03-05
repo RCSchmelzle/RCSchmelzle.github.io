@@ -769,7 +769,7 @@ body.dark-mode.tile-mode .gallery-placeholder {
 
   .bio-photo img {
     width: 160px !important;
-    margin: 0 auto 12px;
+    margin: 16px auto 12px;
   }
 
   .bio-body {
