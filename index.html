@@ -271,7 +271,7 @@
               <td style="padding:8px;width:65%;vertical-align:middle">
                 <span class="papertitle">Monocular Depth Estimation</span>
                 <br>
-                <em>Personal Project</em> &mdash; 2024&ndash;2025
+                <em>Personal Project</em> &mdash; 2024
                 <p>
                   A deep learning pipeline for predicting dense per-pixel depth maps from single RGB images. A ResNet-34 U-Net encoder-decoder with bottleneck self-attention is trained through a 3-stage refinement process that stacks loss functions on a composite base loss (depth MSE, gradient matching, sharpness, fidelity, smoothness). Then the frozen backbone undergoes edge refinement with superpixel consistency and pixel-level polish via skip connections with losses on normals, latent RGB features, and edge sharpening. Includes a convergence dashboard with ablation tests on <a href="https://cs.nyu.edu/~fergus/datasets/nyu_depth_v2.html">NYU Depth V2</a> and additional tests with <a href="https://github.com/apple/ml-hypersim">Apple Hypersim</a> synthetic scenes and personal Blender-generated datasets. Best variant: 0.154 abs_rel and 0.784 &delta;&#x2081; accuracy.
                 </p>
@@ -288,7 +288,7 @@
               <td style="padding:8px;width:80%;vertical-align:middle">
                 <span class="papertitle">Ray Tracer</span>
                 <br>
-                <em>Personal Project</em> &mdash; 2025
+                <em>Personal Project</em> &mdash; 2024
                 <p>
                   A real-time GPU ray tracer that supports Phong shading with shadow rays, specular reflections, ambient occlusion, and one-bounce Monte Carlo global illumination with progressive frame accumulation for color bleeding and soft lighting. BVH structure for accelerated traversal, OBJ mesh loading, antialiasing (FXAA, SSAA), and an interactive PyQt5 viewer that supports orbit and first-person camera controls, per-light HSV color editing, and keyframed camera animations. Also supports export to Looking Glass Factory quilt format.
                 </p>
