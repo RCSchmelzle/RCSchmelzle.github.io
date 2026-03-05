@@ -688,6 +688,10 @@ body.dark-mode.tile-mode .gallery-placeholder {
     white-space: nowrap;
   }
 
+  nav a.nav-secondary {
+    display: none;
+  }
+
   /* Stack table rows vertically */
   table[style*="border-spacing:0px 10px"] > tbody > tr > td,
   table[style*="border-spacing:0px 4px"] > tbody > tr > td {
