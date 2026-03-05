@@ -677,14 +677,15 @@ body.dark-mode.tile-mode .gallery-placeholder {
 
   nav {
     padding: 8px 6px 6px;
-    font-size: 10px;
-    flex-wrap: wrap;
+    font-size: 9px;
+    flex-wrap: nowrap;
     justify-content: center;
-    gap: 2px 0;
+    overflow-x: auto;
   }
 
   nav a {
-    padding: 2px 5px;
+    padding: 2px 4px;
+    white-space: nowrap;
   }
 
   /* Stack table rows vertically */
@@ -720,6 +721,19 @@ body.dark-mode.tile-mode .gallery-placeholder {
   /* More spacing under name above photo */
   .bio-name {
     margin-bottom: 12px;
+  }
+
+  /* Honors: match padding on mobile */
+  table > tbody > tr > td[style*="padding:2px 16px"] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Gallery: stack images vertically on mobile */
+  table[style*="border-spacing:0px 10px"] > tbody > tr > td[style*="width:50%"] {
+    display: block !important;
+    width: 100% !important;
+    padding: 4px 0 !important;
   }
 
   .img-placeholder {
