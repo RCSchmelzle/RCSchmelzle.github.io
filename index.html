@@ -64,6 +64,9 @@
       body.dark-mode #node-hint button {
         color: #4a5568;
       }
+      @media (max-width: 768px) {
+        #node-hint { display: none !important; }
+      }
     </style>
     <div id="content-wrap">
     <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
@@ -243,7 +246,7 @@
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle">
                 <div class="one">
-                  <video autoplay loop muted playsinline width="100%" style="border-radius:4px;"><source src="images/raytracer-demo.mp4" type="video/mp4"></video>
+                  <video autoplay loop muted playsinline width="100%" style="border-radius:4px;"><source src="images/parallax-demo.mp4" type="video/mp4"></video>
                 </div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
@@ -279,7 +282,7 @@
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle">
                 <div class="one">
-                  <div class="img-placeholder">Ray Tracer</div>
+                  <video autoplay loop muted playsinline width="100%" style="border-radius:4px;"><source src="images/raytracer-demo.mp4" type="video/mp4"></video>
                 </div>
               </td>
               <td style="padding:8px;width:80%;vertical-align:middle">
@@ -489,32 +492,27 @@
               </td>
             </tr>
           </tbody></table>
-          <table style="width:100%;border:0px;border-spacing:0px 4px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
             <tr>
-              <td style="padding:4px 16px;width:75%;vertical-align:middle">Rising Star Scholarship &mdash; Visual Effects &amp; Computer Graphics</td>
-              <td style="padding:4px 16px;width:25%;vertical-align:middle;text-align:right"><em>Savannah College of Art and Design</em></td>
+              <td style="padding:2px 16px;font-size:13px;vertical-align:middle">Rising Star Scholarship &mdash; Visual Effects &amp; Computer Graphics <span style="float:right;color:#718096;font-style:italic;">SCAD</span></td>
             </tr>
             <tr>
-              <td style="padding:4px 16px;width:75%;vertical-align:middle">NC Fellow</td>
-              <td style="padding:4px 16px;width:25%;vertical-align:middle;text-align:right"><em>UNC Chapel Hill, 2020&ndash;Present</em></td>
+              <td style="padding:2px 16px;font-size:13px;vertical-align:middle">NC Fellow <span style="float:right;color:#718096;font-style:italic;">UNC Chapel Hill, 2020&ndash;Present</span></td>
             </tr>
             <tr>
-              <td style="padding:4px 16px;width:75%;vertical-align:middle">Phi Beta Kappa</td>
-              <td style="padding:4px 16px;width:25%;vertical-align:middle;text-align:right"><em>UNC Chapel Hill, 2023</em></td>
+              <td style="padding:2px 16px;font-size:13px;vertical-align:middle">Phi Beta Kappa <span style="float:right;color:#718096;font-style:italic;">UNC Chapel Hill, 2023</span></td>
             </tr>
             <tr>
-              <td style="padding:4px 16px;width:75%;vertical-align:middle">National Merit Scholar</td>
-              <td style="padding:4px 16px;width:25%;vertical-align:middle;text-align:right"><em>2019</em></td>
+              <td style="padding:2px 16px;font-size:13px;vertical-align:middle">National Merit Scholar <span style="float:right;color:#718096;font-style:italic;">2019</span></td>
             </tr>
           </tbody></table>
-
           <!-- ===== GALLERY ===== -->
           <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
             <tr>
               <td style="padding:16px;width:100%;vertical-align:middle">
                 <h2 id="gallery">Design &amp; Fabrication</h2>
                 <p>
-                  A selection of multimedia design work, including laser etching, photography, visual effects, and 3D modeling.
+                  With 14 years of Blender and 10 years of Illustrator experience, I enjoy exploring the creative side of representing the world. Left: experiments in particle simulations and material shading in Blender. Right: personal photography, computational filtering, and laser-etched fabrication.
                 </p>
               </td>
             </tr>
@@ -958,5 +956,39 @@
 
     } // end else (not mobile)
     </script>
+
+<!-- Lightbox overlay -->
+<div id="lightbox" onclick="if(event.target===this)closeLightbox()" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;justify-content:center;align-items:center;cursor:pointer;">
+  <button onclick="closeLightbox()" style="position:absolute;top:20px;right:24px;background:none;border:none;color:#fff;font-size:32px;cursor:pointer;z-index:10000;">&times;</button>
+  <div id="lightbox-content" style="max-width:90%;max-height:90%;display:flex;justify-content:center;align-items:center;cursor:default;"></div>
+</div>
+<script>
+(function(){
+  var lb = document.getElementById("lightbox");
+  var lbc = document.getElementById("lightbox-content");
+  function openLightbox(el) {
+    lbc.innerHTML = "";
+    if (el.tagName === "VIDEO") {
+      var v = document.createElement("video");
+      v.src = el.querySelector("source") ? el.querySelector("source").src : el.src;
+      v.controls = true; v.autoplay = true; v.loop = true;
+      v.style.maxWidth = "90vw"; v.style.maxHeight = "85vh"; v.style.borderRadius = "8px";
+      lbc.appendChild(v);
+    } else if (el.tagName === "IMG") {
+      var img = document.createElement("img");
+      img.src = el.src;
+      img.style.maxWidth = "90vw"; img.style.maxHeight = "85vh"; img.style.borderRadius = "8px";
+      lbc.appendChild(img);
+    }
+    lb.style.display = "flex";
+  }
+  window.closeLightbox = function() { lb.style.display = "none"; lbc.innerHTML = ""; };
+  document.addEventListener("keydown", function(e) { if (e.key === "Escape") closeLightbox(); });
+  document.querySelectorAll(".one video, .one img, img[src*=gallery]").forEach(function(el) {
+    el.style.cursor = "pointer";
+    el.addEventListener("click", function(e) { e.preventDefault(); openLightbox(el); });
+  });
+})();
+</script>
   </body>
 </html>
