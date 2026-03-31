@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Twine Hotspot Tool</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f5f4f0;color:#1a1a18;padding:1.5rem;max-width:900px;margin:0 auto}
+h1{font-size:18px;font-weight:500;margin-bottom:1.5rem;color:#1a1a18}
+.wrap{display:flex;flex-direction:column;gap:16px}
+.card{background:#fff;border:0.5px solid rgba(0,0,0,0.12);border-radius:12px;padding:1rem 1.25rem}
+.section-title{font-size:11px;font-weight:500;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:600px){.grid4{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11px;color:#666}
+.field input[type="number"],.field input[type="text"]{font-family:monospace;font-size:13px;width:100%;padding:6px 8px;border:0.5px solid rgba(0,0,0,0.2);border-radius:6px;background:#fff;color:#1a1a18}
+.field input:focus{outline:none;border-color:rgba(0,0,0,0.4)}
+.field input[type="range"]{width:100%;accent-color:#378ADD}
+.field input[type="color"]{width:100%;height:28px;border:0.5px solid rgba(0,0,0,0.2);border-radius:6px;padding:2px;cursor:pointer;background:#fff}
+.field .range-row{display:flex;align-items:center;gap:8px}
+.field .range-val{font-size:11px;font-family:monospace;color:#666;min-width:28px;text-align:right}
+.metric{background:#f5f4f0;border-radius:8px;padding:10px 12px}
+.metric-label{font-size:11px;color:#666;margin-bottom:3px}
+.metric-value{font-size:18px;font-weight:500;font-family:monospace;color:#1a1a18}
+.metric-unit{font-size:11px;color:#666;font-weight:400}
+.fbar{font-size:12px;color:#666;font-family:monospace;padding:8px 12px;background:#f5f4f0;border-radius:8px;border-left:2px solid #378ADD;margin-top:10px}
+.btn-sm{padding:5px 10px;font-size:12px;cursor:pointer;background:#f5f4f0;border:0.5px solid rgba(0,0,0,0.2);border-radius:8px;color:#1a1a18}
+.btn-sm:hover{background:#e8e7e3}
+.btn-sm.active{background:#e8f0fa;color:#185fa5;border-color:transparent}
+.btn{padding:8px 16px;font-size:13px;cursor:pointer;background:#f5f4f0;border:0.5px solid rgba(0,0,0,0.2);border-radius:8px;color:#1a1a18}
+.btn:hover{background:#e8e7e3}
+.btn-primary{background:#e8f0fa;color:#185fa5;border-color:transparent;width:100%;margin-top:12px}
+.btn-primary:hover{opacity:0.85}
+.toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px;margin-top:8px}
+.draw-wrap{position:relative;line-height:0;border-radius:8px;overflow:hidden;border:0.5px solid rgba(0,0,0,0.15);margin-bottom:10px;display:inline-block;max-width:100%}
+.draw-wrap-outer{text-align:center;margin-bottom:10px}
+.draw-wrap img{max-width:100%;display:block}
+.draw-wrap canvas{position:absolute;top:0;left:0;cursor:crosshair}
+.hint{font-size:12px;color:#666;margin-bottom:8px;padding:6px 10px;background:#f5f4f0;border-radius:8px}
+.url-row{display:flex;gap:8px;margin-bottom:10px}
+.url-row input{flex:1;font-family:monospace;font-size:13px;padding:6px 8px;border:0.5px solid rgba(0,0,0,0.2);border-radius:6px;background:#fff;color:#1a1a18}
+.url-row input:focus{outline:none;border-color:rgba(0,0,0,0.4)}
+.status{font-size:12px;margin-bottom:8px}
+.status.err{color:#a32d2d}
+.status.ok{color:#3b6d11}
+.divider{height:0.5px;background:rgba(0,0,0,0.1);margin:10px 0}
+.shape-list{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.shape-row{display:flex;align-items:center;gap:8px;font-size:12px;font-family:monospace;color:#666;padding:4px 8px;background:#f5f4f0;border-radius:8px}
+.shape-num{font-weight:500;color:#1a1a18;min-width:20px}
+.shape-del{margin-left:auto;cursor:pointer;color:#a32d2d;font-size:14px;background:none;border:none;line-height:1;padding:0 2px}
+.hs-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.hs{background:#f5f4f0;border-radius:8px;padding:12px}
+.hs-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:4px}
+.hs-title{font-size:12px;font-weight:500;font-family:monospace;color:#1a1a18}
+.badges{display:flex;gap:4px}
+.badge{font-size:10px;padding:2px 7px;border-radius:8px}
+.badge-ok{background:#eaf3de;color:#3b6d11}
+.badge-warn{background:#faeeda;color:#854f0b}
+.pct-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
+.pct-label{font-size:10px;color:#666;margin-bottom:2px}
+.pct-val{font-size:13px;font-family:monospace;font-weight:500;color:#1a1a18}
+.working{font-size:11px;font-family:monospace;color:#666;background:#fff;border-radius:8px;padding:8px 10px;margin-bottom:8px;line-height:1.7;border:0.5px solid rgba(0,0,0,0.12);white-space:pre}
+.clip-box{font-size:11px;font-family:monospace;word-break:break-all;background:#fff;border-radius:8px;padding:8px 10px;margin-bottom:8px;border:0.5px solid rgba(0,0,0,0.12)}
+.clip-lbl{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.pass-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.pass-row label{font-size:11px;color:#666;white-space:nowrap}
+.pass-row input{flex:1;font-size:13px;padding:5px 8px;border:0.5px solid rgba(0,0,0,0.2);border-radius:6px;background:#fff;color:#1a1a18}
+.copy-row{display:flex;gap:6px;flex-wrap:wrap}
+.copy-btn{font-size:11px;padding:3px 8px;border-radius:8px;border:0.5px solid rgba(0,0,0,0.2);background:transparent;color:#666;cursor:pointer;font-family:monospace}
+.copy-btn:hover{background:#fff;color:#1a1a18}
+.warn-text{font-size:12px;color:#854f0b;margin:3px 0}
+.err-text{font-size:12px;color:#a32d2d;margin-top:10px}
+.copy-all-bar{background:#f5f4f0;border-radius:8px;padding:10px 12px;margin-top:4px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.copy-all-label{font-size:12px;color:#666}
+.codegen-pre{font-size:11px;font-family:monospace;color:#666;white-space:pre;overflow-x:auto;line-height:1.6;max-height:300px;overflow-y:auto;background:#f5f4f0;padding:10px;border-radius:8px;margin-top:8px}
+details summary{font-size:12px;color:#666;cursor:pointer;padding:6px 0}
+details textarea{margin-top:8px;width:100%;min-height:70px;font-family:monospace;font-size:12px;display:block;padding:6px 8px;border:0.5px solid rgba(0,0,0,0.2);border-radius:6px}
+.dim-note{font-size:11px;color:#3b6d11;margin-top:6px;margin-bottom:4px}
+.site-link{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-radius:12px;border:0.5px solid rgba(0,0,0,0.15);background:#f5f4f0;text-decoration:none;color:inherit}
+.site-link:hover{background:#e8e7e3}
+.site-link-name{font-size:13px;font-weight:500;color:#1a1a18;display:block}
+.site-link-url{font-size:11px;font-family:monospace;color:#666;display:block;margin-top:2px}
+.arr{font-size:16px;color:#666}
+.opts-title{font-size:11px;font-weight:500;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;margin-top:12px}
+.swatch-preview{width:24px;height:24px;border-radius:6px;border:0.5px solid rgba(0,0,0,0.15);display:inline-block;vertical-align:middle;margin-left:6px}
+</style>
+</head>
+<body>
+<h1>Twine Hotspot Tool</h1>
+<div class="wrap">
+
+<!-- IMAGE URL -->
+<div class="card">
+  <div class="section-title">Image URL</div>
+  <div class="url-row">
+    <input id="drawUrl" type="text" placeholder="Paste image URL..." value="https://picsum.photos/seed/map/900/600"/>
+    <button class="btn-sm" onclick="loadDrawImg()">Load</button>
+  </div>
+  <div id="drawStatus" class="status" style="display:none"></div>
+</div>
+
+<!-- STEP 1 -->
+<div class="card">
+  <div class="section-title">Step 1 — Dimensions</div>
+  <p style="font-size:12px;color:#666;margin-bottom:10px">Load your image and natural dimensions fill in automatically. Or enter them manually.</p>
+  <div class="grid4" style="margin-bottom:10px">
+    <div class="field"><label>Natural width</label><input type="number" id="natW" placeholder="auto from image" oninput="onDimInput()"/></div>
+    <div class="field"><label>Natural height</label><input type="number" id="natH" placeholder="auto from image" oninput="onDimInput()"/></div>
+    <div class="field"><label>Display width</label><input type="number" id="dispW" placeholder="e.g. 800" oninput="onDimInput()"/></div>
+    <div class="field"><label>Display height</label><input type="number" id="dispH" placeholder="auto" style="color:#666"/></div>
+  </div>
+  <div id="dimRes" style="display:none">
+    <div class="grid2">
+      <div class="metric"><div class="metric-label">Aspect ratio</div><div class="metric-value" id="ratioOut">—</div></div>
+      <div class="metric"><div class="metric-label">Display height</div><div class="metric-value" id="dispHOut">—<span class="metric-unit"> px</span></div></div>
+    </div>
+    <div class="fbar" id="dispFormula"></div>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="card">
+  <div class="section-title">Step 2 — Draw hotspot regions</div>
+
+  <div id="editorUI" style="display:none">
+    <div id="dimNote" class="dim-note" style="display:none"></div>
+    <div class="toolbar">
+      <button id="tool-rect"   class="btn-sm active" onclick="setTool('rect')">Rect</button>
+      <button id="tool-circle" class="btn-sm"        onclick="setTool('circle')">Circle</button>
+      <button id="tool-poly"   class="btn-sm"        onclick="setTool('poly')">Polygon</button>
+      <span style="flex:1"></span>
+      <button class="btn-sm" onclick="undoLast()">Undo</button>
+      <button class="btn-sm" onclick="clearAll()">Clear</button>
+    </div>
+    <div id="polyHint" class="hint" style="display:none">Click to add points — double-click to close the polygon.</div>
+    <div class="draw-wrap-outer">
+      <div class="draw-wrap" id="drawWrap">
+        <img id="drawImg" style="max-width:100%;display:block;user-select:none;pointer-events:none"/>
+        <canvas id="drawCanvas"></canvas>
+      </div>
+    </div>
+    <div id="shapeList" class="shape-list"></div>
+
+    <!-- OPTIONS -->
+    <div class="divider"></div>
+    <div class="opts-title">Options</div>
+    <div class="grid3" style="margin-bottom:10px">
+      <div class="field">
+        <label>Polygon smoothing</label>
+        <div class="range-row">
+          <input type="range" id="polySmooth" min="0" max="5" value="0" oninput="onSmoothChange()"/>
+          <span class="range-val" id="polySmoothVal">0</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Hover glow color</label>
+        <input type="color" id="hoverColor" value="#ffff00"/>
+      </div>
+      <div class="field">
+        <label>Hover glow intensity (px)</label>
+        <div class="range-row">
+          <input type="range" id="hoverIntensity" min="0" max="40" value="15" oninput="document.getElementById('hoverIntVal').textContent=this.value"/>
+          <span class="range-val" id="hoverIntVal">15</span>
+        </div>
+      </div>
+    </div>
+    <div class="grid3" style="margin-bottom:10px">
+      <div class="field">
+        <label>Mask color</label>
+        <input type="color" id="maskColor" value="#ff0000"/>
+      </div>
+      <div class="field">
+        <label>Mask opacity (%)</label>
+        <div class="range-row">
+          <input type="range" id="maskOpacity" min="0" max="100" value="30" oninput="document.getElementById('maskOpVal').textContent=this.value"/>
+          <span class="range-val" id="maskOpVal">30</span>
+        </div>
+      </div>
+      <div class="field" style="align-self:end">
+        <div style="font-size:11px;color:#666">
+          Mask: <span id="maskPreviewText">none</span>
+          <span id="maskSwatch" class="swatch-preview" style="background:transparent"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <details>
+    <summary>Can't load image? Paste &lt;map&gt; code instead</summary>
+    <textarea id="mapCode" placeholder="<area shape=&quot;rect&quot; coords=&quot;100,80,400,320&quot; href=&quot;&quot; />"></textarea>
+  </details>
+
+  <button class="btn btn-primary" onclick="calcHotspots()">Calculate percentages</button>
+  <div id="hotspotOutput"></div>
+</div>
+
+<!-- MASCHEK LINK -->
+<a class="site-link" href="https://maschek.hu/imagemap/imgmap" target="_blank">
+  <div>
+    <span class="site-link-name">maschek.hu image map editor</span>
+    <span class="site-link-url">maschek.hu/imagemap/imgmap — alternative: draw regions here and paste the &lt;map&gt; code above</span>
+  </div>
+  <span class="arr">&#8599;</span>
+</a>
+
+<!-- STEP 3 -->
+<div class="card" id="s3" style="display:none">
+  <div class="section-title">Step 3 — Generate Twine code</div>
+  <div id="codeOutput"></div>
+</div>
+
+</div><!-- end .wrap -->
+
+<script>
+var natW=0,natH=0,parsedHotspots=[],generatedCode='';
+var tool='rect',isDown=false,sx=0,sy=0,mx=0,my=0;
+var shapes=[],polyPts=[];
+var canvas=document.getElementById('drawCanvas');
+var ctx=canvas.getContext('2d');
+var drawImg=document.getElementById('drawImg');
+var COLORS=['rgba(255,120,0','rgba(0,150,255','rgba(0,200,80','rgba(200,0,220','rgba(255,200,0'];
+
+function gcd(a,b){return b?gcd(b,a%b):a;}
+
+/* ---- Chaikin corner-cutting smoothing ---- */
+function chaikinSmooth(coords,iterations){
+  // coords is flat [x0,y0,x1,y1,...], returns flat smoothed
+  if(iterations<=0)return coords;
+  var pts=[];
+  for(var i=0;i<coords.length;i+=2)pts.push([coords[i],coords[i+1]]);
+  for(var iter=0;iter<iterations;iter++){
+    var np=[];
+    for(var j=0;j<pts.length;j++){
+      var p0=pts[j],p1=pts[(j+1)%pts.length];
+      np.push([0.75*p0[0]+0.25*p1[0],0.75*p0[1]+0.25*p1[1]]);
+      np.push([0.25*p0[0]+0.75*p1[0],0.25*p0[1]+0.75*p1[1]]);
+    }
+    pts=np;
+  }
+  var out=[];
+  pts.forEach(function(p){out.push(Math.round(p[0]),Math.round(p[1]));});
+  return out;
+}
+
+function getSmoothLevel(){return parseInt(document.getElementById('polySmooth').value)||0;}
+
+function onSmoothChange(){
+  document.getElementById('polySmoothVal').textContent=document.getElementById('polySmooth').value;
+  redrawCanvas();
+}
+
+/* ---- Overlap detection using canvas compositing ---- */
+function drawShapeOnCtx(tc,s,sc){
+  tc.beginPath();
+  if(s.shape==='rect'){
+    tc.rect(s.coords[0]*sc,s.coords[1]*sc,(s.coords[2]-s.coords[0])*sc,(s.coords[3]-s.coords[1])*sc);
+  }else if(s.shape==='circle'){
+    tc.arc(s.coords[0]*sc,s.coords[1]*sc,s.coords[2]*sc,0,Math.PI*2);
+  }else if(s.shape==='poly'){
+    var c=s.smoothCoords||s.coords;
+    for(var j=0;j<c.length;j+=2){
+      if(j===0)tc.moveTo(c[j]*sc,c[j+1]*sc);
+      else tc.lineTo(c[j]*sc,c[j+1]*sc);
+    }
+    tc.closePath();
+  }
+}
+
+function shapesOverlap(a,b){
+  // pixel-accurate overlap using offscreen canvas compositing
+  var res=200;
+  var sc=res/Math.max(natW,natH);
+  var w=Math.ceil(natW*sc),h=Math.ceil(natH*sc);
+  var tc=document.createElement('canvas');
+  tc.width=w;tc.height=h;
+  var c=tc.getContext('2d');
+  // draw shape A
+  c.fillStyle='#f00';
+  drawShapeOnCtx(c,a,sc);
+  c.fill();
+  // composite shape B — only pixels where both overlap survive
+  c.globalCompositeOperation='source-in';
+  c.fillStyle='#00f';
+  drawShapeOnCtx(c,b,sc);
+  c.fill();
+  // check for any non-transparent pixels
+  var data=c.getImageData(0,0,w,h).data;
+  for(var i=3;i<data.length;i+=4){
+    if(data[i]>0)return true;
+  }
+  return false;
+}
+
+/* ---- Mask preview update ---- */
+function updateMaskPreview(){
+  var op=parseInt(document.getElementById('maskOpacity').value)||0;
+  var col=document.getElementById('maskColor').value;
+  var swatch=document.getElementById('maskSwatch');
+  var text=document.getElementById('maskPreviewText');
+  if(op===0){
+    text.textContent='none';
+    swatch.style.background='transparent';
+  }else{
+    var r=parseInt(col.slice(1,3),16),g=parseInt(col.slice(3,5),16),b=parseInt(col.slice(5,7),16);
+    var rgba='rgba('+r+','+g+','+b+','+(op/100).toFixed(2)+')';
+    text.textContent=rgba;
+    swatch.style.background=rgba;
+  }
+}
+document.getElementById('maskOpacity').addEventListener('input',updateMaskPreview);
+document.getElementById('maskColor').addEventListener('input',updateMaskPreview);
+
+/* ---- Dimensions ---- */
+function onDimInput(){
+  natW=parseInt(document.getElementById('natW').value)||0;
+  natH=parseInt(document.getElementById('natH').value)||0;
+  var dw=parseInt(document.getElementById('dispW').value)||0;
+  var res=document.getElementById('dimRes');
+  if(natW&&natH&&dw){
+    var dh=Math.round(dw*(natH/natW));
+    document.getElementById('dispH').value=dh;
+    document.getElementById('dispH').style.color='';
+    var d=gcd(natW,natH);
+    document.getElementById('ratioOut').textContent=natW/d+':'+natH/d;
+    document.getElementById('dispHOut').textContent=dh;
+    document.getElementById('dispFormula').textContent='display height = '+dw+' x ('+natH+' / '+natW+') = '+dh;
+    res.style.display='block';
+  } else res.style.display='none';
+  redrawCanvas();
+}
+
+/* ---- Image loading ---- */
+function loadDrawImg(){
+  var url=document.getElementById('drawUrl').value.trim();
+  if(!url)return;
+  var st=document.getElementById('drawStatus');
+  st.textContent='Loading...';st.className='status';st.style.display='block';
+  drawImg.onload=function(){
+    st.style.display='none';
+    document.getElementById('editorUI').style.display='block';
+    var nw=drawImg.naturalWidth,nh=drawImg.naturalHeight;
+    if(nw&&nh){
+      document.getElementById('natW').value=nw;
+      document.getElementById('natH').value=nh;
+      natW=nw;natH=nh;
+      var note=document.getElementById('dimNote');
+      note.textContent='Natural dimensions from image: '+nw+' x '+nh+' px';
+      note.style.display='block';
+      onDimInput();
+    }
+    syncCanvas();
+  };
+  drawImg.onerror=function(){
+    st.textContent='Could not load image. Try a different URL or paste <map> code in the fallback below.';
+    st.className='status err';
+  };
+  drawImg.src=url;
+}
+
+function syncCanvas(){
+  canvas.width=drawImg.offsetWidth;
+  canvas.height=drawImg.offsetHeight;
+  canvas.style.width=canvas.width+'px';
+  canvas.style.height=canvas.height+'px';
+  redrawCanvas();
+}
+
+/* ---- Tools ---- */
+function setTool(t){
+  tool=t;polyPts=[];isDown=false;
+  document.querySelectorAll('[id^="tool-"]').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('tool-'+t).classList.add('active');
+  document.getElementById('polyHint').style.display=(t==='poly')?'block':'none';
+}
+
+function getPos(e){var r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
+function toNatX(cx){return natW?Math.round(cx*natW/canvas.width):Math.round(cx);}
+function toNatY(cy){return natH?Math.round(cy*natH/canvas.height):Math.round(cy);}
+function toCvX(nx){return natW?nx*canvas.width/natW:nx;}
+function toCvY(ny){return natH?ny*canvas.height/natH:ny;}
+
+canvas.addEventListener('mousedown',function(e){if(tool==='poly')return;var p=getPos(e);isDown=true;sx=p.x;sy=p.y;mx=p.x;my=p.y;});
+canvas.addEventListener('mousemove',function(e){var p=getPos(e);mx=p.x;my=p.y;if(isDown||(tool==='poly'&&polyPts.length>0))redrawCanvas();});
+canvas.addEventListener('mouseup',function(e){
+  if(!isDown||tool==='poly')return;
+  var p=getPos(e);isDown=false;
+  if(tool==='rect'){
+    var x1=toNatX(Math.min(sx,p.x)),y1=toNatY(Math.min(sy,p.y)),x2=toNatX(Math.max(sx,p.x)),y2=toNatY(Math.max(sy,p.y));
+    if(Math.abs(x2-x1)>4&&Math.abs(y2-y1)>4)addShape({shape:'rect',coords:[x1,y1,x2,y2]});
+  } else if(tool==='circle'){
+    var cx=toNatX(sx),cy=toNatY(sy),r=Math.round(Math.sqrt(Math.pow(p.x-sx,2)+Math.pow(p.y-sy,2))*natW/canvas.width);
+    if(r>4)addShape({shape:'circle',coords:[cx,cy,r]});
+  }
+  redrawCanvas();
+});
+canvas.addEventListener('mouseleave',function(){isDown=false;redrawCanvas();});
+canvas.addEventListener('click',function(e){if(tool!=='poly')return;var p=getPos(e);polyPts.push([p.x,p.y]);redrawCanvas();});
+canvas.addEventListener('dblclick',function(e){
+  if(tool!=='poly')return;
+  polyPts.pop();
+  if(polyPts.length>=3){var coords=[];polyPts.forEach(function(p){coords.push(toNatX(p[0]),toNatY(p[1]));});addShape({shape:'poly',coords:coords});}
+  polyPts=[];redrawCanvas();
+});
+
+function addShape(s){shapes.push(s);updateShapeList();}
+function updateShapeList(){
+  var el=document.getElementById('shapeList');
+  if(!shapes.length){el.innerHTML='';return;}
+  el.innerHTML=shapes.map(function(s,i){
+    return'<div class="shape-row"><span class="shape-num">'+(i+1)+'</span><span>'+s.shape+' ['+s.coords.join(', ')+']</span><button class="shape-del" onclick="deleteShape('+i+')">&#10005;</button></div>';
+  }).join('');
+}
+function deleteShape(i){shapes.splice(i,1);redrawCanvas();updateShapeList();}
+function undoLast(){if(polyPts.length){polyPts=[];redrawCanvas();return;}if(shapes.length){shapes.pop();redrawCanvas();updateShapeList();}}
+function clearAll(){shapes=[];polyPts=[];isDown=false;redrawCanvas();updateShapeList();}
+
+/* ---- Canvas drawing ---- */
+function colorOf(i,a){return COLORS[i%COLORS.length]+','+a+')';}
+
+function drawPolyPath(coords){
+  ctx.beginPath();
+  for(var j=0;j<coords.length;j+=2){
+    if(j===0)ctx.moveTo(toCvX(coords[j]),toCvY(coords[j+1]));
+    else ctx.lineTo(toCvX(coords[j]),toCvY(coords[j+1]));
+  }
+  ctx.closePath();
+}
+
+function redrawCanvas(){
+  if(!canvas.width)return;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  var smooth=getSmoothLevel();
+  shapes.forEach(function(s,i){
+    ctx.strokeStyle=colorOf(i,0.85);ctx.lineWidth=2;ctx.fillStyle=colorOf(i,0.15);
+    if(s.shape==='rect'){
+      var x1=toCvX(s.coords[0]),y1=toCvY(s.coords[1]),w=toCvX(s.coords[2])-x1,h=toCvY(s.coords[3])-y1;
+      ctx.fillRect(x1,y1,w,h);ctx.strokeRect(x1,y1,w,h);
+    } else if(s.shape==='circle'){
+      var cx=toCvX(s.coords[0]),cy=toCvY(s.coords[1]),r=s.coords[2]*canvas.width/(natW||canvas.width);
+      ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();ctx.stroke();
+    } else if(s.shape==='poly'){
+      var c=smooth>0?chaikinSmooth(s.coords,smooth):s.coords;
+      drawPolyPath(c);
+      ctx.fill();ctx.stroke();
+    }
+    ctx.fillStyle=colorOf(i,0.95);ctx.font='bold 12px sans-serif';
+    ctx.fillText(i+1,toCvX(s.coords[0])+4,toCvY(s.coords[1])+14);
+  });
+  if(isDown){
+    ctx.strokeStyle='rgba(255,60,60,0.9)';ctx.lineWidth=2;ctx.fillStyle='rgba(255,60,60,0.12)';
+    if(tool==='rect'){ctx.fillRect(sx,sy,mx-sx,my-sy);ctx.strokeRect(sx,sy,mx-sx,my-sy);}
+    else if(tool==='circle'){var rr=Math.sqrt(Math.pow(mx-sx,2)+Math.pow(my-sy,2));ctx.beginPath();ctx.arc(sx,sy,rr,0,Math.PI*2);ctx.fill();ctx.stroke();}
+  }
+  if(tool==='poly'&&polyPts.length){
+    ctx.strokeStyle='rgba(255,60,60,0.9)';ctx.lineWidth=2;
+    ctx.beginPath();polyPts.forEach(function(p,i){i===0?ctx.moveTo(p[0],p[1]):ctx.lineTo(p[0],p[1]);});ctx.lineTo(mx,my);ctx.stroke();
+    polyPts.forEach(function(p){ctx.beginPath();ctx.arc(p[0],p[1],3,0,Math.PI*2);ctx.fillStyle='rgba(255,60,60,0.9)';ctx.fill();});
+  }
+}
+
+/* ---- Calculation ---- */
+function pc(v,t){return Math.round(v/t*10000)/100;}
+
+function getAreas(){
+  if(shapes.length>0)return shapes.map(function(s){return'<area shape="'+s.shape+'" coords="'+s.coords.join(',')+'" href="" />';}).join('\n');
+  return document.getElementById('mapCode').value;
+}
+
+function calcHotspots(){
+  natW=parseInt(document.getElementById('natW').value)||0;
+  natH=parseInt(document.getElementById('natH').value)||0;
+  var out=document.getElementById('hotspotOutput');
+  if(!natW||!natH){out.innerHTML='<div class="err-text">Natural dimensions needed -- load an image or enter them in Step 1.</div>';return;}
+  var raw=getAreas();
+  var areas=[...raw.matchAll(/<area[^>]+>/gi)].map(function(m){return m[0];});
+  if(!areas.length){out.innerHTML='<div class="err-text">No regions drawn yet and no &lt;area&gt; tags in fallback.</div>';return;}
+
+  var smooth=getSmoothLevel();
+  var parsed=[];
+  areas.forEach(function(area,i){
+    var shapeM=area.match(/shape="([^"]+)"/i),coordsM=area.match(/coords="([^"]+)"/i);
+    if(!shapeM||!coordsM)return;
+    var shape=shapeM[1].toLowerCase(),nums=coordsM[1].split(',').map(Number);
+    var left,top,width,height,warns=[],bbox,working='',clipPath='',isCircle=false,smoothCoords=null;
+    if(shape==='rect'){
+      var x1=nums[0],y1=nums[1],x2=nums[2],y2=nums[3];
+      left=pc(x1,natW);top=pc(y1,natH);width=pc(x2-x1,natW);height=pc(y2-y1,natH);
+      bbox={x1:x1,y1:y1,x2:x2,y2:y2};
+      if((x2-x1)<30||(y2-y1)<30)warns.push('Tiny: '+(x2-x1)+'x'+(y2-y1)+'px -- likely accidental.');
+      working='left:  '+x1+' / '+natW+' x 100 = '+left+'%\ntop:   '+y1+' / '+natH+' x 100 = '+top+'%\nwidth: ('+x2+'-'+x1+') / '+natW+' x 100 = '+width+'%\nheight:('+y2+'-'+y1+') / '+natH+' x 100 = '+height+'%';
+    } else if(shape==='circle'){
+      var cx=nums[0],cy=nums[1],r=nums[2];
+      left=pc(cx-r,natW);top=pc(cy-r,natH);width=pc(r*2,natW);height=pc(r*2,natH);
+      bbox={x1:cx-r,y1:cy-r,x2:cx+r,y2:cy+r};isCircle=true;
+      if(r<15)warns.push('Very small radius: '+r+'px.');
+      working='left:  ('+cx+'-'+r+') / '+natW+' x 100 = '+left+'%\ntop:   ('+cy+'-'+r+') / '+natH+' x 100 = '+top+'%\nwidth: ('+r+'x2) / '+natW+' x 100 = '+width+'%\nheight:('+r+'x2) / '+natH+' x 100 = '+height+'%';
+    } else if(shape==='poly'){
+      var sc=smooth>0?chaikinSmooth(nums,smooth):nums;
+      smoothCoords=sc;
+      var xs=sc.filter(function(_,j){return j%2===0;}),ys=sc.filter(function(_,j){return j%2===1;});
+      var px1=Math.min.apply(null,xs),py1=Math.min.apply(null,ys),px2=Math.max.apply(null,xs),py2=Math.max.apply(null,ys);
+      var bw=px2-px1,bh=py2-py1;
+      left=pc(px1,natW);top=pc(py1,natH);width=pc(bw,natW);height=pc(bh,natH);
+      bbox={x1:px1,y1:py1,x2:px2,y2:py2};
+      var pts=xs.map(function(_,k){return Math.round((xs[k]-px1)/bw*10000)/100+'% '+Math.round((ys[k]-py1)/bh*10000)/100+'%';}).join(', ');
+      clipPath='clip-path: polygon('+pts+');';
+      working='bbox: x '+Math.round(px1)+'--'+Math.round(px2)+', y '+Math.round(py1)+'--'+Math.round(py2)+(smooth>0?' (smoothed x'+smooth+')':'')+'\nleft:'+left+'%  top:'+top+'%  width:'+width+'%  height:'+height+'%';
+    } else return;
+    // warn if shape extends past image
+    if(left<0||top<0||left+width>100||top+height>100)warns.push('Extends past image edge (will be clipped).');
+    parsed.push({i:i+1,shape:shape,left:left,top:top,width:width,height:height,warns:warns,working:working,bbox:bbox,clipPath:clipPath,isCircle:isCircle,passage:'Passage '+(i+1),smoothCoords:smoothCoords,coords:nums});
+  });
+
+  // pixel-accurate overlap detection
+  for(var a=0;a<parsed.length;a++){
+    for(var b=a+1;b<parsed.length;b++){
+      var sa={shape:parsed[a].shape,coords:parsed[a].coords,smoothCoords:parsed[a].smoothCoords};
+      var sb={shape:parsed[b].shape,coords:parsed[b].coords,smoothCoords:parsed[b].smoothCoords};
+      if(shapesOverlap(sa,sb)){
+        parsed[a].warns.push('Overlaps area '+parsed[b].i+'.');
+        parsed[b].warns.push('Overlaps area '+parsed[a].i+'.');
+      }
+    }
+  }
+
+  parsedHotspots=parsed;
+  var html='<div class="hs-list">';
+  parsed.forEach(function(p,idx){
+    var bh=p.warns.length===0?'<span class="badge badge-ok">ok</span>':p.warns.map(function(w){return'<span class="badge badge-warn">'+(w.includes('Overlaps')?'overlaps':w.includes('Tiny')||w.includes('small')?'tiny':'check')+'</span>';}).join('');
+    var css='left:'+p.left+'%; top:'+p.top+'%; width:'+p.width+'%; height:'+p.height+'%;'+(p.clipPath?' '+p.clipPath:'');
+    var js='{ left:"'+p.left+'%", top:"'+p.top+'%", width:"'+p.width+'%", height:"'+p.height+'%"'+(p.clipPath?', clipPath:"'+p.clipPath+'"':'')+' }';
+    html+='<div class="hs"><div class="hs-hdr"><span class="hs-title">Area '+p.i+' -- '+p.shape+'</span><div class="badges">'+bh+'</div></div>'
+      +'<div class="pct-grid"><div><div class="pct-label">left</div><div class="pct-val">'+p.left+'%</div></div><div><div class="pct-label">top</div><div class="pct-val">'+p.top+'%</div></div><div><div class="pct-label">width</div><div class="pct-val">'+p.width+'%</div></div><div><div class="pct-label">height</div><div class="pct-val">'+p.height+'%</div></div></div>'
+      +'<div class="working">'+p.working+'</div>'
+      +(p.clipPath?'<div style="margin-bottom:8px"><div class="clip-lbl">clip-path</div><div class="clip-box">'+p.clipPath+'</div></div>':'')
+      +p.warns.map(function(w){return'<div class="warn-text">'+w+'</div>';}).join('')
+      +'<div class="pass-row"><label>Twine passage:</label><input type="text" value="'+p.passage+'" oninput="updatePassage('+idx+',this.value)"/></div>'
+      +'<div class="copy-row"><button class="copy-btn" onclick="cp('+JSON.stringify(css)+')">copy CSS</button><button class="copy-btn" onclick="cp('+JSON.stringify(js)+')">copy JS object</button>'+(p.clipPath?'<button class="copy-btn" onclick="cp('+JSON.stringify(p.clipPath)+')">copy clip-path</button>':'')+'</div>'
+      +'</div>';
+  });
+  html+='</div>';
+  var allJs='[\n'+parsed.map(function(p){return'  { left:"'+p.left+'%", top:"'+p.top+'%", width:"'+p.width+'%", height:"'+p.height+'%"'+(p.isCircle?', circle:true':', circle:false')+(p.clipPath?', clipPath:"'+p.clipPath+'"':'')+', passage:"'+p.passage+'" }';}).join(',\n')+'\n]';
+  html+='<div class="copy-all-bar"><span class="copy-all-label">All '+parsed.length+' as JS array</span><button class="copy-btn" onclick="cp('+JSON.stringify(allJs)+')">copy all</button></div>';
+  out.innerHTML=html;
+  document.getElementById('s3').style.display='block';
+  generateCode();
+}
+
+function updatePassage(idx,val){if(parsedHotspots[idx])parsedHotspots[idx].passage=val;generateCode();}
+
+/* ---- Code generation ---- */
+function hexToRgb(hex){
+  var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return{r:r,g:g,b:b};
+}
+
+function generateCode(){
+  if(!parsedHotspots.length)return;
+  var imgUrl=document.getElementById('drawUrl').value.trim()||'YOUR-IMAGE-URL-HERE';
+
+  // read options
+  var hoverCol=document.getElementById('hoverColor').value;
+  var hoverInt=parseInt(document.getElementById('hoverIntensity').value)||0;
+  var maskCol=document.getElementById('maskColor').value;
+  var maskOp=parseInt(document.getElementById('maskOpacity').value)||0;
+  var hRgb=hexToRgb(hoverCol);
+  var mRgb=hexToRgb(maskCol);
+
+  var maskBg=maskOp>0?'rgba('+mRgb.r+','+mRgb.g+','+mRgb.b+','+(maskOp/100).toFixed(2)+')':'rgba(0,0,0,0)';
+  var hoverShadow=hoverInt>0?'0 0 '+hoverInt+'px '+Math.round(hoverInt/2)+'px rgba('+hRgb.r+','+hRgb.g+','+hRgb.b+',0.7)':'none';
+
+  var lines=parsedHotspots.map(function(p){
+    var line='    { left:"'+p.left+'%", top:"'+p.top+'%", width:"'+p.width+'%", height:"'+p.height+'%",';
+    line+=(p.isCircle?' circle:true,':" circle:false,");
+    if(p.clipPath)line+=' clipPath:"'+p.clipPath+'",';
+    line+=' passage:"'+p.passage+'" }';
+    return line;
+  }).join(',\n');
+
+  var dispW=parseInt(document.getElementById('dispW').value)||2000;
+
+  var code='<div id="hotspot-container"\n     style="position:relative; max-width:'+dispW+'px; overflow:hidden; padding:0; margin:0; line-height:0; font-size:0;">\n  <img src="'+imgUrl+'"\n       alt="description of your image"\n       style="width:100%; display:block; padding:0; margin:0;">\n</div>\n\n<script>\n(function() {\n  var container = document.getElementById("hotspot-container");\n\n  var hotspots = [\n'+lines+'\n  ];\n\n  hotspots.forEach(function(h) {\n    var div = document.createElement("div");\n    div.style.position   = "absolute";\n    div.style.left       = h.left;\n    div.style.top        = h.top;\n    div.style.width      = h.width;\n    div.style.height     = h.height;\n    div.style.cursor     = "pointer";\n    div.style.background = "'+maskBg+'";\n    div.style.transition = "box-shadow 0.2s ease";\n    if (h.circle) div.style.borderRadius = "50%";\n    if (h.clipPath) div.style.cssText += h.clipPath;\n';
+
+  if(hoverInt>0){
+    code+='    div.addEventListener("mouseenter", function() {\n      div.style.boxShadow = "'+hoverShadow+'";\n    });\n    div.addEventListener("mouseleave", function() {\n      div.style.boxShadow = "none";\n    });\n';
+  }
+
+  code+='    div.addEventListener("click", function() {\n      window.harlowe.Engine.goToPassage(h.passage);\n    });\n\n    container.appendChild(div);\n  });\n})();\n<\/script>';
+
+  generatedCode=code;
+  var out=document.getElementById('codeOutput');
+  out.innerHTML='<div style="margin-top:12px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span style="font-size:12px;font-weight:500">Ready to paste into Twine</span><button class="copy-btn" onclick="cp(generatedCode)">copy all</button></div><div class="codegen-pre">'+code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div></div>';
+}
+
+function cp(t){
+  navigator.clipboard.writeText(t).catch(function(){
+    var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+  });
+}
+</script>
+</body>
+</html>
