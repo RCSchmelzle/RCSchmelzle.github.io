@@ -177,9 +177,13 @@ details[open] summary{margin-bottom:8px}
   </details>
   <div class="action-bar">
     <button class="btn btn-primary" id="copyBtn" onclick="copyCode()">Copy Twine Code</button>
+    <button class="btn" id="storyJsBtn" onclick="copyStoryJs()">Copy Story JS Setup</button>
     <button class="btn" onclick="showModal('pctModal')">Relative Mask Paths</button>
     <button class="btn" onclick="showModal('codeModal')">Generated Twine Code</button>
     <div id="overlapWarning" style="display:none;font-size:11px;color:#dd2222;padding:4px 8px;background:#fdf0f0;border-radius:6px">Overlapping hotspots — fix before copying</div>
+  </div>
+  <div style="margin-top:8px;font-size:10px;color:#999;display:flex;gap:12px;flex-wrap:wrap">
+    <span>Image mapping inspired by <a href="https://www.maschek.hu/imagemap/" target="_blank" style="color:#999">Online Image Map Editor</a> by maschek.hu</span>
   </div>
   <!-- hidden containers for modal content -->
   <div id="pctOutput" style="display:none"></div>
@@ -709,6 +713,17 @@ function copyCode(){
 }
 
 function cp(t){navigator.clipboard.writeText(t).catch(function(){var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);});}
+
+var STORY_JS='window.harlowe = window.harlowe || {};\nwindow.harlowe.Engine = Engine;';
+function copyStoryJs(){
+  navigator.clipboard.writeText(STORY_JS).then(function(){
+    var btn=document.getElementById('storyJsBtn');
+    btn.textContent='Copied!';btn.classList.add('copied');
+    setTimeout(function(){btn.textContent='Copy Story JS Setup';btn.classList.remove('copied');},1500);
+  }).catch(function(){
+    var ta=document.createElement('textarea');ta.value=STORY_JS;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+  });
+}
 
 // pre-load example shapes (coords are native pixels for the 612x408 wizard room image)
 shapes=[
