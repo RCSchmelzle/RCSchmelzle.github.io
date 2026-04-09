@@ -119,7 +119,10 @@
                 </div>
               </td>
               <td style="padding:2.5%;width:37%;max-width:37%" class="bio-photo">
-                <a href="images/RyanSchmelzle.jpeg"><img style="width:100%;max-width:100%;object-fit: cover; border-radius: 50%;" alt="profile photo" src="images/RyanSchmelzle.jpeg" class="hoverZoomLink"></a>
+                <a href="images/RyanSchmelzle.jpeg" style="position:relative;display:inline-block;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,0.6);box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+                  <img style="width:100%;max-width:100%;object-fit:cover;border-radius:50%;display:block;" alt="profile photo" src="images/RyanSchmelzle.jpeg" class="hoverZoomLink">
+                  <span style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:50%;box-shadow:inset 0 0 20px rgba(0,0,0,0.3);pointer-events:none;"></span>
+                </a>
               </td>
             </tr>
           </tbody></table>
@@ -137,9 +140,11 @@
 
             <tr>
               <td style="padding:16px;width:30%;vertical-align:middle;">
-                <video style="width:100%;border-radius:6px;" autoplay loop muted playsinline>
-                  <source src="images/telepresence-demo.mp4" type="video/mp4">
-                </video>
+                <div class="one">
+                  <video style="width:100%;border-radius:6px;" autoplay loop muted playsinline>
+                    <source src="images/telepresence-demo.mp4" type="video/mp4">
+                  </video>
+                </div>
               </td>
               <td style="padding:8px;width:65%;vertical-align:middle">
                 <a href="https://ieeexplore.ieee.org/document/10557509">
@@ -331,6 +336,20 @@
             </tr>
           </tbody></table>
           <table class="timeline" style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+
+            <tr>
+              <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
+                <img src="images/apple-logo.svg" alt="Apple" style="width:100%;max-width:90px;">
+              </td>
+              <td style="padding:8px;width:80%;vertical-align:middle">
+                <span class="papertitle">Software Engineering Intern (Upcoming)</span>
+                <br>
+                <a href="https://www.apple.com/">Apple</a>, Sunnyvale, CA &mdash; May 2026&ndash;Aug. 2026
+                <p>
+                  Interning on the Apple Vision Pro team, contributing to creative applications and visualization research for spatial computing platforms.
+                </p>
+              </td>
+            </tr>
 
             <tr>
               <td style="padding:16px;width:20%;vertical-align:middle;text-align:center">
@@ -565,10 +584,8 @@
       if (animRunning) requestAnimationFrame(draw);
     }
 
-    var nodeRGB = {r:130, g:160, b:200};
-    var targetRGB = {r:130, g:160, b:200};
-    document.body.classList.add('dark-mode');
-    document.getElementById('toggle-dark').innerHTML = '&#9788;';
+    var nodeRGB = {r:100, g:130, b:170};
+    var targetRGB = {r:100, g:130, b:170};
     var nodeColor = 'rgba(100,130,170,';
 
     var tileInited = false;
