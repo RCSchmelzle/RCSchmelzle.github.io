@@ -110,6 +110,7 @@ details[open] summary{margin-bottom:8px}
 </style>
 </head>
 <body>
+<button class="btn" onclick="showHelp()" style="position:fixed;top:10px;right:12px;z-index:50;font-weight:600">Instructions</button>
 <h1>Twine Hotspot Tool</h1>
 
 <!-- TOP BAR -->
@@ -524,6 +525,9 @@ function redrawCanvas(){
     // mask fill
     if(hasOverlap){
       ctx.fillStyle=hexToRgba(col,isSel?0.3:0.2);
+    }else if(isHov&&hoverInt>0&&maskOp===0){
+      // ensure drop-shadow silhouette exists so hover glow renders with mask off
+      ctx.fillStyle=hexToRgba(hoverCol,0.08);
     }else{
       ctx.fillStyle=hexToRgba(maskCol,maskOp/100);
     }
@@ -673,18 +677,20 @@ function recalc(skipList){
   if(outW>0){
     code+='    if (h.svgPts) {\n      var svg = document.createElementNS("http://www.w3.org/2000/svg","svg");\n      svg.setAttribute("viewBox","0 0 100 100");\n      svg.setAttribute("preserveAspectRatio","none");\n      svg.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;";\n      var poly = document.createElementNS("http://www.w3.org/2000/svg","polygon");\n      poly.setAttribute("points",h.svgPts);\n      poly.setAttribute("fill","none");\n      poly.setAttribute("stroke","rgba('+oRgb.r+','+oRgb.g+','+oRgb.b+',1)");\n      poly.setAttribute("stroke-width","'+outW+'");\n      poly.setAttribute("stroke-linejoin","round");\n      poly.setAttribute("vector-effect","non-scaling-stroke");\n      svg.appendChild(poly);\n      wrap.appendChild(svg);\n    }\n';
   }
+  // hover bg swap — lets drop-shadow glow render even when mask opacity is 0
+  var hoverBgSwap=(maskOp===0&&hoverInt>0)?' div.style.background = "rgba('+hRgb.r+','+hRgb.g+','+hRgb.b+',0.08)";':'';
+  var hoverBgRevert=(maskOp===0&&hoverInt>0)?' div.style.background = "'+maskBg+'";':'';
+  var hoverEnterCode=hoverInt>0?(' glow.style.filter = "'+hoverFilter+'";'+hoverBgSwap):'';
+  var hoverLeaveCode=' glow.style.filter = "none";'+hoverBgRevert;
   // label tooltip on wrapper (never clipped)
   if(labelsOn){
     code+='    if (h.label) {\n      var tip = document.createElement("span");\n      tip.textContent = h.label;\n      tip.style.cssText = "position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#fff;font-size:13px;line-height:1.3;padding:4px 10px;border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:10;";\n      wrap.appendChild(tip);\n';
-    code+='      wrap.addEventListener("mouseenter", function() { tip.style.opacity = "1";';
-    if(hoverInt>0) code+=' glow.style.filter = "'+hoverFilter+'";';
-    code+=' });\n      wrap.addEventListener("mouseleave", function() { tip.style.opacity = "0"; glow.style.filter = "none";';
-    code+=' });\n    }';
+    code+='      wrap.addEventListener("mouseenter", function() { tip.style.opacity = "1";'+hoverEnterCode+' });\n      wrap.addEventListener("mouseleave", function() { tip.style.opacity = "0";'+hoverLeaveCode+' });\n    }';
     if(hoverInt>0){
-      code+=' else {\n      wrap.addEventListener("mouseenter", function() { glow.style.filter = "'+hoverFilter+'"; });\n      wrap.addEventListener("mouseleave", function() { glow.style.filter = "none"; });\n    }\n';
+      code+=' else {\n      wrap.addEventListener("mouseenter", function() {'+hoverEnterCode+' });\n      wrap.addEventListener("mouseleave", function() {'+hoverLeaveCode+' });\n    }\n';
     } else code+='\n';
   } else {
-    if(hoverInt>0)code+='    wrap.addEventListener("mouseenter", function() { glow.style.filter = "'+hoverFilter+'"; });\n    wrap.addEventListener("mouseleave", function() { glow.style.filter = "none"; });\n';
+    if(hoverInt>0)code+='    wrap.addEventListener("mouseenter", function() {'+hoverEnterCode+' });\n    wrap.addEventListener("mouseleave", function() {'+hoverLeaveCode+' });\n';
   }
   code+='    wrap.addEventListener("click", function() { window.harlowe.Engine.goToPassage(h.passage); });\n    glow.appendChild(div);\n    wrap.appendChild(glow);\n    container.appendChild(wrap);\n  });\n})();\n<\/script>';
 
@@ -706,6 +712,21 @@ function recalc(skipList){
 }
 
 function hexToRgb(hex){return{r:parseInt(hex.slice(1,3),16),g:parseInt(hex.slice(3,5),16),b:parseInt(hex.slice(5,7),16)};}
+
+function showHelp(){
+  var overlay=document.createElement('div');overlay.className='modal-overlay';
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  var body='<div style="font-size:12px;line-height:1.55;color:#333">'
+    +'<p><strong>1. Load an image.</strong> Paste an image URL and click <em>Load</em>.</p>'
+    +'<p><strong>2. Draw hotspots.</strong> Use <em>Rect</em>, <em>Circle</em>, or <em>Polygon</em> to draw clickable regions. For polygons, click to add points and double-click to close.</p>'
+    +'<p><strong>3. Manage hotspots in the list.</strong> Each shape you draw appears in the hotspot list, numbered (1, 2, 3…) to match the number on the canvas. For each row: type the Twine <em>passage name</em> to link to, optionally set a <em>label</em> (hover tooltip), and delete with the trash icon. Use the <em>Select</em> tool to drag or resize existing shapes.</p>'
+    +'<p><strong>4. Style the hotspots.</strong> Adjust <em>Mask</em>, <em>Outline</em>, <em>Glow</em>, and <em>Labels</em>. Hover glow works even when mask opacity is 0.</p>'
+    +'<p><strong>5. Paste into Twine.</strong> Click <em>Copy Twine Code</em> and paste into a Harlowe passage. First time only: also click <em>Copy Story JS Setup</em> and paste into your story\'s JavaScript tab.</p>'
+    +'<p style="color:#888;font-size:11px;margin-top:10px">Tip: overlapping hotspots are flagged in red and must be resolved before copying.</p>'
+    +'</div>';
+  overlay.innerHTML='<div class="modal"><div class="modal-hdr"><h2>How to use</h2><button class="modal-close" onclick="this.closest(\'.modal-overlay\').remove()">&times;</button></div>'+body+'</div>';
+  document.body.appendChild(overlay);
+}
 
 function showModal(id){
   var title=id==='pctModal'?'Relative Mask Paths (Percent)':'Generated Twine Code';

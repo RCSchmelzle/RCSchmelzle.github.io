@@ -130,6 +130,8 @@ details[open] summary{margin-bottom:6px}
 </head>
 <body>
 
+<button class="btn" onclick="showHelp()" style="position:fixed;top:10px;right:12px;z-index:50;font-weight:600">Instructions</button>
+
 <!-- HEADER -->
 <div class="header">
   <div class="header-row">
@@ -412,7 +414,7 @@ function redrawCanvas(){
   shapes.forEach(function(s,i){
     var hasOverlap=overlaps[i],col=hasOverlap?'#dd2222':COLORS[i%COLORS.length],isSel=i===selectedIdx,isHov=i===hoveredIdx;
     if(outW>0){ctx.strokeStyle=isSel?hexToRgba(col,1):outCol;ctx.lineWidth=isSel?outW+1:outW;}else{ctx.strokeStyle='transparent';ctx.lineWidth=0;}
-    ctx.fillStyle=hasOverlap?hexToRgba(col,isSel?0.3:0.2):hexToRgba(maskCol,maskOp/100);
+    ctx.fillStyle=hasOverlap?hexToRgba(col,isSel?0.3:0.2):((isHov&&hoverInt>0&&maskOp===0)?hexToRgba(hoverCol,0.08):hexToRgba(maskCol,maskOp/100));
     if(isHov&&hoverInt>0){ctx.shadowColor='rgba('+hRgb.r+','+hRgb.g+','+hRgb.b+',0.8)';ctx.shadowBlur=hoverInt;}else{ctx.shadowColor='transparent';ctx.shadowBlur=0;}
     if(s.shape==='rect'){var x1=toCvX(s.coords[0]),y1=toCvY(s.coords[1]),w=toCvX(s.coords[2])-x1,h=toCvY(s.coords[3])-y1;ctx.fillRect(x1,y1,w,h);ctx.strokeRect(x1,y1,w,h);}
     else if(s.shape==='circle'){var cx2=toCvX(s.coords[0]),cy2=toCvY(s.coords[1]),r2=s.coords[2]*canvas.width/(natW||canvas.width);ctx.beginPath();ctx.arc(cx2,cy2,r2,0,Math.PI*2);ctx.fill();ctx.stroke();}
@@ -494,7 +496,19 @@ function recalcHotspots(skipList){
   code+=' }\n    if (h.clipPath) div.style.cssText += h.clipPath;\n';
   if(outW>0)code+='    if (!h.circle && !h.clipPath) div.style.cssText += "'+outlineBorder+'";\n';
   if(outW>0){code+='    if (h.svgPts) {\n      var svg = document.createElementNS("http://www.w3.org/2000/svg","svg");\n      svg.setAttribute("viewBox","0 0 100 100");\n      svg.setAttribute("preserveAspectRatio","none");\n      svg.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;";\n      var poly = document.createElementNS("http://www.w3.org/2000/svg","polygon");\n      poly.setAttribute("points",h.svgPts);\n      poly.setAttribute("fill","none");\n      poly.setAttribute("stroke","rgba('+oRgb.r+','+oRgb.g+','+oRgb.b+',1)");\n      poly.setAttribute("stroke-width","'+outW+'");\n      poly.setAttribute("stroke-linejoin","round");\n      poly.setAttribute("vector-effect","non-scaling-stroke");\n      svg.appendChild(poly);\n      wrap.appendChild(svg);\n    }\n';}
-  if(labelsOn){code+='    if (h.label) {\n      var tip = document.createElement("span");\n      tip.textContent = h.label;\n      tip.style.cssText = "position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#fff;font-size:13px;line-height:1.3;padding:4px 10px;border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:10;";\n      wrap.appendChild(tip);\n';code+='      wrap.addEventListener("mouseenter", function() { tip.style.opacity = "1";';if(hoverInt>0)code+=' glow.style.filter = "'+hoverFilter+'";';code+=' });\n      wrap.addEventListener("mouseleave", function() { tip.style.opacity = "0"; glow.style.filter = "none";';code+=' });\n    }';if(hoverInt>0){code+=' else {\n      wrap.addEventListener("mouseenter", function() { glow.style.filter = "'+hoverFilter+'"; });\n      wrap.addEventListener("mouseleave", function() { glow.style.filter = "none"; });\n    }\n';}else code+='\n';}else{if(hoverInt>0)code+='    wrap.addEventListener("mouseenter", function() { glow.style.filter = "'+hoverFilter+'"; });\n    wrap.addEventListener("mouseleave", function() { glow.style.filter = "none"; });\n';}
+  var hoverBgSwap=(maskOp===0&&hoverInt>0)?' div.style.background = "rgba('+hRgb.r+','+hRgb.g+','+hRgb.b+',0.08)";':'';
+  var hoverBgRevert=(maskOp===0&&hoverInt>0)?' div.style.background = "'+maskBg+'";':'';
+  var hoverEnterCode=hoverInt>0?(' glow.style.filter = "'+hoverFilter+'";'+hoverBgSwap):'';
+  var hoverLeaveCode=' glow.style.filter = "none";'+hoverBgRevert;
+  if(labelsOn){
+    code+='    if (h.label) {\n      var tip = document.createElement("span");\n      tip.textContent = h.label;\n      tip.style.cssText = "position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#fff;font-size:13px;line-height:1.3;padding:4px 10px;border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:10;";\n      wrap.appendChild(tip);\n';
+    code+='      wrap.addEventListener("mouseenter", function() { tip.style.opacity = "1";'+hoverEnterCode+' });\n      wrap.addEventListener("mouseleave", function() { tip.style.opacity = "0";'+hoverLeaveCode+' });\n    }';
+    if(hoverInt>0){
+      code+=' else {\n      wrap.addEventListener("mouseenter", function() {'+hoverEnterCode+' });\n      wrap.addEventListener("mouseleave", function() {'+hoverLeaveCode+' });\n    }\n';
+    } else code+='\n';
+  } else {
+    if(hoverInt>0)code+='    wrap.addEventListener("mouseenter", function() {'+hoverEnterCode+' });\n    wrap.addEventListener("mouseleave", function() {'+hoverLeaveCode+' });\n';
+  }
   code+='    wrap.addEventListener("click", function() { window.harlowe.Engine.goToPassage(h.passage); });\n    glow.appendChild(div);\n    wrap.appendChild(glow);\n    container.appendChild(wrap);\n  });\n})();\n<\/script>';
 
   generatedCode=code;
@@ -621,6 +635,23 @@ function copyStoryJs(){
     var btn=document.getElementById('storyJsBtn');btn.textContent='Copied!';btn.classList.add('copied');
     setTimeout(function(){btn.textContent='Story JS';btn.classList.remove('copied');},1500);
   }).catch(function(){var ta=document.createElement('textarea');ta.value=STORY_JS;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);});
+}
+
+function showHelp(){
+  var overlay=document.createElement('div');overlay.className='modal-overlay';
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  var body='<div style="font-size:12px;line-height:1.55;color:#333">'
+    +'<p><strong>1. Load an image.</strong> Paste an image URL at the top and click <em>Load</em>.</p>'
+    +'<p><strong>2. Draw hotspots.</strong> Use the <em>Rect</em>, <em>Circle</em>, or <em>Polygon</em> tool to draw clickable regions over the image. For polygons, click to add points and double-click to close.</p>'
+    +'<p><strong>3. Manage hotspots in the list.</strong> Each hotspot you draw appears in the list below the image, numbered (1, 2, 3…) to match the number shown on the canvas. For each row: type the Twine <em>passage name</em> it should link to, optionally set a <em>label</em> (tooltip shown on hover), and use the trash icon to delete. Click a row to select the matching shape on the image; use the <em>Select</em> tool to drag or resize it.</p>'
+    +'<p><strong>4. Style the hotspots.</strong> Adjust <em>Mask</em> (color overlay), <em>Outline</em>, <em>Glow</em> (hover effect), and <em>Labels</em> under "Hotspot style". Hover glow works even with mask opacity at 0.</p>'
+    +'<p><strong>5. Write body text.</strong> Use the right-side rich-text editor. Pick an <em>Output layout</em> (text above/below/left/right of image) in the header.</p>'
+    +'<p><strong>6. Style the output.</strong> Use <em>Output style</em> to adjust background, fonts, frame, shadows, and spacing. Watch the live <em>Preview</em>.</p>'
+    +'<p><strong>7. Paste into Twine.</strong> Click <em>Copy HTML</em> and paste into a Twine passage (Harlowe format). If this is your first hotspot passage in the story, also click <em>Story JS</em> and paste into your story\'s JavaScript tab — this is only required once per story.</p>'
+    +'<p style="color:#888;font-size:11px;margin-top:10px">Tip: overlapping hotspots are flagged in red and must be resolved before copying.</p>'
+    +'</div>';
+  overlay.innerHTML='<div class="modal"><div class="modal-hdr"><h2>How to use the Twine Toolkit</h2><button class="modal-close" onclick="this.closest(\'.modal-overlay\').remove()">&times;</button></div>'+body+'</div>';
+  document.body.appendChild(overlay);
 }
 
 function showCodeModal(){
