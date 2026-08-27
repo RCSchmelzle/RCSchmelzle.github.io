@@ -210,6 +210,8 @@ const Count = (() => {
       cap:`Say we have <b>1011</b> in binary. That's one group of eight, one group of two, one group of one. So <b>1011</b> is&hellip;` },
     { base:2,  value:11,   active:5, frozen:true, allPlaces:true,
       cap:`Every binary place is just <b>0 or 1</b> &mdash; two symbols, nothing more. Same amount, same &ldquo;sum of pieces&rdquo; idea as decimal, with fewer symbols per place. That's all binary is.` },
+    { base:2,  value:10,   active:5, frozen:true, allPlaces:true, amount:'',
+      cap:`<b>Cheat sheet.</b> Places double: <b>16&nbsp;8&nbsp;4&nbsp;2&nbsp;1</b>.<br><b>Binary &rarr; decimal:</b> add the places that are switched on. <b>1010</b> &rarr; 8&nbsp;+&nbsp;2 = <b>10</b>.<br><b>Decimal &rarr; binary:</b> biggest place that fits, subtract, repeat. <b>10</b> &rarr; 8 (leaves 2) &rarr; 2 = <b>1010</b>.` },
   ];
 
   const S = () => STEPS[step];
