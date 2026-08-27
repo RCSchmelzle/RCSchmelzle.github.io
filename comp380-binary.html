@@ -183,6 +183,8 @@ const Count = (() => {
   const STEPS = [
     { base:10, value:0,    active:1, frozen:true,
       cap:`We use a number system called <b>decimal</b> every day.` },
+    { base:10, value:3,    active:1, frozen:true,
+      cap:`Every number has two sides: its <b>value</b> &mdash; the quantity, how many &mdash; and the <b>symbol</b> we write for it. Here the value is <i>three</i>; the symbol is <b>3</b>.` },
     { base:10, value:0,    active:1,
       cap:`In decimal, we build every number from ten symbols: the Arabic numerals <b>0</b>&ndash;<b>9</b>.` },
     { base:10, value:9,    active:1, stuck:true,
@@ -206,7 +208,7 @@ const Count = (() => {
     { base:2,  value:0,    active:1,
       cap:`It takes the rolling-over rule to the extreme: a place fills after just <b>one</b>. So this number comes straight from which wires are powered on.` },
     { base:2,  value:1,    active:2, circle:1, max:2,
-      cap:`Say we want to go to two. The ones place is already full, so it rolls back to zero and <b>carries the one</b> to the next place &mdash; the same nine-to-ten move, just far sooner.` },
+      cap:`Say we want to go to two. The ones place is already full, so it rolls back to zero and <b>carries the one</b> to the next place &mdash; the same nine-to-ten move, just far sooner. So it takes two wires &mdash; two <b>bits</b> &mdash; to represent the value two.` },
     { base:2,  value:2,    active:2, circle:1, frozen:true,
       cap:`In binary, the new place is the <b>twos</b> place. <b>10</b> is one group of two, none left over.` },
     { base:2,  value:3,    active:2, frozen:true,
