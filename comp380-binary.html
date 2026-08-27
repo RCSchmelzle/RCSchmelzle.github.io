@@ -212,6 +212,8 @@ const Count = (() => {
       cap:`Every binary place is just <b>0 or 1</b> &mdash; two symbols, nothing more. Same amount, same &ldquo;sum of pieces&rdquo; idea as decimal, with fewer symbols per place. That's all binary is.` },
     { base:2,  value:13,   active:5, frozen:true, allPlaces:true, amount:'',
       cap:`<b>Cheat sheet.</b> Places double: <b>16&nbsp;8&nbsp;4&nbsp;2&nbsp;1</b>.<br><b>Binary &rarr; decimal:</b> add the places that are switched on. <b>1101</b> &rarr; 8&nbsp;+&nbsp;4&nbsp;+&nbsp;1 = <b>13</b>.<br><b>Decimal &rarr; binary:</b> biggest place that fits, subtract, repeat. <b>13</b> &rarr; 8 (leaves 5) &rarr; 4 (leaves 1) &rarr; 1 = <b>1101</b>.` },
+    { base:2, value:0, active:3, frozen:true, hideBoard:true, amount:'011 + 010 = ?',
+      cap:`<b>Extra credit.</b> Addition works exactly like decimal &mdash; add each place and carry the one whenever a place overflows (in binary, that happens at <b>2</b>: <b>1 + 1 = 10</b>). Work it in columns.` },
   ];
 
   const S = () => STEPS[step];
@@ -281,6 +283,8 @@ const Count = (() => {
       if (labelled)
         pCells[i].textContent = Math.pow(base, i);
     }
+
+    board.style.display = S().hideBoard ? 'none' : '';
 
     if (S().amount != null){
       amountEl.textContent = S().amount;
