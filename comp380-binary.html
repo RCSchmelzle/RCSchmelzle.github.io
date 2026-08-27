@@ -208,14 +208,14 @@ const Count = (() => {
       cap:`When that place fills up too, it's just like going from 99 to 100 &mdash; carry over to a new place and roll the others back to zero. In binary, that's the fours place.` },
     { base:2,  value:15,   active:5,
       cap:`Each new place is worth <b>double</b> the one before: a ones place, a twos place, a fours place, an eights place. Switch them all on and you have <b>8 + 4 + 2 + 1 = 15</b>.` },
-    { base:2,  value:11,   active:5, frozen:true, allPlaces:true, amount:'?',
+    { base:2,  value:11,   active:5, frozen:true, amount:'?',
       cap:`Say we have <b>1011</b> in binary. That's one group of eight, one group of two, one group of one. So <b>1011</b> is&hellip;` },
-    { base:2,  value:11,   active:5, frozen:true, allPlaces:true,
-      cap:`&hellip; <b>8 + 2 + 1 = 11</b>. To read any binary number, just add the place values that are switched on.` },
-    { base:2,  value:11,   active:5, frozen:true, allPlaces:true,
+    { base:2,  value:11,   active:5, frozen:true,
+      cap:`&hellip; <b>8 + 2 + 1 = 11</b>. Just check which place values are switched on, and add them up.` },
+    { base:2,  value:11,   active:5, frozen:true,
       cap:`Every binary place is just <b>0 or 1</b> &mdash; two symbols, nothing more. Same amount, same &ldquo;sum of pieces&rdquo; idea as decimal, with fewer symbols per place. That's all binary is.` },
-    { base:2,  value:11,   active:5, frozen:true, allPlaces:true, amount:'Your turn',
-      cap:`Look at your notecard and write down what that binary number is in decimal.<br><b>Like before:</b> <b>1011</b> &rarr; add the places that are switched on &rarr; 8 + 2 + 1 = <b>11</b>.` },
+    { base:2, value:0, active:1, frozen:true, hideBoard:true, amount:'Your turn',
+      cap:`Look back at your notecard and write down what that binary number is in decimal.` },
     { base:2, value:0, active:3, frozen:true, hideBoard:true, amount:'011 + 010 = ?',
       cap:`<b>Extra credit.</b> Addition works exactly like decimal &mdash; add each place and carry the one whenever a place overflows (in binary, that happens at <b>2</b>: <b>1 + 1 = 10</b>). Work it in columns.` },
   ];
@@ -263,7 +263,7 @@ const Count = (() => {
     board.style.setProperty('--cols', DISPLAY);
     const d = digitsOf(value, base, N);
     const highest = highestUsed();
-    const labelUpto = S().allPlaces ? DISPLAY - 1 : Math.min(DISPLAY - 1, highest);   // label a place only once it's in use
+    const labelUpto = Math.min(DISPLAY - 1, highest);   // label a place only once it holds a digit
 
     for (let i = 0; i < N; i++){
       const show = i < DISPLAY;
