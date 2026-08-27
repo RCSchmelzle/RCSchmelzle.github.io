@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>An Introduction to Binary</title>
+<style>
+  :root{
+    --bg:#f6f6f3; --panel:#ffffff; --ink:#1c1e22; --ink-dim:#7a7f87;
+    --line:#e4e4de; --cell:#efefeb;
+    --hot:#2b6cb0; --spill:#c1121f;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0f1115; --panel:#171a1f; --ink:#e8e9ec; --ink-dim:#8b929c;
+      --line:#2a2e35; --cell:#1f232a;
+      --hot:#69a9e6; --spill:#ff6b6b;
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%}
+  body{
+    background:var(--bg);color:var(--ink);
+    font:16px/1.4 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    display:flex;flex-direction:column;align-items:center;
+    padding:clamp(16px,4vw,44px);gap:clamp(20px,4vh,32px);
+  }
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+
+  .page-title{
+    margin:0;text-align:center;font-size:clamp(20px,5vw,30px);font-weight:700;
+    letter-spacing:-.01em;color:var(--ink);
+  }
+
+  .view{display:none;flex-direction:column;align-items:center;gap:clamp(16px,3.5vh,26px);width:100%;max-width:620px}
+  .view.active{display:flex}
+
+  .headline{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+  .headline .amount{font-size:clamp(34px,9vw,58px);font-weight:650;font-variant-numeric:tabular-nums}
+  #c-amount{font-size:clamp(24px,6.5vw,40px);font-weight:650;line-height:1.15;max-width:16ch}
+  .headline .as{color:var(--ink-dim);font-size:clamp(13px,3.4vw,16px)}
+  .headline .as b{color:var(--ink)}
+
+  /* ---------- count board ---------- */
+  .board{
+    --cols:6;
+    --colw:clamp(30px,8vw,48px);
+    --gap:clamp(4px,1.6vw,12px);
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:16px clamp(12px,3vw,24px);width:100%;overflow-x:auto;
+  }
+  .ticker{display:flex;align-items:center;justify-content:center;gap:clamp(8px,2.4vw,16px)}
+  .wheels{
+    display:flex;flex-direction:column;gap:6px;
+    border-left:1px solid var(--line);padding-left:clamp(10px,2.8vw,18px);
+  }
+  .base-label{
+    flex:0 0 auto;font-size:clamp(11px,2.9vw,14px);font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim);
+  }
+  .stepper{flex:0 0 auto;display:flex;flex-direction:column;gap:6px}
+  .step-btn{
+    width:34px;height:34px;padding:0;border-radius:8px;cursor:pointer;
+    border:1px solid var(--line);background:var(--bg);color:var(--ink);
+    font:inherit;font-size:20px;font-weight:700;line-height:1;
+  }
+  .step-btn:hover:not(:disabled){border-color:var(--hot);color:var(--hot)}
+  .step-btn:active{transform:translateY(1px)}
+  .step-btn:disabled{opacity:.3;cursor:default}
+  .rowgrid{
+    display:grid;
+    grid-template-columns:repeat(var(--cols),var(--colw));
+    gap:var(--gap);
+    justify-content:center;
+  }
+  .digit{
+    text-align:center;font-size:clamp(20px,5.5vw,32px);font-weight:600;
+    font-variant-numeric:tabular-nums;
+  }
+  .digit.zero{color:color-mix(in srgb,var(--ink-dim) 55%,transparent)}
+  .digit.maxed{color:var(--spill)}
+  .place.ring{border-radius:9px;outline:2px solid var(--spill);outline-offset:3px;color:var(--spill)}
+  .digit.roll{animation:roll .22s ease-out both}
+  @keyframes roll{from{transform:translateY(-55%);opacity:.15}to{transform:translateY(0);opacity:1}}
+
+  .place{text-align:center;font-size:clamp(11px,2.8vw,14px);color:var(--ink-dim);font-variant-numeric:tabular-nums;min-height:1.2em}
+
+
+  .hidden{display:none!important}
+
+  .progress{display:flex;gap:5px;align-items:center}
+  .pdot{width:7px;height:7px;border-radius:4px;background:var(--line);cursor:pointer;transition:width .2s,background .2s}
+  .pdot.done{background:color-mix(in srgb,var(--hot) 40%,var(--line))}
+  .pdot.on{background:var(--hot);width:22px}
+
+  .deck-nav{
+    display:flex;align-items:stretch;gap:12px;width:100%;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;
+  }
+  .caption{
+    flex:1;display:flex;align-items:center;min-height:3.6em;
+  }
+  .caption > span{
+    text-align:left;font-size:clamp(13.5px,3.5vw,16px);line-height:1.5;color:var(--ink);
+  }
+  .caption b{font-weight:700}
+  .caption i{font-style:italic;color:var(--ink-dim)}
+  .caption .k{color:var(--spill);font-weight:700}
+
+  .arrow{
+    flex:0 0 auto;width:46px;border-radius:10px;border:1px solid var(--line);
+    background:var(--bg);color:var(--ink);font-size:24px;font-weight:700;line-height:1;cursor:pointer;
+  }
+  .arrow:hover:not(:disabled){border-color:var(--hot);color:var(--hot)}
+  .arrow:disabled{opacity:.3;cursor:default}
+  .arrow.nudge{animation:nudge 1.15s ease-in-out infinite}
+
+  .digit.stuck{color:var(--spill);animation:shake .34s ease}
+  @keyframes shake{10%,90%{transform:translateX(-2px)}30%,70%{transform:translateX(3px)}50%{transform:translateX(-3px)}}
+  @keyframes nudge{50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--hot) 34%,transparent)}}
+</style>
+</head>
+<body>
+
+  <h1 class="page-title">An Introduction to Binary</h1>
+
+  <!-- ================= guided walkthrough ================= -->
+  <section class="view active" id="view-count">
+    <div class="headline">
+      <div class="amount" id="c-amount">zero</div>
+    </div>
+
+    <div class="board" id="c-board">
+      <div class="ticker">
+        <span class="base-label" id="c-baselabel">decimal</span>
+        <div class="wheels">
+          <div class="rowgrid" id="c-digits"></div>
+          <div class="rowgrid" id="c-places"></div>
+        </div>
+        <div class="stepper">
+          <button class="step-btn" id="c-plus" aria-label="add one">+</button>
+          <button class="step-btn" id="c-minus" aria-label="subtract one">&minus;</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="deck-nav">
+      <button class="arrow" id="c-back" aria-label="previous step">&#8249;</button>
+      <div class="caption"><span id="c-caption"></span></div>
+      <button class="arrow" id="c-next" aria-label="next step">&#8250;</button>
+    </div>
+
+    <div class="progress" id="c-progress"></div>
+  </section>
+
+<script>
+"use strict";
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const digitAt = (v, b, i) => Math.floor(v / Math.pow(b, i)) % b;
+const digitsOf = (v, b, n) => Array.from({length:n}, (_, i) => digitAt(v, b, i));
+
+/* ============================================================ COUNT — guided walkthrough */
+const Count = (() => {
+  const N = 6;
+  let value = 0, base = 10, step = 0;
+
+  const $ = id => document.getElementById(id);
+  const amountEl = $('c-amount'),
+        captionEl = $('c-caption'), progressEl = $('c-progress'),
+        board = $('c-board'), placesRow = $('c-places'), baseLabelEl = $('c-baselabel'),
+        backBtn = $('c-back'), nextBtn = $('c-next'),
+        plusBtn = $('c-plus'), minusBtn = $('c-minus');
+
+  // All five places are on screen the whole time; unused ones sit as dim leading zeros.
+  // Place values (1, 10, 100 / 1, 2, 4, 8) show in grey under the places in play.
+  // active : how many places are "in play" this step (can change); the rest are frozen at 0.
+  // under  : 'range' swaps the place values for "0-N" (symbols-per-place); otherwise omit.
+  const DISPLAY = 5;
+  const STEPS = [
+    { base:10, value:0,    active:1, frozen:true,
+      cap:`We use a number system called <b>decimal</b> every day.` },
+    { base:10, value:0,    active:1,
+      cap:`In decimal, we build every number from ten symbols: the Arabic numerals <b>0</b>&ndash;<b>9</b>.` },
+    { base:10, value:9,    active:1, stuck:true,
+      cap:`In decimal, nine is the highest symbol there is &mdash; any more and we'd need new symbols. So for now, the ones place is full.` },
+    { base:10, value:9,    active:2, circle:1, min:9, max:10,
+      cap:`To represent higher numbers, we add another digit to the front &mdash; the tens place. The ones roll back to zero and the tens place pops up.` },
+    { base:10, value:10,   active:2, frozen:true,
+      cap:`One group of ten, none left over.` },
+    { base:10, value:null, active:3, max:99,
+      cap:`Keep counting. Any time a place passes its last symbol it falls to 0 and ticks the place on its left &mdash; that is all &ldquo;carrying&rdquo; is. The tens place just tallies tens: <b>20</b> is two sets of ten, <b>30</b> is three sets of ten.` },
+    { base:10, value:99,   active:3, circle:2, min:99, max:100,
+      cap:`And once we hit <b>99</b>, we roll over again &mdash; both places fall back to 0 and a hundreds place appears.` },
+    { base:2,  value:0,    active:1, frozen:true,
+      cap:`The same rule works with <i>any</i> alphabet of symbols. Nothing says a place must hold ten of them before it rolls over &mdash; the cut-off could be higher or lower.` },
+    { base:2,  value:0,    active:1,
+      cap:`Binary takes it to the extreme: a place rolls over after <b>one</b>. Just two states per place, <b>0</b> or <b>1</b> &mdash; in hardware, this number comes from whether a wire is powered on or off.` },
+    { base:2,  value:1,    active:2, circle:1, max:2,
+      cap:`Say we want to go to two. The ones place is already full, so it rolls back to zero and <b>carries the one</b> to the next place &mdash; the same nine-to-ten move, just far sooner.` },
+    { base:2,  value:2,    active:2, circle:1, frozen:true,
+      cap:`In binary, the new place is the <b>twos</b> place. <b>10</b> is one group of two, none left over.` },
+    { base:2,  value:3,    active:2, frozen:true,
+      cap:`And if we have one group of two and one group of one, that's three in binary.` },
+    { base:2,  value:3,    active:3, circle:2, min:3, max:4,
+      cap:`When that place fills up too, it's just like going from 99 to 100 &mdash; carry over to a new place and roll the others back to zero. In binary, that's the fours place.` },
+    { base:2,  value:15,   active:5,
+      cap:`Each new place is worth <b>double</b> the one before: a ones place, a twos place, a fours place, an eights place. Switch them all on and you have <b>8 + 4 + 2 + 1 = 15</b>.` },
+    { base:2,  value:11,   active:5, frozen:true, amount:'?',
+      cap:`Say we have <b>1011</b> in binary. That's one group of eight, one group of two, one group of one. So <b>1011</b> is&hellip;` },
+    { base:2,  value:11,   active:5, frozen:true, allPlaces:true,
+      cap:`Every binary place is just <b>0 or 1</b> &mdash; two symbols, nothing more. Same amount, same &ldquo;sum of pieces&rdquo; idea as decimal, with fewer symbols per place. That is binary.` },
+  ];
+
+  const S = () => STEPS[step];
+  const active = () => S().active;
+  const ceilingFor = a => Math.pow(base, a) - 1;
+  const lo = () => S().min ?? 0;
+  const hi = () => S().max ?? ceilingFor(active());
+  const frozen = () => S().frozen === true;
+
+  const pdots = STEPS.map((_, i) => {
+    const d = document.createElement('div'); d.className = 'pdot';
+    d.onclick = () => goto(i);
+    progressEl.appendChild(d);
+    return d;
+  });
+
+  const dCells = [], pCells = [];
+  {
+    const digitsRow = $('c-digits');
+    for (let i = N - 1; i >= 0; i--){
+      const d = document.createElement('div'); d.className = 'digit'; digitsRow.appendChild(d); dCells[i] = d;
+      const p = document.createElement('div'); p.className = 'place'; placesRow.appendChild(p); pCells[i] = p;
+    }
+  }
+
+  function highestUsed(){
+    const d = digitsOf(value, base, N); let h = 0;
+    for (let i = 0; i < N; i++) if (d[i]) h = i;
+    return h;
+  }
+
+  const ONES = ['zero','one','two','three','four','five','six','seven','eight','nine','ten',
+    'eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+  const TENS = ['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+  function toWords(n){
+    if (n < 20) return ONES[n];
+    if (n < 100) return TENS[(n / 10) | 0] + (n % 10 ? '-' + ONES[n % 10] : '');
+    const h = (n / 100) | 0, r = n % 100;
+    return ONES[h] + ' hundred' + (r ? ' ' + toWords(r) : '');
+  }
+
+  function render(animate){
+    board.style.setProperty('--cols', DISPLAY);
+    const d = digitsOf(value, base, N);
+    const highest = highestUsed();
+    const labelUpto = S().allPlaces ? DISPLAY - 1 : Math.min(DISPLAY - 1, highest);   // label a place only once it's in use
+
+    for (let i = 0; i < N; i++){
+      const show = i < DISPLAY;
+      const circled = i === S().circle;
+      const labelled = show && (i <= labelUpto || circled);
+      dCells[i].classList.toggle('hidden', !show);
+      pCells[i].classList.toggle('hidden', !show);
+      pCells[i].style.visibility = labelled ? '' : 'hidden';
+      pCells[i].classList.toggle('ring', show && circled);
+      const v = d[i], prev = dCells[i].textContent;
+      dCells[i].textContent = v;
+      dCells[i].classList.toggle('zero', v === 0 && i > highest);
+      dCells[i].classList.toggle('maxed', i === 0 && value >= hi() && S().stuck === true);
+      dCells[i].classList.remove('roll', 'stuck');
+      dCells[i].style.animationDelay = '';
+      if (show && animate && prev !== String(v)){
+        void dCells[i].offsetWidth;
+        dCells[i].style.animationDelay = (i * 0.05) + 's';   // ripple leftward with the carry
+        dCells[i].classList.add('roll');
+      }
+      if (labelled)
+        pCells[i].textContent = Math.pow(base, i);
+    }
+
+    if (S().amount != null){
+      amountEl.textContent = S().amount;
+    } else {
+      const w = toWords(value);
+      amountEl.textContent = w[0].toUpperCase() + w.slice(1);
+    }
+    baseLabelEl.textContent = base === 10 ? 'decimal' : base === 2 ? 'binary' : 'base ' + base;
+
+    captionEl.innerHTML = S().cap;
+    pdots.forEach((el, i) => { el.classList.toggle('on', i === step); el.classList.toggle('done', i < step); });
+    backBtn.disabled = step === 0;
+    nextBtn.disabled = step === STEPS.length - 1;
+    nextBtn.classList.toggle('nudge', !frozen() && value >= hi() && step < STEPS.length - 1);
+
+    plusBtn.disabled  = frozen() || (value >= hi() && !S().stuck);
+    minusBtn.disabled = frozen() || value <= lo() || S().stuck === true;
+  }
+
+  function stuckShake(){
+    const c = dCells[0];
+    c.classList.remove('stuck'); void c.offsetWidth; c.classList.add('stuck');
+  }
+
+  function increment(){
+    if (frozen()) return;
+    if (value >= hi()){ if (S().stuck === true) stuckShake(); return; }
+    value++; render(true);
+  }
+  function decrement(){ if (!frozen() && !S().stuck && value > lo()){ value--; render(true); } }
+
+  function goto(i){
+    step = Math.max(0, Math.min(STEPS.length - 1, i));
+    const st = S();
+    if (st.base) base = st.base;
+    if (st.value != null) value = st.value;
+    value = Math.max(lo(), Math.min(value, hi()));
+    render(false);
+  }
+
+  plusBtn.onclick  = increment;
+  minusBtn.onclick = decrement;
+  nextBtn.onclick = () => goto(step + 1);
+  backBtn.onclick = () => goto(step - 1);
+
+  document.addEventListener('keydown', e => {
+    if (!$('view-count').classList.contains('active')) return;
+    if (/^(INPUT|TEXTAREA)$/.test((e.target || {}).tagName)) return;
+    if (e.key === 'ArrowRight'){ goto(step + 1); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft'){ goto(step - 1); e.preventDefault(); }
+  });
+
+  goto(0);
+})();
+</script>
+</body>
+</html>
