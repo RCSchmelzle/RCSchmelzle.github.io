@@ -38,6 +38,9 @@
   .headline{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
   .headline .amount{font-size:clamp(34px,9vw,58px);font-weight:650;font-variant-numeric:tabular-nums}
   #c-amount{font-size:clamp(24px,6.5vw,40px);font-weight:650;line-height:1.15;max-width:16ch}
+  .colsum{display:inline-flex;flex-direction:column;align-items:flex-end;
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.8em;line-height:1.35;letter-spacing:.12em}
+  .colsum .ruled{border-bottom:.08em solid currentColor;padding-bottom:.06em}
   .headline .as{color:var(--ink-dim);font-size:clamp(13px,3.4vw,16px)}
   .headline .as b{color:var(--ink)}
 
@@ -216,8 +219,9 @@ const Count = (() => {
       cap:`Every binary place is just <b>0 or 1</b> &mdash; two symbols, nothing more. Same amount, same &ldquo;sum of pieces&rdquo; idea as decimal, with fewer symbols per place. That's all binary is.` },
     { base:2, value:0, active:1, frozen:true, hideBoard:true, amount:'Your turn',
       cap:`Look back at your notecard and write down what that binary number is in decimal.` },
-    { base:2, value:0, active:3, frozen:true, hideBoard:true, amount:'011 + 010 = ?',
-      cap:`<b>Extra credit.</b> Addition works exactly like decimal &mdash; add each place and carry the one whenever a place overflows (in binary, that happens at <b>2</b>: <b>1 + 1 = 10</b>). Work it in columns.` },
+    { base:2, value:0, active:3, frozen:true, hideBoard:true,
+      amount:`<span class="colsum"><span>&nbsp;&nbsp;0 1 1</span><span class="ruled">+ 0 1 0</span></span>`,
+      cap:`<b>Extra credit.</b> Addition works exactly like decimal &mdash; add each place, and carry the one when a place overflows.` },
   ];
 
   const S = () => STEPS[step];
@@ -291,7 +295,7 @@ const Count = (() => {
     board.style.display = S().hideBoard ? 'none' : '';
 
     if (S().amount != null){
-      amountEl.textContent = S().amount;
+      amountEl.innerHTML = S().amount;
     } else {
       const w = toWords(value);
       amountEl.textContent = w[0].toUpperCase() + w.slice(1);
