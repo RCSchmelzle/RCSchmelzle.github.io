@@ -214,6 +214,8 @@ const Count = (() => {
       cap:`&hellip; <b>8 + 2 + 1 = 11</b>. To read any binary number, just add the place values that are switched on.` },
     { base:2,  value:11,   active:5, frozen:true, allPlaces:true,
       cap:`Every binary place is just <b>0 or 1</b> &mdash; two symbols, nothing more. Same amount, same &ldquo;sum of pieces&rdquo; idea as decimal, with fewer symbols per place. That's all binary is.` },
+    { base:2,  value:11,   active:5, frozen:true, allPlaces:true, amount:'Your turn',
+      cap:`Look at your notecard and write down what that binary number is in decimal.<br><b>Like before:</b> <b>1011</b> &rarr; add the places that are switched on &rarr; 8 + 2 + 1 = <b>11</b>.` },
     { base:2, value:0, active:3, frozen:true, hideBoard:true, amount:'011 + 010 = ?',
       cap:`<b>Extra credit.</b> Addition works exactly like decimal &mdash; add each place and carry the one whenever a place overflows (in binary, that happens at <b>2</b>: <b>1 + 1 = 10</b>). Work it in columns.` },
   ];
