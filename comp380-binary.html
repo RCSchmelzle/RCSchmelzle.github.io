@@ -189,7 +189,7 @@ const Count = (() => {
     { base:10, value:10,   active:2, frozen:true,
       cap:`One group of ten, none left over.` },
     { base:10, value:null, active:3, max:99,
-      cap:`Keep counting. Any time a place passes its last symbol it falls to 0 and ticks the place on its left &mdash; that is all &ldquo;carrying&rdquo; is. The tens place just tallies tens: <b>20</b> is two sets of ten, <b>30</b> is three sets of ten.` },
+      cap:`Keep counting. Any time we pass a nine, that place rolls back to zero and carries a one to the left &mdash; that's all &ldquo;carrying&rdquo; is. The tens place just tallies tens: <b>20</b> is two sets of ten, <b>30</b> is three sets of ten.` },
     { base:10, value:99,   active:3, circle:2, min:99, max:100,
       cap:`And once we hit <b>99</b>, we roll over again &mdash; both places fall back to 0 and a hundreds place appears.` },
     { base:2,  value:0,    active:1, frozen:true,
