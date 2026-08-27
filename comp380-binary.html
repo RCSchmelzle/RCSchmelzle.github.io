@@ -339,6 +339,8 @@ const Count = (() => {
     if (/^(INPUT|TEXTAREA)$/.test((e.target || {}).tagName)) return;
     if (e.key === 'ArrowRight'){ goto(step + 1); e.preventDefault(); }
     else if (e.key === 'ArrowLeft'){ goto(step - 1); e.preventDefault(); }
+    else if (e.key === 'ArrowUp'){ increment(); e.preventDefault(); }
+    else if (e.key === 'ArrowDown'){ decrement(); e.preventDefault(); }
   });
 
   goto(0);
