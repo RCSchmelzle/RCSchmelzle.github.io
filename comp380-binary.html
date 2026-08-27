@@ -179,7 +179,7 @@ const Count = (() => {
   // Place values (1, 10, 100 / 1, 2, 4, 8) show in grey under the places in play.
   // active : how many places are "in play" this step (can change); the rest are frozen at 0.
   // under  : 'range' swaps the place values for "0-N" (symbols-per-place); otherwise omit.
-  const DISPLAY = 5;
+  const DISPLAY = 3;
   const STEPS = [
     { base:10, value:0,    active:1, frozen:true,
       cap:`We use a number system called <b>decimal</b> every day.` },
@@ -209,13 +209,13 @@ const Count = (() => {
       cap:`And if we have one group of two and one group of one, that's three in binary.` },
     { base:2,  value:3,    active:3, circle:2, min:3, max:4,
       cap:`When that place fills up too, it's just like going from 99 to 100 &mdash; carry over to a new place and roll the others back to zero. In binary, that's the fours place.` },
-    { base:2,  value:15,   active:5,
-      cap:`Each new place is worth <b>double</b> the one before: a ones place, a twos place, a fours place, an eights place. Switch them all on and you have <b>8 + 4 + 2 + 1 = 15</b>.` },
-    { base:2,  value:11,   active:5, frozen:true, amount:'?',
-      cap:`Say we have <b>1011</b> in binary. That's one group of eight, one group of two, one group of one. So <b>1011</b> is&hellip;` },
-    { base:2,  value:11,   active:5, frozen:true,
-      cap:`&hellip; <b>8 + 2 + 1 = 11</b>. Just check which place values are switched on, and add them up.` },
-    { base:2,  value:11,   active:5, frozen:true,
+    { base:2,  value:7,    active:3,
+      cap:`Each new place is worth <b>double</b> the one before: a ones place, a twos place, a fours place. Switch them all on and you have <b>4 + 2 + 1 = 7</b>.` },
+    { base:2,  value:5,    active:3, frozen:true, amount:'?',
+      cap:`Say we have <b>101</b> in binary. That's one group of four and one group of one. So <b>101</b> is&hellip;` },
+    { base:2,  value:5,    active:3, frozen:true,
+      cap:`&hellip; <b>4 + 1 = 5</b>. Just check which place values are switched on, and add them up.` },
+    { base:2,  value:5,    active:3, frozen:true,
       cap:`Every binary place is just <b>0 or 1</b> &mdash; two symbols, nothing more. Same amount, same &ldquo;sum of pieces&rdquo; idea as decimal, with fewer symbols per place. That's all binary is.` },
     { base:2, value:0, active:1, frozen:true, hideBoard:true, amount:'Your turn',
       cap:`Look back at your notecard and write down what that binary number is in decimal.` },
