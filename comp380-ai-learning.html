@@ -151,21 +151,22 @@
   .sn{display:none}
   [hidden]{display:none!important}
 
-  /* ---------- S1: nested scope boxes ---------- */
+  /* ---------- S1: nested scope boxes + one example per level ---------- */
   .nest{
-    border:2px solid var(--line);border-radius:14px;padding:20px;
+    border:2px solid var(--line);border-radius:14px;padding:18px;
     background:var(--panel);transition:border-color .18s,background .18s;
   }
   .nest .nlab{
-    display:inline-block;font-size:15px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
-    color:var(--ink-dim);margin-bottom:12px;cursor:pointer;border-radius:6px;padding:2px 5px;margin-left:-5px;
+    display:inline-block;font-size:14.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--ink-dim);margin-bottom:11px;cursor:pointer;border-radius:6px;padding:2px 5px;margin-left:-5px;
   }
   .nest .nlab:hover{background:var(--hot-soft);color:var(--hot)}
   .nest.on{border-color:var(--hot);background:var(--hot-soft)}
   .nest.on>.nlab{color:var(--hot)}
-  .nest{padding:20px}
-  .nest.n-llm{padding:24px 20px}
-  .nest.n-llm .nlab{margin:0}
+  .nest.n-llm{padding:13px;opacity:.5;border-style:dashed}
+  .nest.n-llm .nlab{margin:0;cursor:default}
+  .nest.n-llm .nlab:hover{background:none;color:var(--ink-dim)}
+  .nest.n-llm .later{font-size:12px;color:var(--ink-dim);margin-left:8px;white-space:nowrap}
   .deflist{display:flex;flex-direction:column;gap:11px}
   .spread{flex:1;justify-content:space-between}
   .mid-v{justify-content:center}
@@ -181,6 +182,69 @@
     border-radius:12px;padding:9px 14px;font-size:19px;font-weight:650;color:var(--hot);text-align:center;
   }
 
+  .cat-title{font-size:31px;font-weight:700;letter-spacing:-.015em;line-height:1.1}
+  .cat-def{font-size:18px;font-style:italic;color:var(--ink-dim);line-height:1.35;margin-top:3px}
+  .ex-line{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .ex-line .ex{font-size:21px;font-weight:650}
+  .ex-line .method{
+    font-size:13.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--hot);
+    background:var(--hot-soft);border-radius:999px;padding:4px 11px;
+  }
+  .demo-area{position:relative;min-height:0;display:flex;flex-direction:column;justify-content:center}
+  .dm{display:none;flex-direction:column;gap:11px}
+  .dm.on{display:flex}
+  .dm svg{width:100%;height:auto;display:block;overflow:visible}
+
+  .takeaway-q{
+    border-left:4px solid var(--hot);padding:5px 0 5px 14px;font-size:20px;font-weight:650;line-height:1.3;
+  }
+
+  /* AI: the hand-written procedure */
+  .proc{display:flex;align-items:center;gap:7px}
+  .pstep{
+    flex:1;border:1.5px solid var(--line);border-radius:10px;padding:7px 9px;text-align:center;
+    font-size:15px;font-weight:600;line-height:1.2;transition:border-color .18s,background .18s,color .18s;
+  }
+  .pstep.on{border-color:var(--hot);background:var(--hot-soft);color:var(--hot)}
+  .pstep.done{border-color:color-mix(in srgb,var(--hot) 45%,var(--line))}
+  .chess-wrap{display:flex;gap:18px;align-items:center}
+  .chess{
+    flex:0 0 auto;display:grid;grid-template-columns:repeat(5,38px);grid-template-rows:repeat(5,38px);
+    border:1px solid var(--line);border-radius:8px;overflow:hidden;
+  }
+  .sq{position:relative;display:grid;place-items:center;font-size:24px;line-height:1}
+  .sq.dark{background:color-mix(in srgb,var(--ink) 11%,var(--panel))}
+  .sq.light{background:color-mix(in srgb,var(--ink) 3%,var(--panel))}
+  .sq .pc{animation:pop .25s ease-out both}
+  .sq.cand::after{
+    content:"";position:absolute;inset:7px;border:2px dashed var(--hot);border-radius:50%;
+    animation:pop .22s ease-out both;
+  }
+  .sq .score{
+    position:absolute;bottom:1px;right:1px;font-size:11px;font-weight:700;color:var(--hot);
+    background:var(--panel);border-radius:4px;padding:0 3px;line-height:1.35;
+    font-variant-numeric:tabular-nums;animation:pop .22s ease-out both;
+  }
+  .sq.best{background:color-mix(in srgb,var(--hot) 26%,var(--panel))}
+  .sq.best .score{color:var(--ink)}
+  .chess-note{font-size:15.5px;line-height:1.45;color:var(--ink-dim)}
+  .chess-note b{color:var(--ink)}
+
+  /* ML: the two learned parameters */
+  .params{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .params .pf{font-size:18px;font-weight:600}
+  .pchip{
+    min-width:92px;text-align:center;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:17px;font-weight:700;
+    border:1.5px solid var(--line);border-radius:9px;padding:4px 10px;background:var(--panel);color:var(--ink-dim);
+    transition:border-color .2s,color .2s;
+  }
+  .pchip.set{border-color:var(--hot);color:var(--hot)}
+  .pnote{font-size:15px;color:var(--ink-dim);line-height:1.35}
+
+  /* DL: many weights at once */
+  .netfoot{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .wcount{font-size:16px;font-weight:650}
+  .wcount b{color:var(--hot);font-variant-numeric:tabular-nums}
   /* ---------- S2: rules toggle ---------- */
   .switch{display:flex;align-items:center;gap:11px;font-size:16px}
   .switch .sw{
@@ -339,42 +403,91 @@
 <section class="slide" data-demo="nest">
   <div class="s-head">
     <h2>What does it mean for AI to &ldquo;learn&rdquo;?</h2>
-    <p class="lead">AI &rarr; Machine Learning &rarr; Deep Learning &rarr; Large Language Models.
-      Today: what is actually happening under the hood? <i class="dim">Click each label.</i></p>
+    <p class="lead">Three nested ideas, one example each. <i class="dim">Click a layer on the left.</i></p>
   </div>
   <div class="body">
-    <div class="col mid-v" style="flex:0 0 470px">
+
+    <!-- ---------- left: the persistent hierarchy ---------- -->
+    <div class="col mid-v" style="flex:0 0 330px">
       <div class="nest n-ai" data-k="ai"><span class="nlab">Artificial Intelligence</span>
         <div class="nest n-ml" data-k="ml"><span class="nlab">Machine Learning</span>
           <div class="nest n-dl" data-k="dl"><span class="nlab">Deep Learning</span>
-            <div class="nest n-llm" data-k="llm"><span class="nlab">Large Language Models</span></div>
+            <div class="nest n-llm"><span class="nlab">Large Language Models</span><span class="later">slide 6</span></div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- ---------- right: only the selected category ---------- -->
     <div class="col grow">
-      <div class="deflist spread">
-        <div class="defrow" data-k="ai"><div class="t">AI</div>
-          <div class="d">Broad category of systems performing tasks associated with intelligent behavior.</div></div>
-        <div class="defrow" data-k="ml"><div class="t">Machine Learning</div>
-          <div class="d">Systems whose behavior is learned from data rather than entirely specified by hand.</div></div>
-        <div class="defrow" data-k="dl"><div class="t">Deep Learning</div>
-          <div class="d">Machine learning using multilayer neural networks.</div></div>
-        <div class="defrow" data-k="llm"><div class="t">Large Language Models</div>
-          <div class="d">Large neural networks trained to model and generate language.</div></div>
+      <div class="card grow" style="display:flex;flex-direction:column;gap:9px;min-height:0">
+        <div>
+          <div class="cat-title" id="s1-title"></div>
+          <div class="cat-def" id="s1-def"></div>
+        </div>
+        <div class="ex-line">
+          <span class="ex" id="s1-ex"></span>
+          <span class="method" id="s1-method"></span>
+          <span class="illus" id="s1-illus">Illustrative</span>
+        </div>
+
+        <div class="demo-area grow">
+          <!-- ····· AI: search over moves ····· -->
+          <div class="dm" data-d="ai">
+            <div class="proc" id="s1-proc">
+              <div class="pstep" data-i="1">Position</div><div class="ar">&rarr;</div>
+              <div class="pstep" data-i="2">Consider possible moves</div><div class="ar">&rarr;</div>
+              <div class="pstep" data-i="3">Evaluate each</div><div class="ar">&rarr;</div>
+              <div class="pstep" data-i="4">Choose the best</div>
+            </div>
+            <div class="chess-wrap">
+              <div class="chess" id="s1-board"></div>
+              <div class="chess-note" id="s1-cnote">A person wrote every step of this procedure, including the rule
+                that scores a position. Nothing here changes with experience.</div>
+            </div>
+          </div>
+
+          <!-- ····· ML: fit a line ····· -->
+          <div class="dm" data-d="ml">
+            <svg id="s1-scatter" viewBox="0 0 700 212" preserveAspectRatio="xMidYMid meet" aria-label="house size versus price scatterplot"></svg>
+            <div class="params">
+              <span class="pf">price &asymp;</span>
+              <span class="pchip" id="s1-slope">?</span>
+              <span class="pf">&times; size +</span>
+              <span class="pchip" id="s1-icpt">?</span>
+              <span class="pnote" id="s1-pnote">Two numbers. Training's whole job is to find them.</span>
+            </div>
+          </div>
+
+          <!-- ····· DL: a small network ····· -->
+          <div class="dm" data-d="dl">
+            <svg id="s1-net" viewBox="0 0 700 186" preserveAspectRatio="xMidYMid meet" aria-label="pixels feeding a four-layer neural network"></svg>
+            <div class="netfoot">
+              <span class="pnote" id="s1-nnote">Nobody writes a rule for &ldquo;cat.&rdquo; The weights are adjusted until the
+                answer comes out right.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="takeaway-q" id="s1-take"></div>
       </div>
     </div>
   </div>
   <div class="foot">
-    <div class="punch grow" id="s1-punch" hidden>ChatGPT is AI &mdash; but AI does not mean ChatGPT.</div>
+    <button class="btn primary" id="s1-act">Step through it</button>
     <button class="btn ghost" data-reset>Reset</button>
   </div>
   <div class="sn">
     <p class="say">&ldquo;AI is the broadest term. Machine learning is one way we build AI. Deep learning is one
-      approach to machine learning, and LLMs are one major application of deep learning. So ChatGPT is AI,
-      but AI does not mean ChatGPT.&rdquo;</p>
-    <p class="beat">Beat: click the four boxes outside-in while you talk, then land on the punch line.</p>
-    <p class="beat">Transition &rarr; &ldquo;The important difference starts with how we tell a computer what to do.&rdquo;</p>
+      approach to machine learning. So ChatGPT is AI, but AI does not mean ChatGPT.&rdquo;</p>
+    <p class="beat"><b>Chess</b> &mdash; step it through: a person specified the procedure <i>and</i> the rule that scores a
+      position. This is AI with no learning in it at all. Worth saying out loud: for decades, this was most of AI.</p>
+    <p class="beat"><b>House prices</b> &mdash; hit LEARN. The line is not drawn by hand; it is the line that best fits
+      these points. Call out the two parameters as they appear: that is what &ldquo;learned&rdquo; means here.</p>
+    <p class="beat"><b>Image recognition</b> &mdash; same idea, vastly more of it. Point at the weight count, then say a
+      frontier model has billions. Stop there: <i>what</i> those layers end up representing is slide 2's job.</p>
+    <p class="beat">Ramp into slide 2: we specify the procedure &rarr; learn a couple of parameters &rarr; learn enormous
+      numbers of interconnected ones.</p>
   </div>
 </section>
 
@@ -976,28 +1089,263 @@ document.addEventListener('keydown', e => {
   else if (/^[1-8]$/.test(k)){ goto(+k - 1); e.preventDefault(); }
 });
 
-/* ============================================================ 1 — nested scopes */
+/* ============================================================ 1 — one example per level */
 demos.nest = (() => {
   const s = slides[0];
-  const boxes = qsa('.nest', s), rows = qsa('.defrow', s), punch = $('s1-punch');
-  const seen = new Set();
-  boxes.forEach(b => {
-    const hit = e => {
-      e.stopPropagation();                 // an inner box must not also trigger the ones around it
-      const k = b.dataset.k;
-      seen.add(k);
-      b.classList.add('on');
-      rows.forEach(r => { if (r.dataset.k === k) r.classList.add('on'); });
-      punch.hidden = seen.size < boxes.length;
+  const boxes = qsa('.nest[data-k]', s), dms = qsa('.dm', s);
+  const titleEl = $('s1-title'), defEl = $('s1-def'), exEl = $('s1-ex'),
+        methodEl = $('s1-method'), takeEl = $('s1-take'), actBtn = $('s1-act'), illusEl = $('s1-illus');
+
+  const CAT = {
+    ai: { title:'Artificial Intelligence',
+          def:'Computer systems designed to perform tasks associated with intelligent behavior.',
+          ex:'♟️ Chess', method:'Search / algorithm', act:'Step through it', illus:'Illustrative scores',
+          take:'AI does not necessarily learn from data.' },
+    ml: { title:'Machine Learning',
+          def:'AI that learns patterns or parameters from data.',
+          ex:'\u{1F3E0} Predicting house prices', method:'Linear regression', act:'Learn', illus:'Illustrative data',
+          take:'The model learns the line’s parameters from data.' },
+    dl: { title:'Deep Learning',
+          def:'Machine learning using neural networks with many layers.',
+          ex:'\u{1F431} Image recognition', method:'Deep neural network', act:'Show learning', illus:'Illustrative network',
+          take:'Training adjusts many weights and allows useful internal representations to emerge.' }
+  };
+
+  /* ---------------- AI: search with a hand-written evaluation ---------------- */
+  const Chess = (() => {
+    const board = $('s1-board'), steps = qsa('.pstep', s), note = $('s1-cnote');
+    const KNIGHT = { r:2, c:1 };
+    // legal knight moves from (2,1) on a 5x5 board, with illustrative scores
+    const MOVES = [ { r:0, c:2, v:'+1.8' }, { r:1, c:3, v:'−0.4' }, { r:4, c:2, v:'+0.6' } ];
+    const BEST = 0;
+    let cells = [], step = 0;
+
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++){
+      const d = document.createElement('div');
+      d.className = 'sq ' + ((r + c) % 2 ? 'dark' : 'light');
+      board.appendChild(d); cells.push(d);
+    }
+    const at = (r, c) => cells[r * 5 + c];
+
+    function render(){
+      cells.forEach(c => { c.className = c.className.replace(/ (cand|best)\b/g, ''); c.innerHTML = ''; });
+      const here = step >= 4 ? MOVES[BEST] : KNIGHT;
+      at(here.r, here.c).innerHTML = '<span class="pc">♞</span>';
+      if (step >= 2) MOVES.forEach((m, i) => {
+        const cell = at(m.r, m.c);
+        if (!(step >= 4 && i === BEST)) cell.className += ' cand';
+        if (step >= 4 && i === BEST) cell.className += ' best';
+        if (step >= 3) cell.innerHTML += '<span class="score">' + m.v + '</span>';
+      });
+      steps.forEach(el => {
+        const i = +el.dataset.i;
+        el.classList.toggle('on', i === step);
+        el.classList.toggle('done', i < step);
+      });
+      note.innerHTML = step < 3
+        ? 'A person wrote every step of this procedure, including the rule that scores a position.'
+        : step === 3
+          ? 'Those scores come from an evaluation rule <b>a human wrote</b> — material, position, king safety.'
+          : 'It picked <b>+1.8</b>. Play a million games and the procedure is still exactly the same: '
+            + '<b>nothing here changes with experience.</b>';
+      actBtn.textContent = step >= 4 ? 'Run it again' : step === 0 ? 'Step through it' : 'Next step →';
+    }
+    return {
+      act(){ step = step >= 4 ? 1 : step + 1; render(); },
+      reset(){ step = 0; render(); }
     };
+  })();
+
+  /* ---------------- ML: least squares, actually computed ---------------- */
+  const Reg = (() => {
+    const svg = $('s1-scatter'), slopeEl = $('s1-slope'), icptEl = $('s1-icpt'), noteEl = $('s1-pnote');
+    // illustrative data: size in sq ft, price in $k
+    const D = [[950,205],[1100,232],[1250,268],[1320,252],[1450,300],[1600,296],[1700,340],[1850,352],
+               [1950,380],[2100,372],[2250,420],[2400,438],[2600,452],[2850,505],[3050,528]];
+    const X0 = 800, X1 = 3200, Y0 = 150, Y1 = 580;          // data ranges
+    const L = 62, R = 690, T = 12, B = 168;                  // plot box in viewBox units
+    const px = x => L + (x - X0) / (X1 - X0) * (R - L);
+    const py = y => B - (y - Y0) / (Y1 - Y0) * (B - T);
+
+    // ordinary least squares
+    const n = D.length, sx = D.reduce((a, d) => a + d[0], 0), sy = D.reduce((a, d) => a + d[1], 0);
+    const sxy = D.reduce((a, d) => a + d[0] * d[1], 0), sxx = D.reduce((a, d) => a + d[0] * d[0], 0);
+    const M = (n * sxy - sx * sy) / (n * sxx - sx * sx), Bc = (sy - M * sx) / n;
+
+    const el = (t, at) => { const e = document.createElementNS('http://www.w3.org/2000/svg', t);
+      for (const k in at) e.setAttribute(k, at[k]); return e; };
+    let line = null, resid = null, timers = [];
+
+    function frame(){
+      svg.innerHTML = '';
+      svg.appendChild(el('line', { x1:L, y1:B, x2:R, y2:B, stroke:'var(--line)', 'stroke-width':1.5 }));
+      svg.appendChild(el('line', { x1:L, y1:T, x2:L, y2:B, stroke:'var(--line)', 'stroke-width':1.5 }));
+      const lab = (x, y, txt, anchor, size) => { const t = el('text', { x, y, fill:'var(--ink-dim)',
+        'font-size':size || 13, 'text-anchor':anchor || 'start', 'font-family':'inherit' }); t.textContent = txt; return t; };
+      svg.appendChild(lab((L + R) / 2, B + 40, 'house size (sq ft)', 'middle'));
+      const yl = lab(0, 0, 'price ($k)', 'middle');
+      yl.setAttribute('transform', 'translate(16,' + ((T + B) / 2) + ') rotate(-90)');
+      svg.appendChild(yl);
+      [1000, 2000, 3000].forEach(v => svg.appendChild(lab(px(v), B + 19, v.toLocaleString(), 'middle', 12)));
+      [200, 400, 600].forEach(v => svg.appendChild(lab(L - 8, py(v) + 4, '$' + v, 'end', 12)));
+      resid = el('g', { opacity:0 }); svg.appendChild(resid);
+      line = el('line', { x1:px(X0), y1:py(Bc + M * X0), x2:px(X1), y2:py(Bc + M * X1),
+        stroke:'var(--hot)', 'stroke-width':3, 'stroke-linecap':'round', opacity:0 });
+      svg.appendChild(line);
+      D.forEach(([x, y]) => svg.appendChild(el('circle', { cx:px(x), cy:py(y), r:5.5,
+        fill:'var(--panel)', stroke:'var(--ink-dim)', 'stroke-width':2 })));
+    }
+    function setLine(m, b, opacity){
+      line.setAttribute('opacity', opacity);
+      line.setAttribute('x1', px(X0)); line.setAttribute('y1', py(b + m * X0));
+      line.setAttribute('x2', px(X1)); line.setAttribute('y2', py(b + m * X1));
+    }
+    function stop(){ timers.forEach(clearTimeout); timers = []; }
+    function clear(){
+      stop(); frame();
+      slopeEl.textContent = '?'; icptEl.textContent = '?';
+      slopeEl.classList.remove('set'); icptEl.classList.remove('set');
+      noteEl.innerHTML = 'Two numbers. Training’s whole job is to find them.';
+      actBtn.textContent = 'Learn';
+    }
+    function learn(){
+      clear(); actBtn.textContent = 'Fitting…'; actBtn.disabled = true;
+      // a few wrong guesses first, so "fitting" reads as a search, not a formula
+      const guesses = [[M * 0.45, Bc + 120], [M * 1.55, Bc - 95], [M * 0.8, Bc + 40]];
+      guesses.forEach((g, i) => timers.push(setTimeout(() => setLine(g[0], g[1], 0.35), 230 * (i + 1))));
+      timers.push(setTimeout(() => {
+        setLine(M, Bc, 1);
+        D.forEach(([x, y]) => resid.appendChild(el('line', { x1:px(x), y1:py(y), x2:px(x), y2:py(Bc + M * x),
+          stroke:'var(--ink-dim)', 'stroke-width':1.5, 'stroke-dasharray':'2 3' })));
+        resid.setAttribute('opacity', 0.55);
+        slopeEl.textContent = '$' + Math.round(M * 1000) + '/sq ft'; slopeEl.classList.add('set');
+        icptEl.textContent = '$' + Math.round(Bc) + 'k'; icptEl.classList.add('set');
+        noteEl.innerHTML = 'The line nobody drew: the one that leaves the <b>smallest total gap</b> to the data.';
+        actBtn.textContent = 'Run it again'; actBtn.disabled = false;
+      }, 230 * 4));
+    }
+    frame();
+    return { act: learn, reset: clear, leave: stop };
+  })();
+
+  /* ---------------- DL: many weights, and features nobody specified ---------------- */
+  const Net = (() => {
+    const svg = $('s1-net'), noteEl = $('s1-nnote');
+    const CAT_PX = ['100001','111111','101101','111111','011110','010010'];
+    const LAYERS = [[10, 250], [6, 390], [5, 520]], OUT = ['CAT', 'DOG', 'BIRD'];
+    const OUTX = 648, TOP = 16, BOT = 150;
+    const el = (t, at) => { const e = document.createElementNS('http://www.w3.org/2000/svg', t);
+      for (const k in at) e.setAttribute(k, at[k]); return e; };
+    const ys = (k) => Array.from({length:k}, (_, i) => k === 1 ? (TOP + BOT) / 2
+      : TOP + i * (BOT - TOP) / (k - 1));
+    let edges = [], outNodes = [], labels = [], timers = [], round = 0;
+    const WEIGHTS = 16 * LAYERS[0][0] + LAYERS[0][0] * LAYERS[1][0] + LAYERS[1][0] * LAYERS[2][0]
+      + LAYERS[2][0] * OUT.length;
+
+    function build(){
+      svg.innerHTML = ''; edges = []; outNodes = []; labels = [];
+      // the input image
+      const gx = 14, gy = 40, cell = 13;
+      CAT_PX.forEach((row, r) => row.split('').forEach((v, c) => {
+        svg.appendChild(el('rect', { x:gx + c * cell, y:gy + r * cell, width:cell - 1.5, height:cell - 1.5, rx:2,
+          fill: v === '1' ? 'var(--ink)' : 'color-mix(in srgb,var(--ink) 9%,var(--panel))' }));
+      }));
+      const capt = el('text', { x:gx + 3 * cell, y:gy + 6 * cell + 18, fill:'var(--ink-dim)', 'font-size':13,
+        'text-anchor':'middle', 'font-family':'inherit' });
+      capt.textContent = 'cat pixels'; svg.appendChild(capt);
+
+      const cols = LAYERS.map(([k, x]) => ys(k).map(y => ({ x, y })));
+      const outs = ys(OUT.length).map(y => ({ x:OUTX, y }));
+      // pixels -> first layer (drawn from the image block, not every pixel, to stay legible)
+      const src = { x:gx + 6 * cell + 6, y:gy + 3 * cell };
+      cols[0].forEach(n => edges.push(svg.appendChild(el('line', { x1:src.x, y1:src.y, x2:n.x, y2:n.y,
+        stroke:'var(--ink-dim)', 'stroke-width':1, opacity:.3 }))));
+      for (let i = 0; i < cols.length - 1; i++) cols[i].forEach(a => cols[i + 1].forEach(b =>
+        edges.push(svg.appendChild(el('line', { x1:a.x, y1:a.y, x2:b.x, y2:b.y,
+          stroke:'var(--ink-dim)', 'stroke-width':1, opacity:.3 })))));
+      cols[cols.length - 1].forEach(a => outs.forEach(b =>
+        edges.push(svg.appendChild(el('line', { x1:a.x, y1:a.y, x2:b.x, y2:b.y,
+          stroke:'var(--ink-dim)', 'stroke-width':1, opacity:.3 })))));
+      cols.flat().forEach(n => svg.appendChild(el('circle', { cx:n.x, cy:n.y, r:6,
+        fill:'var(--panel)', stroke:'var(--ink-dim)', 'stroke-width':2 })));
+      outs.forEach((n, i) => {
+        const g = el('g', {});
+        const t = el('text', { x:n.x, y:n.y + 5, fill:'var(--ink-dim)', 'font-size':15, 'font-weight':700,
+          'font-family':'inherit' });
+        t.textContent = OUT[i]; g.appendChild(t); svg.appendChild(g); outNodes.push(t);
+      });
+      // what those middle layers end up representing is slide 2's story, not this one's
+      [['many layers of weights', (LAYERS[0][1] + LAYERS[2][1]) / 2]].forEach(([txt, x]) => {
+        const t = el('text', { x, y:BOT + 26, fill:'var(--hot)', 'font-size':12.5, 'text-anchor':'middle',
+          'font-family':'inherit', opacity:0 });
+        t.textContent = txt; svg.appendChild(t); labels.push(t);
+      });
+    }
+    function stop(){ timers.forEach(clearTimeout); timers = []; }
+    function clear(){
+      stop(); round = 0; build();
+      noteEl.innerHTML = 'Nobody writes a rule for &ldquo;cat.&rdquo; The weights are adjusted until the answer comes out right.';
+      actBtn.textContent = 'Show learning'; actBtn.disabled = false;
+    }
+    function tick(){
+      // each pass nudges a random subset: what "adjusting the weights" looks like from outside
+      edges.forEach(e => {
+        const w = Math.random();
+        e.setAttribute('stroke-width', (0.6 + w * 2.6).toFixed(2));
+        e.setAttribute('opacity', (0.18 + w * 0.7).toFixed(2));
+        e.setAttribute('stroke', w > 0.62 ? 'var(--hot)' : 'var(--ink-dim)');
+      });
+      round++;
+      if (round < 7) timers.push(setTimeout(tick, 270));
+      else {
+        labels.forEach(t => t.setAttribute('opacity', 1));
+        outNodes[0].setAttribute('fill', 'var(--hot)');
+        outNodes[0].setAttribute('font-size', 19);
+        noteEl.innerHTML = '<b>' + WEIGHTS.toLocaleString() + ' weights</b> in this toy network, all nudged together. '
+          + 'A frontier model has <b>billions</b>.';
+        actBtn.textContent = 'Run it again'; actBtn.disabled = false;
+      }
+    }
+    build();
+    return {
+      act(){ stop(); round = 0; build(); actBtn.disabled = true; actBtn.textContent = 'Training…'; tick(); },
+      reset: clear, leave: stop
+    };
+  })();
+
+  const SUB = { ai:Chess, ml:Reg, dl:Net };
+  let cur = 'ai';
+
+  function show(k){
+    if (SUB[cur] && SUB[cur].leave) SUB[cur].leave();
+    cur = k;
+    const c = CAT[k];
+    boxes.forEach(b => b.classList.toggle('on', b.dataset.k === k));
+    dms.forEach(d => d.classList.toggle('on', d.dataset.d === k));
+    titleEl.textContent = c.title;
+    defEl.textContent = c.def;
+    exEl.textContent = c.ex;
+    methodEl.textContent = c.method;
+    takeEl.textContent = c.take;
+    illusEl.textContent = c.illus;
+    actBtn.disabled = false;
+    SUB[k].reset();
+  }
+  boxes.forEach(b => {
+    const hit = e => { e.stopPropagation(); show(b.dataset.k); };   // inner boxes must not trigger the outer ones
     qs('.nlab', b).onclick = hit;
     b.onclick = hit;
   });
-  return { reset(){
-    seen.clear(); punch.hidden = true;
-    boxes.forEach(b => b.classList.remove('on'));
-    rows.forEach(r => r.classList.remove('on'));
-  }};
+  actBtn.onclick = () => SUB[cur].act();
+
+  show('ai');
+  return {
+    reset(){ show('ai'); },
+    leave(){                                   // never leave the action button stuck mid-animation
+      Object.values(SUB).forEach(d => d.leave && d.leave());
+      SUB[cur].reset();
+    }
+  };
 })();
 
 /* ============================================================ 2 — who writes the rules */
