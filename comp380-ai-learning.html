@@ -1,0 +1,1380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Does It Mean for AI to Learn?</title>
+<style>
+  :root{
+    --bg:#f6f6f3; --panel:#ffffff; --sunk:#efefeb; --ink:#1c1e22; --ink-dim:#6f757e;
+    --line:#e0e0da; --hot:#2b6cb0; --hot-soft:#e8f0f9;
+    --spill:#c1121f; --good:#1f7a4d; --flag:#8a5a00; --flag-soft:#fbf1dc;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#0f1115; --panel:#171a1f; --sunk:#1f232a; --ink:#e8e9ec; --ink-dim:#939aa4;
+      --line:#2a2e35; --hot:#69a9e6; --hot-soft:#16293b;
+      --spill:#ff6b6b; --good:#56c48d; --flag:#e3b25f; --flag-soft:#2a2314;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f1115; --panel:#171a1f; --sunk:#1f232a; --ink:#e8e9ec; --ink-dim:#939aa4;
+    --line:#2a2e35; --hot:#69a9e6; --hot-soft:#16293b;
+    --spill:#ff6b6b; --good:#56c48d; --flag:#e3b25f; --flag-soft:#2a2314;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    background:var(--bg);color:var(--ink);overflow:hidden;
+    font:16px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+  b{font-weight:700}
+
+  /* ---------- deck shell: a fixed 1280x720 stage scaled to fit any projector ---------- */
+  .deck{height:100%;display:flex;flex-direction:column}
+  .stage-wrap{flex:1;min-height:0;position:relative;overflow:hidden}
+  /* the stage is centred by transform, not by the layout: grid/flex centring clamps to
+     start once the item is taller than its box, which clipped the slide when the
+     speaker-notes drawer opened. */
+  .stage{
+    position:absolute;top:50%;left:50%;width:1280px;height:720px;
+    transform-origin:center center;transform:translate(-50%,-50%);
+  }
+
+  .slide{
+    position:absolute;inset:0;display:none;flex-direction:column;gap:16px;
+    padding:38px 52px 30px;background:var(--bg);
+  }
+  .slide.active{display:flex}
+  .s-head{display:flex;flex-direction:column;gap:5px;flex:0 0 auto}
+  .s-head h2{margin:0;font-size:37px;line-height:1.1;letter-spacing:-.015em;font-weight:700}
+  .lead{margin:0;font-size:20px;color:var(--ink-dim);line-height:1.35}
+  .body{flex:1;min-height:0;display:flex;gap:24px;align-items:stretch}
+  .col{display:flex;flex-direction:column;gap:12px;min-width:0}
+  .grow{flex:1}
+  .foot{flex:0 0 auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+  .card.sunk{background:var(--sunk)}
+  .card h3{margin:0 0 10px;font-size:14px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-dim)}
+  .stack{display:flex;flex-direction:column;gap:9px}
+  .center{align-items:center;text-align:center}
+
+  /* vocabulary: bold term + plain-English gloss */
+  .vocab{font-size:17px;line-height:1.4}
+  .vocab b{color:var(--ink)}
+  .vocab span{color:var(--ink-dim)}
+  .defn-strip{border-left:3px solid var(--hot);padding:2px 0 2px 12px;font-size:17px;line-height:1.4}
+  .big-line{font-size:26px;font-weight:650;line-height:1.2;letter-spacing:-.01em}
+  .p{font-size:18px;line-height:1.45;margin:0}
+  .dim{color:var(--ink-dim)}
+  .hot{color:var(--hot)}
+
+  /* "illustrative, not a measurement" flag */
+  .illus{
+    display:inline-flex;align-items:center;gap:6px;background:var(--flag-soft);color:var(--flag);
+    border:1px solid color-mix(in srgb,var(--flag) 35%,transparent);border-radius:999px;
+    padding:3px 10px;font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  }
+
+  /* buttons */
+  .btn{
+    font:inherit;font-size:16px;font-weight:650;cursor:pointer;border-radius:10px;
+    border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:9px 15px;
+  }
+  .btn:hover:not(:disabled){border-color:var(--hot);color:var(--hot)}
+  .btn:active:not(:disabled){transform:translateY(1px)}
+  .btn:disabled{opacity:.38;cursor:default}
+  .btn.primary{background:var(--hot);border-color:var(--hot);color:#fff}
+  .btn.primary:hover:not(:disabled){filter:brightness(1.08);color:#fff}
+  .btn.ghost{font-size:14.5px;padding:7px 12px;font-weight:600;color:var(--ink-dim)}
+  .btn.ghost:hover{color:var(--hot)}
+  .btn.pulse{animation:pulse 1.3s ease-in-out infinite}
+  @keyframes pulse{50%{box-shadow:0 0 0 5px color-mix(in srgb,var(--hot) 30%,transparent)}}
+
+  /* flow diagrams */
+  .flow{display:flex;flex-direction:column;align-items:stretch;gap:4px}
+  .node{
+    border:1.5px solid var(--line);background:var(--panel);border-radius:11px;
+    padding:9px 12px;text-align:center;font-size:16.5px;font-weight:600;line-height:1.25;
+    transition:border-color .18s,background .18s,color .18s,box-shadow .18s;
+  }
+  .node small{display:block;font-size:13.5px;font-weight:500;color:var(--ink-dim);margin-top:2px}
+  .node.on{border-color:var(--hot);background:var(--hot-soft);color:var(--hot);box-shadow:0 0 0 3px color-mix(in srgb,var(--hot) 16%,transparent)}
+  .node.dim{opacity:.4}
+  .node.tight{padding:6px 10px;font-size:15px}
+  .ar{text-align:center;font-size:17px;line-height:1;color:var(--ink-dim)}
+  .ar.loop{color:var(--hot);font-weight:700}
+  .row-flow{display:flex;align-items:center;gap:8px}
+  .row-flow .node{flex:1}
+  .row-flow .ar{flex:0 0 auto;font-size:19px}
+
+  /* go-deeper + speaker notes disclosure */
+  details.gd{border-top:1px dashed var(--line);padding-top:8px;position:relative}
+  details.gd>summary{
+    cursor:pointer;font-size:14.5px;font-weight:650;color:var(--ink-dim);list-style:none;
+    display:flex;align-items:center;gap:7px;
+  }
+  details.gd>summary::-webkit-details-marker{display:none}
+  details.gd>summary::before{content:"▸";color:var(--hot);font-size:13px}
+  details.gd[open]>summary::before{content:"▾"}
+  details.gd>summary:hover{color:var(--hot)}
+  details.gd .gd-body{
+    position:absolute;bottom:calc(100% + 6px);left:0;right:0;z-index:6;
+    background:var(--panel);border:1px solid var(--hot);border-radius:13px;padding:14px 16px;
+    font-size:15.5px;line-height:1.5;color:var(--ink-dim);box-shadow:0 14px 38px rgba(0,0,0,.16);
+  }
+  details.gd .gd-body b{color:var(--ink)}
+
+  /* ---------- chrome ---------- */
+  .chrome{
+    flex:0 0 auto;display:flex;align-items:center;gap:12px;
+    padding:9px clamp(12px,2vw,22px);border-top:1px solid var(--line);background:var(--panel);
+  }
+  .chrome .nav{width:40px;height:34px;padding:0;font-size:21px;line-height:1}
+  .dots{display:flex;gap:5px;align-items:center}
+  .pdot{width:8px;height:8px;border-radius:5px;background:var(--line);cursor:pointer;border:0;padding:0;transition:width .2s,background .2s}
+  .pdot.done{background:color-mix(in srgb,var(--hot) 42%,var(--line))}
+  .pdot.on{background:var(--hot);width:24px}
+  .counter{font-size:13.5px;color:var(--ink-dim);font-variant-numeric:tabular-nums;min-width:44px}
+  .deck-name{font-size:13.5px;color:var(--ink-dim);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .notes{
+    flex:0 0 auto;max-height:34vh;overflow:auto;border-top:1px solid var(--line);
+    background:var(--sunk);padding:14px clamp(14px,2.4vw,26px) 18px;
+  }
+  .notes h4{margin:0 0 8px;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim)}
+  .notes .sn-body{font-size:15.5px;line-height:1.55;max-width:105ch}
+  .notes .sn-body p{margin:0 0 8px}
+  .notes .sn-body .say{border-left:3px solid var(--hot);padding-left:11px}
+  .notes .sn-body .beat{color:var(--ink-dim);font-style:italic}
+  .sn{display:none}
+  [hidden]{display:none!important}
+
+  /* ---------- S1: nested scope boxes ---------- */
+  .nest{
+    border:2px solid var(--line);border-radius:14px;padding:20px;
+    background:var(--panel);transition:border-color .18s,background .18s;
+  }
+  .nest .nlab{
+    display:inline-block;font-size:15px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--ink-dim);margin-bottom:12px;cursor:pointer;border-radius:6px;padding:2px 5px;margin-left:-5px;
+  }
+  .nest .nlab:hover{background:var(--hot-soft);color:var(--hot)}
+  .nest.on{border-color:var(--hot);background:var(--hot-soft)}
+  .nest.on>.nlab{color:var(--hot)}
+  .nest{padding:20px}
+  .nest.n-llm{padding:24px 20px}
+  .nest.n-llm .nlab{margin:0}
+  .deflist{display:flex;flex-direction:column;gap:11px}
+  .spread{flex:1;justify-content:space-between}
+  .mid-v{justify-content:center}
+  .defrow{
+    border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:var(--panel);
+    opacity:.34;transition:opacity .22s,border-color .22s;
+  }
+  .defrow.on{opacity:1;border-color:var(--hot)}
+  .defrow .t{font-size:17px;font-weight:700}
+  .defrow .d{font-size:15.5px;line-height:1.4;color:var(--ink-dim);margin-top:2px}
+  .punch{
+    background:var(--hot-soft);border:1px solid color-mix(in srgb,var(--hot) 40%,transparent);
+    border-radius:12px;padding:9px 14px;font-size:19px;font-weight:650;color:var(--hot);text-align:center;
+  }
+
+  /* ---------- S2: rules toggle ---------- */
+  .switch{display:flex;align-items:center;gap:11px;font-size:16px}
+  .switch .sw{
+    width:78px;height:34px;border-radius:999px;border:1px solid var(--line);background:var(--sunk);
+    position:relative;cursor:pointer;flex:0 0 auto;padding:0;
+  }
+  .switch .sw i{
+    position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;
+    background:var(--hot);transition:left .2s ease;
+  }
+  .switch .sw.right i{left:47px}
+  .switch .lab{color:var(--ink-dim);font-weight:600;transition:color .18s;cursor:pointer}
+  .switch .lab:hover{color:var(--hot)}
+  .switch .lab.on{color:var(--hot)}
+  .pipe-title{font-size:15px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);text-align:center;margin-bottom:8px}
+  .pipe.dimmed{opacity:.42}
+  .pipe{transition:opacity .22s}
+
+  /* ---------- S3: training loop ---------- */
+  .loop-stage{display:flex;align-items:center;gap:11px}
+  .loop-stage .num{
+    flex:0 0 auto;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--line);
+    display:grid;place-items:center;font-size:14.5px;font-weight:700;color:var(--ink-dim);
+  }
+  .loop-stage.on .num{border-color:var(--hot);background:var(--hot);color:#fff}
+  .loop-stage .node{flex:1;text-align:left}
+  .lossbar{display:flex;align-items:baseline;gap:9px;font-variant-numeric:tabular-nums}
+  .lossbar .v{font-size:30px;font-weight:700;color:var(--hot);transition:color .2s}
+  .lossbar .k{font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim)}
+  .sparks{display:flex;align-items:flex-end;gap:4px;height:46px}
+  .sparks i{width:11px;background:color-mix(in srgb,var(--hot) 45%,transparent);border-radius:3px 3px 0 0;transition:height .3s}
+
+  /* ---------- S4: train / evaluate / inference ---------- */
+  .stations{display:flex;align-items:stretch;gap:9px}
+  .station{
+    flex:1;border:1.5px solid var(--line);border-radius:13px;background:var(--panel);padding:11px 12px;
+    display:flex;flex-direction:column;gap:5px;transition:border-color .18s,background .18s;
+  }
+  .station.on{border-color:var(--hot);background:var(--hot-soft)}
+  .station .icon{font-size:24px;line-height:1}
+  .station .name{font-size:16.5px;font-weight:700;letter-spacing:.03em}
+  .station .sub{font-size:14px;color:var(--ink-dim);line-height:1.35}
+  .beasts{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+  .beast{
+    width:60px;height:60px;border-radius:12px;border:1.5px solid var(--line);background:var(--sunk);
+    display:grid;place-items:center;font-size:30px;position:relative;
+  }
+  .beast .tag{position:absolute;bottom:-9px;font-size:11px;font-weight:700;background:var(--panel);
+    border:1px solid var(--line);border-radius:6px;padding:0 4px;color:var(--ink-dim)}
+  .beast.held{border-style:dashed;border-color:var(--hot);color:var(--hot)}
+  .beast.reveal{animation:pop .3s ease-out}
+  @keyframes pop{from{transform:scale(.72);opacity:0}to{transform:scale(1);opacity:1}}
+  .verdict{font-size:18px;line-height:1.4}
+  .verdict b.ok{color:var(--good)}
+
+  /* ---------- S5: CPU vs GPU ---------- */
+  .chip{display:flex;flex-direction:column;gap:11px;flex:1;justify-content:center}
+  .chip .hdr{display:flex;align-items:baseline;gap:9px}
+  .chip .hdr .nm{font-size:19px;font-weight:700}
+  .chip .hdr .ct{font-size:14px;color:var(--ink-dim);font-variant-numeric:tabular-nums}
+  .ops{display:grid;grid-template-columns:repeat(10,22px);gap:4px;justify-content:center;align-self:center}
+  .ops i{aspect-ratio:1;border-radius:3px;background:var(--sunk);border:1px solid var(--line);transition:background .12s,border-color .12s}
+  .ops i.on{background:var(--hot);border-color:var(--hot)}
+  .ops i.busy{background:color-mix(in srgb,var(--hot) 45%,transparent);border-color:var(--hot)}
+  .ticks{font-size:15px;color:var(--ink-dim);font-variant-numeric:tabular-nums;text-align:center}
+  .ticks b{color:var(--ink);font-size:17px}
+
+  /* ---------- S6: tokens + next token ---------- */
+  .txtin{
+    width:100%;font:inherit;font-size:18px;padding:10px 12px;border-radius:11px;
+    border:1.5px solid var(--line);background:var(--panel);color:var(--ink);
+  }
+  .txtin:focus{outline:none;border-color:var(--hot)}
+  .tokrow{display:flex;flex-wrap:wrap;gap:6px;min-height:58px;align-content:flex-start}
+  .tok{
+    border:1.5px solid var(--hot);background:var(--hot-soft);border-radius:8px;padding:4px 7px 3px;
+    display:flex;flex-direction:column;align-items:center;gap:1px;animation:pop .22s ease-out both;
+  }
+  .tok .t{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;font-weight:600;white-space:pre;color:var(--ink)}
+  .tok .id{font-size:11.5px;color:var(--ink-dim);font-variant-numeric:tabular-nums}
+  .cand{display:flex;flex-direction:column;gap:6px}
+  .cand button{
+    display:flex;align-items:center;gap:10px;width:100%;text-align:left;cursor:pointer;
+    border:1.5px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 10px;font:inherit;color:var(--ink);
+  }
+  .cand button:hover{border-color:var(--hot)}
+  .cand .w{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:16px;font-weight:650;min-width:84px}
+  .cand .bar{flex:1;height:10px;border-radius:6px;background:var(--sunk);overflow:hidden}
+  .cand .bar i{display:block;height:100%;background:var(--hot);border-radius:6px}
+  .cand .pct{font-size:14.5px;color:var(--ink-dim);font-variant-numeric:tabular-nums;min-width:48px;text-align:right}
+  .sent{font-size:19px;line-height:1.4}
+  .sent .blank{color:var(--hot);font-weight:700}
+  .sent .new{color:var(--hot);font-weight:700;animation:pop .25s ease-out}
+
+  /* ---------- S7: chat + context ---------- */
+  .chat{display:flex;flex-direction:column;gap:7px}
+  .bub{max-width:88%;border-radius:13px;padding:8px 12px;font-size:16.5px;line-height:1.35}
+  .bub.you{align-self:flex-end;background:var(--hot);color:#fff;border-bottom-right-radius:5px}
+  .bub.bot{align-self:flex-start;background:var(--sunk);border:1px solid var(--line);border-bottom-left-radius:5px}
+  .bub.faded{opacity:.3}
+  .hood{border:1.5px dashed var(--hot);border-radius:12px;padding:10px 12px;background:var(--panel)}
+  .hood .hl{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--hot);font-weight:700;margin-bottom:5px}
+  .hood .ln{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14.5px;line-height:1.42;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hood .ln.sys{color:var(--ink-dim)}
+  .hood .ln.faded{opacity:.3}
+  .hood .ln.dropped{opacity:.32;text-decoration:line-through;text-decoration-color:var(--spill)}
+  .hood .ln.hot{color:var(--spill)}
+  .meterwrap{display:flex;flex-direction:column;gap:5px}
+  .meter{height:16px;border-radius:9px;background:var(--sunk);border:1px solid var(--line);overflow:hidden}
+  .meter i{display:block;height:100%;width:0;background:var(--hot);transition:width .35s ease,background .35s}
+  .meter.full i{background:var(--spill)}
+  .meter-lab{display:flex;justify-content:space-between;font-size:13.5px;color:var(--ink-dim);font-variant-numeric:tabular-nums}
+  .reasons{display:flex;flex-direction:column;gap:5px}
+  .reason{
+    font-size:14.5px;line-height:1.3;border:1px solid var(--spill);border-radius:10px;padding:4px 10px;
+    background:var(--panel);animation:pop .22s ease-out both;
+  }
+  .caveat{font-size:14.5px;line-height:1.45;color:var(--ink-dim);border-left:3px solid var(--flag);padding-left:11px}
+
+  /* ---------- S8: synthesis ---------- */
+  .synth{display:flex;gap:16px;align-items:stretch;flex:1;min-height:0}
+  .synth .side{flex:1;display:flex;flex-direction:column;min-width:0}
+  .synth .mid{flex:0 0 296px;display:flex;flex-direction:column;justify-content:center;gap:9px}
+  .synth .mid .btn{padding:7px 12px;font-size:15px}
+  .synth .mid #s8-ans{min-height:3.4em}
+  .side-hdr{font-size:13.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);text-align:center;margin-bottom:7px}
+  .node.mini{padding:5px 9px;font-size:14.5px;border-radius:9px}
+  .glow{outline:3px solid var(--hot);outline-offset:3px;border-radius:11px}
+  .overlay{
+    position:absolute;inset:0;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 84%,transparent);
+    backdrop-filter:blur(2px);z-index:5;
+  }
+  .overlay .sheet{
+    width:760px;max-width:88%;background:var(--panel);border:1px solid var(--line);border-radius:18px;
+    padding:26px 30px;display:flex;flex-direction:column;gap:14px;box-shadow:0 18px 50px rgba(0,0,0,.14);
+  }
+  .takeaway{font-size:22px;line-height:1.35;display:flex;gap:11px;opacity:.2;transition:opacity .3s}
+  .takeaway.on{opacity:1}
+  .takeaway .n{color:var(--hot);font-weight:700;flex:0 0 auto}
+  .recap-banner{
+    position:absolute;left:52px;right:52px;bottom:22px;z-index:4;
+    background:var(--hot);color:#fff;border-radius:13px;padding:12px 18px;
+    display:flex;align-items:center;gap:14px;box-shadow:0 10px 30px rgba(0,0,0,.16);
+  }
+  .recap-banner .step{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.85;flex:0 0 auto}
+  .recap-banner .txt{font-size:19px;font-weight:600;line-height:1.3;flex:1}
+  .recap-banner .btn{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.45);color:#fff}
+</style>
+</head>
+<body>
+
+<div class="deck">
+<div class="stage-wrap"><div class="stage" id="stage">
+
+<!-- ================================================== 1 ================================================== -->
+<section class="slide" data-demo="nest">
+  <div class="s-head">
+    <h2>What does it mean for AI to &ldquo;learn&rdquo;?</h2>
+    <p class="lead">AI &rarr; Machine Learning &rarr; Deep Learning &rarr; Large Language Models.
+      Today: what is actually happening under the hood? <i class="dim">Click each label.</i></p>
+  </div>
+  <div class="body">
+    <div class="col mid-v" style="flex:0 0 470px">
+      <div class="nest n-ai" data-k="ai"><span class="nlab">Artificial Intelligence</span>
+        <div class="nest n-ml" data-k="ml"><span class="nlab">Machine Learning</span>
+          <div class="nest n-dl" data-k="dl"><span class="nlab">Deep Learning</span>
+            <div class="nest n-llm" data-k="llm"><span class="nlab">Large Language Models</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col grow">
+      <div class="deflist spread">
+        <div class="defrow" data-k="ai"><div class="t">AI</div>
+          <div class="d">Broad category of systems performing tasks associated with intelligent behavior.</div></div>
+        <div class="defrow" data-k="ml"><div class="t">Machine Learning</div>
+          <div class="d">Systems whose behavior is learned from data rather than entirely specified by hand.</div></div>
+        <div class="defrow" data-k="dl"><div class="t">Deep Learning</div>
+          <div class="d">Machine learning using multilayer neural networks.</div></div>
+        <div class="defrow" data-k="llm"><div class="t">Large Language Models</div>
+          <div class="d">Large neural networks trained to model and generate language.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">
+    <div class="punch grow" id="s1-punch" hidden>ChatGPT is AI &mdash; but AI does not mean ChatGPT.</div>
+    <button class="btn ghost" data-reset>Reset</button>
+  </div>
+  <div class="sn">
+    <p class="say">&ldquo;AI is the broadest term. Machine learning is one way we build AI. Deep learning is one
+      approach to machine learning, and LLMs are one major application of deep learning. So ChatGPT is AI,
+      but AI does not mean ChatGPT.&rdquo;</p>
+    <p class="beat">Beat: click the four boxes outside-in while you talk, then land on the punch line.</p>
+    <p class="beat">Transition &rarr; &ldquo;The important difference starts with how we tell a computer what to do.&rdquo;</p>
+  </div>
+</section>
+
+<!-- ================================================== 2 ================================================== -->
+<section class="slide" data-demo="rules">
+  <div class="s-head">
+    <h2>Programming vs. learning</h2>
+    <p class="lead">Same goal &mdash; get the right answer. Completely different place the &ldquo;rules&rdquo; come from.</p>
+  </div>
+  <div class="foot">
+    <div class="switch">
+      <span style="font-weight:700">Who writes the rules?</span>
+      <span class="lab on" id="s2-l">A human, by hand</span>
+      <button class="sw" id="s2-sw" aria-label="toggle who writes the rules"><i></i></button>
+      <span class="lab" id="s2-r">Learned from data</span>
+    </div>
+  </div>
+  <div class="body">
+    <div class="col grow pipe" id="s2-pipeL">
+      <div class="card grow" style="display:flex;flex-direction:column;justify-content:center">
+        <div class="pipe-title">Traditional programming</div>
+        <div class="flow">
+          <div class="node">Data <small>+ human-written rules</small></div>
+          <div class="ar">&darr;</div>
+          <div class="node" id="s2-rules">The program <small>a procedure someone specified</small></div>
+          <div class="ar">&darr;</div>
+          <div class="node">Answer</div>
+        </div>
+      </div>
+    </div>
+    <div class="col grow pipe" id="s2-pipeR">
+      <div class="card grow" style="display:flex;flex-direction:column;justify-content:center">
+        <div class="pipe-title">Machine learning</div>
+        <div class="flow">
+          <div class="node">Examples <small>+ an objective to do well on</small></div>
+          <div class="ar">&darr;</div>
+          <div class="node">Training</div>
+          <div class="ar">&darr;</div>
+          <div class="node" id="s2-params">Learned parameters <small>numbers nobody typed in by hand</small></div>
+          <div class="ar">&darr;</div>
+          <div class="node">Predictions on new input</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot" style="gap:20px">
+    <div class="vocab" style="flex:0 0 400px"><b>Parameter</b> <span>(or <b>weight</b>): an adjustable number
+      inside a model that affects its output.</span></div>
+    <div class="defn-strip big-line grow">Learning = changing parameters based on data.</div>
+  </div>
+  <details class="gd">
+    <summary>Go deeper</summary>
+    <div class="gd-body">The line is blurrier than the diagram suggests. Real systems are hybrids: engineers still
+      write the surrounding program, choose the model's <b>architecture</b>, pick the objective, and clean the data &mdash;
+      all human decisions. What's learned is the parameter values. A modern LLM has <b>billions</b> of them; no one
+      inspects them individually, which is why we describe these models by how they behave rather than by reading their code.</div>
+  </details>
+  <div class="sn">
+    <p class="say">&ldquo;In ordinary programming, a programmer explicitly specifies much of the procedure. In machine
+      learning, we instead have adjustable parameters. Training finds parameter values that make the model perform
+      well on examples.&rdquo;</p>
+    <p class="beat">Emphasize: <b>Learning = changing parameters based on data.</b> That one sentence carries the
+      whole first half of the deck.</p>
+    <p class="beat">Flip the toggle so the class sees the two things being swapped: hand-written rules &harr; learned parameters.</p>
+  </div>
+</section>
+
+<!-- ================================================== 3 ================================================== -->
+<section class="slide" data-demo="loop">
+  <div class="s-head">
+    <h2>How does a neural network learn?</h2>
+    <p class="lead">One training step, five stages &mdash; then do it again. And again. <i class="dim">No calculus required today.</i></p>
+  </div>
+  <div class="body">
+    <div class="col" style="flex:0 0 470px">
+      <div class="flow spread" id="s3-stages">
+        <div class="loop-stage" data-i="1"><div class="num">1</div><div class="node">Input <small>a training example goes in</small></div></div>
+        <div class="ar">&darr;</div>
+        <div class="loop-stage" data-i="2"><div class="num">2</div><div class="node">Prediction <small>the forward pass</small></div></div>
+        <div class="ar">&darr;</div>
+        <div class="loop-stage" data-i="3"><div class="num">3</div><div class="node">Loss <small>&ldquo;how wrong was I?&rdquo;</small></div></div>
+        <div class="ar">&darr;</div>
+        <div class="loop-stage" data-i="4"><div class="num">4</div><div class="node">Backpropagation <small>&ldquo;what contributed to the error?&rdquo;</small></div></div>
+        <div class="ar">&darr;</div>
+        <div class="loop-stage" data-i="5"><div class="num">5</div><div class="node">Update parameters <small>the optimizer nudges the numbers</small></div></div>
+        <div class="ar loop" id="s3-loopar" style="visibility:hidden">&#8635;&nbsp; and repeat, across lots of examples</div>
+      </div>
+    </div>
+    <div class="col grow">
+      <div class="card sunk" style="display:flex;align-items:center;gap:18px">
+        <div class="lossbar"><span class="v" id="s3-loss">&mdash;</span><span class="k">loss</span></div>
+        <div class="sparks" id="s3-sparks"></div>
+        <div class="grow" style="text-align:right"><span class="illus">Illustrative numbers</span></div>
+      </div>
+      <div class="deflist spread">
+        <div class="defrow" data-i="2"><div class="t">Forward pass</div>
+          <div class="d">Data moves through the network to produce a prediction.</div></div>
+        <div class="defrow" data-i="3"><div class="t">Loss</div>
+          <div class="d">A numerical measure of how poorly the prediction matches the training objective.</div></div>
+        <div class="defrow" data-i="4"><div class="t">Backpropagation</div>
+          <div class="d">Calculates how changes to parameters would affect the loss.</div></div>
+        <div class="defrow" data-i="5"><div class="t">Gradient descent</div>
+          <div class="d">An optimizer uses that information to adjust the parameters toward lower loss.
+            Backprop says <i>how</i> they should change; the optimizer actually changes them.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">
+    <button class="btn primary" id="s3-run">Run one training step</button>
+    <button class="btn ghost" data-reset>Reset</button>
+    <details class="gd grow" style="border:0;padding:0">
+      <summary>Go deeper</summary>
+      <div class="gd-body">Backpropagation is the chain rule applied through the layers: it yields a <b>gradient</b> &mdash;
+        for every parameter, the direction and steepness of change in the loss. The optimizer (SGD, Adam, &hellip;) takes a
+        small step against that gradient, scaled by the <b>learning rate</b>. Real training does this on <b>mini-batches</b>
+        of examples rather than one at a time, for billions of steps.</div>
+    </details>
+  </div>
+  <div class="sn">
+    <p class="say">&ldquo;Here's the technical heart of learning. The model makes a prediction. We calculate a loss &mdash;
+      a number representing how wrong it was. Backpropagation works backward through the network to calculate how the
+      parameters affected that loss. An optimization algorithm such as gradient descent then adjusts them.&rdquo;</p>
+    <p class="say">&ldquo;You don't need the calculus today. The important idea is that backprop tells us how the
+      parameters should change; optimization actually changes them.&rdquo;</p>
+    <p class="beat">Click through one full cycle slowly, then a few fast so they see the loss number falling.
+      The falling bars are the whole point of &ldquo;training.&rdquo;</p>
+  </div>
+</section>
+
+<!-- ================================================== 4 ================================================== -->
+<section class="slide" data-demo="split">
+  <div class="s-head">
+    <h2>Training &ne; testing &ne; using</h2>
+    <p class="lead">Three different moments in a model's life. Only one of them changes the parameters.</p>
+  </div>
+  <div class="body">
+    <div class="col grow">
+      <div class="stations" id="s4-stations">
+        <div class="station" data-st="train"><div class="icon">&#127947;</div><div class="name">Train</div>
+          <div class="sub">Show it examples. <b>Parameters change.</b></div></div>
+        <div class="ar" style="align-self:center;font-size:22px">&rarr;</div>
+        <div class="station" data-st="eval"><div class="icon">&#128221;</div><div class="name">Evaluate</div>
+          <div class="sub">How well does it do on <b>held-out</b> examples it never trained on?</div></div>
+        <div class="ar" style="align-self:center;font-size:22px">&rarr;</div>
+        <div class="station" data-st="infer"><div class="icon">&#128640;</div><div class="name">Inference</div>
+          <div class="sub">Use the trained model on new input. Parameters sit still.</div></div>
+      </div>
+
+      <div class="card grow" style="display:flex;gap:22px;align-items:center">
+        <div class="col" style="flex:0 0 330px;gap:9px">
+          <h3 style="margin:0">Training examples</h3>
+          <div class="beasts" id="s4-train"></div>
+        </div>
+        <div class="col" style="flex:0 0 150px;gap:9px">
+          <h3 style="margin:0">Held out</h3>
+          <div class="beasts"><div class="beast held" id="s4-held">?</div></div>
+        </div>
+        <div class="col grow" style="gap:13px;justify-content:center">
+          <div class="verdict" id="s4-verdict">A tiny classifier: five labeled examples in, one new animal kept back.</div>
+          <div id="s4-qwrap" hidden>
+            <div class="big-line" style="font-size:22px">Why not just test it on the examples it trained on?</div>
+            <div class="vocab" id="s4-a" style="margin-top:9px;font-size:18px" hidden>Because memorizing training
+              examples <b>&ne;</b> generalizing to new ones.</div>
+          </div>
+          <div class="vocab" id="s4-of" style="font-size:17px" hidden><b>Overfitting:</b> <span>performing well on
+            training data but poorly on new data.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot" style="gap:16px">
+    <button class="btn primary" id="s4-go">Train on the five examples</button>
+    <button class="btn ghost" data-reset>Reset</button>
+  </div>
+  <details class="gd">
+    <summary>Go deeper</summary>
+    <div class="gd-body">In practice the data is split three ways: a <b>training</b> set that moves the parameters, a
+      <b>validation</b> set for tuning choices like learning rate or when to stop, and a <b>test</b> set touched once,
+      at the end. Reusing test data to make decisions quietly turns it into training data &mdash; one reason published
+      benchmark scores drift upward. <b>Benchmark contamination</b> is the same problem at web scale: if the test
+      questions appeared in the training data, the score measures recall, not generalization.</div>
+  </details>
+  <div class="sn">
+    <p class="say">&ldquo;This distinction matters whenever someone tells you an AI achieved 95 percent accuracy.
+      Our next question should be: 95 percent <i>on what?</i> Training performance doesn't necessarily tell us how it
+      handles the real world.&rdquo;</p>
+    <p class="beat">Ask the &ldquo;why not test on training examples?&rdquo; question out loud and let them answer
+      before you click the reveal.</p>
+  </div>
+</section>
+
+<!-- ================================================== 5 ================================================== -->
+<section class="slide" data-demo="chips">
+  <div class="s-head">
+    <h2>Why GPUs matter</h2>
+    <p class="lead">A neural network's work is an enormous pile of simple numerical operations &mdash;
+      and most of them don't have to wait in line.</p>
+  </div>
+  <div class="body">
+    <div class="card" style="flex:1;display:flex;flex-direction:column;gap:11px">
+      <div class="chip">
+        <div class="hdr"><span class="nm">CPU</span><span class="ct" id="s5-cpuct">0 / 100 done</span></div>
+        <div class="ops" id="s5-cpu"></div>
+        <div class="ticks">A few at a time. <b id="s5-cput">0</b> <span class="dim">conceptual ticks</span></div>
+        <div class="vocab dim" style="font-size:15px">Optimized for flexible, general-purpose computation.</div>
+      </div>
+    </div>
+    <div class="card" style="flex:1;display:flex;flex-direction:column;gap:11px">
+      <div class="chip">
+        <div class="hdr"><span class="nm">GPU</span><span class="ct" id="s5-gpuct">0 / 100 done</span></div>
+        <div class="ops" id="s5-gpu"></div>
+        <div class="ticks">Many at once. <b id="s5-gput">0</b> <span class="dim">conceptual ticks</span></div>
+        <div class="vocab dim" style="font-size:15px">Can perform huge numbers of certain numerical operations in parallel.</div>
+      </div>
+    </div>
+    <div class="col" style="flex:0 0 268px">
+      <div class="card grow" style="display:flex;flex-direction:column;justify-content:center">
+        <div class="flow">
+          <div class="node tight">Neural networks</div>
+          <div class="ar">&darr;</div>
+          <div class="node tight">Lots of matrix / numerical operations</div>
+          <div class="ar">&darr;</div>
+          <div class="node tight">Many can happen in parallel</div>
+          <div class="ar">&darr;</div>
+          <div class="node tight on">GPUs are extremely useful</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot" style="gap:14px">
+    <button class="btn primary" id="s5-run">Process 100 operations</button>
+    <button class="btn ghost" data-reset>Reset</button>
+    <span class="illus">Conceptual illustration &mdash; not a benchmark</span>
+    <div class="defn-strip big-line grow" style="font-size:22px">Modern AI = algorithms + data + compute + scale</div>
+  </div>
+  <details class="gd">
+    <summary>Go deeper</summary>
+    <div class="gd-body">The operation underneath almost all of it is <b>matrix multiplication</b>: every output number is a
+      weighted sum, and none of them depends on the others, so thousands can be computed simultaneously. A CPU has a
+      handful of fast, flexible cores; a GPU has thousands of simpler ones plus very high memory bandwidth to keep them fed.
+      Training runs split work across many GPUs at once, which is why frontier training is discussed in GPU-hours and
+      megawatts rather than lines of code.</div>
+  </details>
+  <div class="sn">
+    <p class="say">&ldquo;This is one reason modern AI is tied so closely to computing infrastructure. Training large
+      neural networks requires staggering amounts of computation. GPUs are particularly useful because neural-network
+      workloads involve lots of mathematical operations that can be performed in parallel.&rdquo;</p>
+    <p class="beat">Say &ldquo;conceptual illustration&rdquo; out loud &mdash; the tick counts are a teaching device,
+      not a measurement. Close on: algorithms + data + compute + scale.</p>
+  </div>
+</section>
+
+<!-- ================================================== 6 ================================================== -->
+<section class="slide" data-demo="tok">
+  <div class="s-head">
+    <h2>How does text become numbers?</h2>
+    <p class="lead">An LLM never sees words the way you do. <i class="dim">Edit the sentence if you like, then tokenize it.</i></p>
+  </div>
+  <div class="body">
+    <div class="col" style="flex:0 0 600px">
+      <input class="txtin" id="s6-in" value="The students are learning about artificial intelligence.">
+      <div class="foot">
+        <button class="btn primary" id="s6-tok">Tokenize</button>
+        <button class="btn ghost" data-reset>Reset</button>
+        <span class="illus">Illustrative segmentation &amp; IDs</span>
+      </div>
+      <div class="card sunk grow"><div class="tokrow" id="s6-toks"></div></div>
+    </div>
+    <div class="col grow">
+      <div class="card grow">
+        <h3>Next-token demo</h3>
+        <div class="sent" id="s6-sent"></div>
+        <div class="cand" id="s6-cand" style="margin-top:11px"></div>
+        <div style="margin-top:10px"><span class="illus">Illustrative probabilities &mdash; not from a real model</span></div>
+      </div>
+      <div class="card sunk">
+        <div class="vocab" style="font-size:16px"><b>During training:</b> <span>prediction &rarr; loss &rarr; backprop &rarr; parameter updates</span></div>
+        <div class="vocab" style="font-size:16px;margin-top:4px"><b>During inference:</b> <span>use the learned parameters to generate</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="row-flow">
+    <div class="node tight">Text</div><div class="ar">&rarr;</div>
+    <div class="node tight">Tokens</div><div class="ar">&rarr;</div>
+    <div class="node tight">Numerical representations</div><div class="ar">&rarr;</div>
+    <div class="node tight">Transformer / attention</div><div class="ar">&rarr;</div>
+    <div class="node tight">Probabilities for the next token</div>
+  </div>
+  <details class="gd">
+    <summary>Go deeper</summary>
+    <div class="gd-body">Tokens come from a learned vocabulary (tens of thousands of entries) built by an algorithm like
+      <b>byte-pair encoding</b>; common words are single tokens, rare ones split into pieces, and the same word can tokenize
+      differently with or without a leading space. Each token ID indexes an <b>embedding</b> &mdash; a long list of numbers.
+      <b>Attention</b> lets each position draw on the others, so the representation of a word depends on its context.
+      Generation then samples from the probability distribution (<b>temperature</b>, top-p), which is why the same prompt
+      can give different answers.</div>
+  </details>
+  <div class="sn">
+    <p class="say">&ldquo;An LLM doesn't operate directly on words as we see them. Text is divided into tokens, which can
+      be words, pieces of words, punctuation, and other text units. Those are represented numerically and processed by the
+      Transformer. Ultimately, the model produces probabilities for what token should come next.&rdquo;</p>
+    <p class="beat">Then connect back to slide 3 explicitly: same prediction step &mdash; in training we measure its error
+      and update; at inference we just take the answer.</p>
+    <p class="beat">Click a low-probability token on purpose to show that generation is a choice from a distribution.</p>
+  </div>
+</section>
+
+<!-- ================================================== 7 ================================================== -->
+<section class="slide" data-demo="ctx">
+  <div class="s-head">
+    <h2>Does a chatbot actually remember you?</h2>
+    <p class="lead">It answered correctly. The interesting question is <i>where that fact was living</i> &mdash;
+      and what happens when the window runs out of room.</p>
+  </div>
+  <div class="body">
+    <div class="col" style="flex:0 0 500px">
+      <div class="card grow" id="s7-left" style="display:flex;flex-direction:column;justify-content:center;min-height:0">
+        <div class="chat" id="s7-chat">
+          <div class="bub you">My robot's name is Marvin.</div>
+          <div class="bub bot">Got it.</div>
+          <div class="bub you">What's my robot's name?</div>
+          <div class="bub bot">Marvin.</div>
+        </div>
+        <div class="hood" id="s7-hood" hidden>
+          <div class="hl">What the model receives <span class="dim" style="font-weight:400;text-transform:none;letter-spacing:0">&mdash; one request</span></div>
+          <div class="ln sys">System / developer instructions</div>
+          <div class="ln sys" id="s7-earlier" hidden></div>
+          <div id="s7-fact">
+            <div class="ln">User: My robot's name is Marvin.</div>
+            <div class="ln">Assistant: Got it.</div>
+          </div>
+          <div id="s7-recent"></div>
+          <div class="ln">User: What's my robot's name?</div>
+          <div class="ar" style="margin:3px 0">&darr;</div>
+          <div class="node tight on" style="margin:0 auto;max-width:190px">Model</div>
+          <div class="ar" style="margin:3px 0">&darr;</div>
+          <div class="ln" id="s7-out" style="text-align:center;font-weight:700">&ldquo;Marvin&rdquo;</div>
+        </div>
+      </div>
+      <div class="punch" id="s7-punch" hidden>Context is not the same thing as training.</div>
+    </div>
+    <div class="col grow">
+      <div class="card" style="padding:13px 15px">
+        <div class="vocab"><b>Context window</b> <span>&mdash; the amount of information the model can work with in a
+          single inference.</span></div>
+        <div class="meterwrap" style="margin-top:9px">
+          <div class="meter" id="s7-meter"><i></i></div>
+          <div class="meter-lab"><span id="s7-mtxt">Context window</span><span id="s7-mpct">0%</span></div>
+        </div>
+        <div class="foot" style="margin-top:9px">
+          <button class="btn" id="s7-more" disabled>Continue conversation</button>
+          <button class="btn" id="s7-compact" disabled>Compact context</button>
+        </div>
+      </div>
+      <div class="card sunk" id="s7-sum" style="padding:10px 14px" hidden>
+        <h3 style="margin-bottom:6px">After compaction</h3>
+        <div id="s7-sumfull">
+          <div class="vocab" style="font-size:15.5px;line-height:1.35">Summary:<br>
+            &bull; User has a robot named Marvin.<br>
+            &bull; They are learning about AI.<br>
+            &bull; They asked about neural networks.</div>
+          <div class="vocab dim" style="font-size:14px;line-height:1.35;margin-top:6px">Real applications can select,
+            summarize, retrieve, or otherwise manage previous information rather than sending an unlimited transcript
+            every time.</div>
+        </div>
+        <div class="vocab" id="s7-sumline" style="font-size:15px;line-height:1.3" hidden>Summary: robot = Marvin
+          &middot; learning about AI &middot; asked about neural networks.</div>
+      </div>
+      <div class="col grow" id="s7-why" style="gap:6px" hidden>
+        <div class="big-line" style="font-size:17px">So why might a chatbot &ldquo;forget&rdquo;?</div>
+        <div class="reasons" id="s7-reasons">
+          <div class="reason">The information isn't in the current context.</div>
+          <div class="reason">Older information was dropped.</div>
+          <div class="reason">Compaction or summarization omitted an important detail.</div>
+          <div class="reason">The information is present, but the model fails to use it correctly.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot" style="gap:14px">
+    <button class="btn primary" id="s7-hoodbtn">Look under the hood</button>
+    <button class="btn ghost" data-reset>Reset</button>
+    <div class="caveat grow">Some products also have separate <b>persistent-memory</b> systems. Persistent memory and the
+      active context window are different mechanisms &mdash; and products don't all implement them the same way.</div>
+  </div>
+  <details class="gd">
+    <summary>Go deeper</summary>
+    <div class="gd-body">Each request re-sends a prompt; the model holds no state between calls on its own. Attention cost
+      grows steeply with length, so the window is finite and long chats get managed: truncation, summarization, or
+      <b>retrieval</b> (fetch only the relevant pieces from a store). A persistent-memory feature is usually a database plus
+      retrieval on top of an unchanged model &mdash; the weights stay fixed. Parameters can be changed after the fact
+      (<b>fine-tuning</b>), but that is a deliberate training run, not something your chat message triggers.</div>
+  </details>
+  <div class="sn">
+    <p class="say">&ldquo;When I told the chatbot &lsquo;Marvin,&rsquo; we generally didn't run backpropagation and
+      retrain the neural network. Instead, chatbot software can package relevant conversation information into the model's
+      input. The trained model then uses that information.&rdquo;</p>
+    <p class="beat">Sequence: <b>Look under the hood</b> &rarr; <b>Continue conversation</b> until the window fills.
+      Watch what happens: the Marvin turn is the oldest, so it is the first thing dropped &mdash; and the answer changes to
+      &ldquo;I don&rsquo;t have that information.&rdquo; Nothing was unlearned; the fact simply stopped being sent.</p>
+    <p class="beat">Then <b>Compact context</b> &mdash; the summary puts the fact back in far fewer tokens and the answer
+      returns. Now ask the class why chatbots forget, and reveal the four reasons one at a time.</p>
+    <p class="beat">Do read the caveat out loud &mdash; otherwise they leave thinking every chatbot just replays the transcript.</p>
+  </div>
+</section>
+
+<!-- ================================================== 8 ================================================== -->
+<section class="slide" data-demo="synth">
+  <div class="s-head">
+    <h2>Put the whole system together</h2>
+    <p class="lead">Everything before you chat, and everything that happens when you do.</p>
+  </div>
+  <div class="synth">
+    <div class="side">
+      <div class="side-hdr">Before you chat: training</div>
+      <div class="flow grow">
+        <div class="node mini" data-r="train">Training data</div>
+        <div class="ar">&darr;</div>
+        <div class="node mini" data-r="params">Neural network <small>billions of parameters</small></div>
+        <div class="ar">&darr;</div>
+        <div class="node mini" data-r="loss2">Prediction</div>
+        <div class="ar">&darr;</div>
+        <div class="node mini" data-r="loss">Loss</div>
+        <div class="ar">&darr;</div>
+        <div class="node mini" data-r="backprop">Backpropagation</div>
+        <div class="ar">&darr;</div>
+        <div class="node mini" data-r="update">Update parameters</div>
+        <div class="ar loop">&#8635;</div>
+        <div class="node mini" data-r="gpu">aided by massive GPU compute</div>
+        <div class="ar">&darr;</div>
+        <div class="node mini" data-r="eval">Evaluate on held-out data</div>
+      </div>
+    </div>
+    <div class="mid">
+      <div class="node on" data-r="model" style="font-size:19px">Trained model <small>parameters now fixed</small></div>
+      <div class="card center" style="padding:12px 13px">
+        <div class="big-line" style="font-size:18px">Did the model &ldquo;learn&rdquo; what you just told it?</div>
+        <div class="col" style="gap:6px;width:100%;margin-top:9px">
+          <button class="btn" id="s8-yes">Yes &mdash; its weights changed</button>
+          <button class="btn" id="s8-no">Not necessarily &mdash; it may just be in context</button>
+        </div>
+        <div class="vocab" id="s8-ans" style="margin-top:9px;font-size:15.5px;line-height:1.35;text-align:left"></div>
+      </div>
+      <button class="btn primary" id="s8-take">Show the four takeaways</button>
+      <div style="display:flex;gap:7px">
+        <button class="btn" id="s8-recap" style="flex:1">&#9654; 60-second recap</button>
+        <button class="btn ghost" data-reset>Reset</button>
+      </div>
+    </div>
+    <div class="side">
+      <div class="side-hdr">When you chat: inference</div>
+      <div class="flow grow">
+        <div class="node mini" data-r="msg">Your message</div>
+        <div class="ar">+</div>
+        <div class="node mini" data-r="context">Conversation context <small>selected, summarized, retrieved</small></div>
+        <div class="ar">&darr;</div>
+        <div class="node mini" data-r="tokens">Tokens</div>
+        <div class="ar">&darr;</div>
+        <div class="node mini" data-r="model2">Trained model</div>
+        <div class="ar">&darr;</div>
+        <div class="node mini" data-r="probs">Next-token probabilities</div>
+        <div class="ar">&darr;</div>
+        <div class="node mini" data-r="gen">Generated response</div>
+        <div class="ar loop">&#8635;</div>
+        <div class="node mini" data-r="infer">One token at a time &mdash; no parameters change</div>
+      </div>
+    </div>
+  </div>
+  <div class="overlay" id="s8-overlay" hidden>
+    <div class="sheet">
+      <h3 style="margin:0;font-size:14px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-dim)">Four things to keep</h3>
+      <div class="takeaway" data-t="1"><span class="n">1</span><span>Training is <b>optimization</b>, not simply storing facts.</span></div>
+      <div class="takeaway" data-t="2"><span class="n">2</span><span>Evaluation asks whether learned behavior <b>generalizes</b>.</span></div>
+      <div class="takeaway" data-t="3"><span class="n">3</span><span>Generation is <b>probabilistic</b>, not guaranteed truth.</span></div>
+      <div class="takeaway" data-t="4"><span class="n">4</span><span>A chatbot is <b>more than the neural network</b> &mdash; the surrounding
+        software manages context, tools, retrieval, memory, and more.</span></div>
+      <div class="foot" style="justify-content:flex-end">
+        <span class="dim" id="s8-takehint" style="font-size:14px">Click anywhere for the next one</span>
+        <button class="btn ghost" id="s8-takeclose">Close</button>
+      </div>
+    </div>
+  </div>
+  <div class="recap-banner" id="s8-banner" hidden>
+    <span class="step" id="s8-bstep">1 / 8</span>
+    <span class="txt" id="s8-btxt"></span>
+    <button class="btn" id="s8-bstop">Stop</button>
+  </div>
+  <div class="sn">
+    <p class="say">&ldquo;If you remember only one distinction, remember this: training changes the model; context gives
+      the trained model information to work with right now. Once you understand that, a lot of seemingly mysterious AI
+      behavior starts making more sense.&rdquo;</p>
+    <p class="beat">Ask the center question as a show of hands before clicking either button.</p>
+    <p class="beat">Verbal hooks back into the course &mdash; no extra slide needed: training data &rarr; bias and
+      copyright; evaluation &rarr; what benchmarks actually measure; GPUs &rarr; environmental and economic
+      concentration; probabilistic generation &rarr; hallucination; context and memory &rarr; privacy.</p>
+    <p class="beat">Out of time? Hit the 60-second recap and stop talking.</p>
+  </div>
+</section>
+
+</div></div>
+
+<div class="chrome">
+  <button class="btn nav" id="prev" aria-label="previous slide">&#8249;</button>
+  <div class="dots" id="dots"></div>
+  <div class="counter"><span id="cur">1</span> / 8</div>
+  <div class="deck-name">What Does It Mean for AI to Learn?</div>
+  <button class="btn ghost" id="notesBtn" aria-expanded="false">Speaker notes <span class="dim">(S)</span></button>
+  <button class="btn ghost" id="fsBtn">Fullscreen <span class="dim">(F)</span></button>
+  <button class="btn ghost" id="themeBtn" aria-label="toggle light or dark">&#9680;</button>
+  <button class="btn nav" id="next" aria-label="next slide">&#8250;</button>
+</div>
+
+<div class="notes" id="notes" hidden>
+  <h4>Speaker notes &mdash; slide <span id="notesNum">1</span></h4>
+  <div class="sn-body" id="notesBody"></div>
+</div>
+</div>
+
+<script>
+"use strict";
+const $  = id => document.getElementById(id);
+const qs = (s, r) => (r || document).querySelector(s);
+const qsa = (s, r) => Array.from((r || document).querySelectorAll(s));
+
+/* ============================================================ deck shell */
+const slides = qsa('.slide');
+const stage = $('stage'), wrap = qs('.stage-wrap');
+const notes = $('notes'), notesBody = $('notesBody'), notesNum = $('notesNum');
+let idx = 0;
+
+/* each slide registers {reset, leave} under its data-demo name */
+const demos = {};
+
+const dots = slides.map((_, i) => {
+  const b = document.createElement('button');
+  b.className = 'pdot'; b.type = 'button';
+  b.setAttribute('aria-label', 'go to slide ' + (i + 1));
+  b.onclick = () => goto(i);
+  $('dots').appendChild(b);
+  return b;
+});
+
+function fit(){
+  const s = Math.min(wrap.clientWidth / 1280, wrap.clientHeight / 720);
+  stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+}
+new ResizeObserver(fit).observe(wrap);
+fit();
+
+function goto(i){
+  i = Math.max(0, Math.min(slides.length - 1, i));
+  if (i !== idx){
+    const d = demos[slides[idx].dataset.demo];
+    if (d && d.leave) d.leave();
+  }
+  idx = i;
+  slides.forEach((s, k) => s.classList.toggle('active', k === i));
+  dots.forEach((d, k) => { d.classList.toggle('on', k === i); d.classList.toggle('done', k < i); });
+  $('cur').textContent = i + 1;
+  notesNum.textContent = i + 1;
+  const sn = qs('.sn', slides[i]);
+  notesBody.innerHTML = sn ? sn.innerHTML : '<p class="beat">No notes for this slide.</p>';
+}
+$('next').onclick = () => goto(idx + 1);
+$('prev').onclick = () => goto(idx - 1);
+
+function resetCurrent(){
+  const d = demos[slides[idx].dataset.demo];
+  if (d && d.reset) d.reset();
+}
+qsa('[data-reset]').forEach(b => b.onclick = resetCurrent);
+
+$('notesBtn').onclick = () => {
+  const open = notes.hidden;
+  notes.hidden = !open;
+  $('notesBtn').setAttribute('aria-expanded', String(open));
+};
+$('fsBtn').onclick = () => {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else document.documentElement.requestFullscreen();
+};
+$('themeBtn').onclick = () => {
+  const dark = matchMedia('(prefers-color-scheme:dark)').matches;
+  const cur = document.documentElement.getAttribute('data-theme') || (dark ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+};
+
+document.addEventListener('keydown', e => {
+  if (/^(INPUT|TEXTAREA)$/.test((e.target || {}).tagName)) return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key;
+  if (k === 'ArrowRight' || k === 'PageDown'){ goto(idx + 1); e.preventDefault(); }
+  else if (k === 'ArrowLeft' || k === 'PageUp'){ goto(idx - 1); e.preventDefault(); }
+  else if (k === 'Home'){ goto(0); e.preventDefault(); }
+  else if (k === 'End'){ goto(slides.length - 1); e.preventDefault(); }
+  else if (k === 's' || k === 'S'){ $('notesBtn').click(); e.preventDefault(); }
+  else if (k === 'f' || k === 'F'){ $('fsBtn').click(); e.preventDefault(); }
+  else if (k === 'r' || k === 'R'){ resetCurrent(); e.preventDefault(); }
+  else if (/^[1-8]$/.test(k)){ goto(+k - 1); e.preventDefault(); }
+});
+
+/* ============================================================ 1 — nested scopes */
+demos.nest = (() => {
+  const s = slides[0];
+  const boxes = qsa('.nest', s), rows = qsa('.defrow', s), punch = $('s1-punch');
+  const seen = new Set();
+  boxes.forEach(b => {
+    const hit = e => {
+      e.stopPropagation();                 // an inner box must not also trigger the ones around it
+      const k = b.dataset.k;
+      seen.add(k);
+      b.classList.add('on');
+      rows.forEach(r => { if (r.dataset.k === k) r.classList.add('on'); });
+      punch.hidden = seen.size < boxes.length;
+    };
+    qs('.nlab', b).onclick = hit;
+    b.onclick = hit;
+  });
+  return { reset(){
+    seen.clear(); punch.hidden = true;
+    boxes.forEach(b => b.classList.remove('on'));
+    rows.forEach(r => r.classList.remove('on'));
+  }};
+})();
+
+/* ============================================================ 2 — who writes the rules */
+demos.rules = (() => {
+  const sw = $('s2-sw'), L = $('s2-l'), R = $('s2-r');
+  const pipeL = $('s2-pipeL'), pipeR = $('s2-pipeR');
+  const nRules = $('s2-rules'), nParams = $('s2-params');
+  let learned = false;
+  function render(){
+    sw.classList.toggle('right', learned);
+    L.classList.toggle('on', !learned);
+    R.classList.toggle('on', learned);
+    pipeL.classList.toggle('dimmed', learned);
+    pipeR.classList.toggle('dimmed', !learned);
+    nRules.classList.toggle('on', !learned);
+    nParams.classList.toggle('on', learned);
+  }
+  sw.onclick = () => { learned = !learned; render(); };
+  L.onclick = () => { learned = false; render(); };
+  R.onclick = () => { learned = true; render(); };
+  render();
+  return { reset(){ learned = false; render(); } };
+})();
+
+/* ============================================================ 3 — the training loop */
+demos.loop = (() => {
+  const s = slides[2];
+  const stages = qsa('.loop-stage', s), rows = qsa('.defrow', s);
+  const runBtn = $('s3-run'), lossEl = $('s3-loss'), sparks = $('s3-sparks'), loopAr = $('s3-loopar');
+  const LOSS = i => +(4.2 * Math.pow(0.79, i)).toFixed(2);   // illustrative: a loss curve, not a measurement
+  let st = 0, cycle = 0;
+
+  function render(){
+    stages.forEach(el => el.classList.toggle('on', +el.dataset.i === st));
+    rows.forEach(r => r.classList.toggle('on', st > 0 && +r.dataset.i <= st));
+    loopAr.style.visibility = cycle > 0 ? '' : 'hidden';
+    lossEl.textContent = st >= 3 || cycle > 0 ? LOSS(cycle).toFixed(2) : '—';
+    sparks.innerHTML = '';
+    for (let i = 0; i <= (st >= 3 ? cycle : cycle - 1); i++){
+      const b = document.createElement('i');
+      b.style.height = (7 + 39 * (LOSS(i) / 4.2)) + 'px';
+      sparks.appendChild(b);
+    }
+    runBtn.textContent = st === 0 ? 'Run one training step'
+      : st === 5 ? 'Start the next step ↺' : 'Next stage →';
+  }
+  runBtn.onclick = () => {
+    if (st === 5){ st = 1; cycle++; } else st++;
+    render();
+  };
+  render();
+  return { reset(){ st = 0; cycle = 0; render(); } };
+})();
+
+/* ============================================================ 4 — train / evaluate / infer */
+demos.split = (() => {
+  const s = slides[3];
+  const stations = qsa('.station', s), trainRow = $('s4-train'), held = $('s4-held');
+  const verdict = $('s4-verdict'), go = $('s4-go');
+  const qwrap = $('s4-qwrap'), ans = $('s4-a'), over = $('s4-of');
+  const SET = [['\u{1F431}','cat'],['\u{1F431}','cat'],['\u{1F436}','dog'],['\u{1F431}','cat'],['\u{1F436}','dog']];
+  let phase = 0;
+
+  function light(which){ stations.forEach(el => el.classList.toggle('on', el.dataset.st === which)); }
+
+  let painted = -1;
+  function render(){
+    if (painted !== (phase >= 1)){                      // animate the tiles once, on first reveal
+      painted = phase >= 1;
+      trainRow.innerHTML = '';
+      SET.forEach(([e, lab], i) => {
+        const d = document.createElement('div');
+        d.className = 'beast' + (phase >= 1 ? ' reveal' : '');
+        d.style.animationDelay = (i * 0.07) + 's';
+        d.innerHTML = e + (phase >= 1 ? '<span class="tag">' + lab + '</span>' : '');
+        trainRow.appendChild(d);
+      });
+    }
+    if (held.dataset.p !== String(phase >= 2)){
+      held.dataset.p = String(phase >= 2);
+      held.className = 'beast held' + (phase >= 2 ? ' reveal' : '');
+      held.innerHTML = phase >= 2 ? '\u{1F415}<span class="tag">dog?</span>' : '?';
+    }
+    qwrap.hidden = phase < 2;
+    ans.hidden = phase < 3;
+    over.hidden = phase < 3;
+
+    if (phase === 0){ light(''); verdict.innerHTML = 'A tiny classifier: five labeled examples in, one new animal kept back.'; go.textContent = 'Train on the five examples'; go.disabled = false; }
+    if (phase === 1){ light('train'); verdict.innerHTML = 'Trained. <b>Parameters changed</b>, and it now labels all five of these correctly — 5 / 5. <i class="dim">Impressive?</i>'; go.textContent = 'Evaluate on the held-out example'; }
+    if (phase === 2){ light('eval'); verdict.innerHTML = 'A photo it never trained on. It predicts <b class="ok">dog — correct</b>. <i class="dim">That</i> is the number worth quoting.'; go.textContent = 'Reveal the answer'; }
+    if (phase === 3){ light('eval'); go.textContent = 'Use it on new input →'; }
+    if (phase === 4){ light('infer'); verdict.innerHTML = '<b>Inference:</b> the trained model labels new photos all day. Its parameters never move.'; go.textContent = 'Done'; go.disabled = true; }
+    go.classList.toggle('pulse', phase === 1 || phase === 2);
+  }
+  go.onclick = () => { phase = Math.min(4, phase + 1); render(); };
+  render();
+  return { reset(){ phase = 0; render(); } };
+})();
+
+/* ============================================================ 5 — CPU vs GPU (conceptual) */
+demos.chips = (() => {
+  const cpu = $('s5-cpu'), gpu = $('s5-gpu'), run = $('s5-run');
+  const cpuct = $('s5-cpuct'), gpuct = $('s5-gpuct'), cput = $('s5-cput'), gput = $('s5-gput');
+  const N = 100, LANES = 4, WAVE = 50;       // 4 "cores" vs. one big parallel wave
+  let timers = [];
+
+  const cells = grid => { grid.innerHTML = ''; return Array.from({length:N}, () => {
+    const i = document.createElement('i'); grid.appendChild(i); return i; }); };
+  let cCells = cells(cpu), gCells = cells(gpu);
+
+  function stop(){ timers.forEach(clearTimeout); timers = []; }
+  function clear(){
+    stop();
+    cCells.forEach(c => c.className = ''); gCells.forEach(c => c.className = '');
+    cpuct.textContent = gpuct.textContent = '0 / 100 done';
+    cput.textContent = gput.textContent = '0';
+    run.disabled = false; run.textContent = 'Process 100 operations';
+  }
+  function go(){
+    clear(); run.disabled = true; run.textContent = 'Processing…';
+    let cDone = 0, cTick = 0;
+    const cpuStep = () => {
+      for (let i = 0; i < LANES && cDone < N; i++, cDone++){
+        if (cDone - LANES >= 0) cCells[cDone - LANES].className = 'on';
+        cCells[cDone].className = 'busy';
+      }
+      cTick++; cput.textContent = cTick; cpuct.textContent = Math.max(0, cDone - LANES) + ' / 100 done';
+      if (cDone < N) timers.push(setTimeout(cpuStep, 105));
+      else timers.push(setTimeout(() => {
+        cCells.forEach(c => c.className = 'on');
+        cpuct.textContent = '100 / 100 done';
+        run.disabled = false; run.textContent = 'Run it again';
+      }, 105));
+    };
+    let gDone = 0, gTick = 0;
+    const gpuStep = () => {
+      for (let i = 0; i < WAVE && gDone < N; i++, gDone++) gCells[gDone].className = 'busy';
+      gTick++; gput.textContent = gTick;
+      timers.push(setTimeout(() => {
+        for (let i = 0; i < gDone; i++) gCells[i].className = 'on';
+        gpuct.textContent = gDone + ' / 100 done';
+        if (gDone < N) gpuStep();
+      }, 260));
+    };
+    cpuStep(); gpuStep();
+  }
+  run.onclick = go;
+  clear();
+  return { reset: clear, leave: stop };
+})();
+
+/* ============================================================ 6 — text to tokens (illustrative) */
+demos.tok = (() => {
+  const inp = $('s6-in'), btn = $('s6-tok'), row = $('s6-toks');
+  const sentEl = $('s6-sent'), candEl = $('s6-cand');
+  const DEFAULT = inp.value;
+
+  // A real tokenizer uses a learned vocabulary. This split is hand-tuned to *look* like one.
+  const SUB = {
+    artificial:['artific','ial'], intelligence:['intellig','ence'], learning:['learn','ing'],
+    students:['student','s'], understanding:['understand','ing'], computer:['comput','er']
+  };
+  const tid = s => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+    return 1000 + Math.abs(h) % 48000; };
+
+  function tokenize(text){
+    const chunks = text.match(/\s*[A-Za-z0-9']+|\s*[^\sA-Za-z0-9']/g) || [];
+    const out = [];
+    chunks.forEach(ch => {
+      const lead = /^\s/.test(ch) ? ' ' : '';
+      const w = ch.trim();
+      const parts = SUB[w.toLowerCase()] || (w.length > 9 ? [w.slice(0, 6), w.slice(6)] : [w]);
+      parts.forEach((p, i) => out.push((i === 0 ? lead : '') + p));
+    });
+    return out;
+  }
+  function paint(){
+    row.innerHTML = '';
+    tokenize(inp.value).forEach((t, i) => {
+      const d = document.createElement('div');
+      d.className = 'tok'; d.style.animationDelay = (i * 0.03) + 's';
+      d.innerHTML = '<span class="t"></span><span class="id">' + tid(t) + '</span>';
+      qs('.t', d).textContent = t;
+      row.appendChild(d);
+    });
+  }
+  btn.onclick = paint;
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') paint(); });
+
+  /* --- next-token demo: fake distributions, clearly labelled as such --- */
+  const BASE = 'The cat sat on the';
+  const CHAIN = {
+    _start: [['mat', 72], ['roof', 12], ['banana', 0.2]],
+    mat:     [['.', 64], ['and', 18], ['purring', 3]],
+    roof:    [['.', 52], ['of', 26], ['again', 7]],
+    banana:  [['.', 38], ['?!', 21], ['which', 9]],
+    _more:   [['.', 58], ['and', 16], ['then', 6]]
+  };
+  let chosen = [];
+  function sentence(){
+    let s = BASE;
+    chosen.forEach((w, i) => { s += (/^[.,!?;:]/.test(w) ? '' : ' ') + '<span class="' + (i === chosen.length - 1 ? 'new' : '') + '">' + w + '</span>'; });
+    return s;
+  }
+  function paintNext(){
+    const last = chosen.length ? chosen[chosen.length - 1] : '_start';
+    const done = /^[.!?]/.test(last || '');
+    sentEl.innerHTML = sentence() + (done ? '' : ' <span class="blank">___</span>');
+    candEl.innerHTML = '';
+    if (done){
+      const d = document.createElement('div');
+      d.className = 'vocab dim'; d.style.fontSize = '15.5px';
+      d.textContent = 'End of sentence. Every word above was picked the same way — one token at a time, from a distribution.';
+      candEl.appendChild(d);
+      return;
+    }
+    (CHAIN[last] || CHAIN._more).forEach(([w, p]) => {
+      const b = document.createElement('button');
+      b.innerHTML = '<span class="w"></span><span class="bar"><i style="width:' + Math.max(1.5, p) + '%"></i></span>' +
+                    '<span class="pct">' + p + '%</span>';
+      qs('.w', b).textContent = w;
+      b.onclick = () => { chosen.push(w); paintNext(); };
+      candEl.appendChild(b);
+    });
+  }
+  paint(); paintNext();
+  return { reset(){ inp.value = DEFAULT; chosen = []; paint(); paintNext(); } };
+})();
+
+/* ============================================================ 7 — context vs. training */
+demos.ctx = (() => {
+  const hoodBtn = $('s7-hoodbtn'), moreBtn = $('s7-more'), compBtn = $('s7-compact');
+  const chat = $('s7-chat'), hood = $('s7-hood'), punch = $('s7-punch'), sum = $('s7-sum'), why = $('s7-why');
+  const meter = $('s7-meter'), fill = qs('i', $('s7-meter')), mtxt = $('s7-mtxt'), mpct = $('s7-mpct');
+  const earlier = $('s7-earlier'), fact = $('s7-fact'), recent = $('s7-recent'), out = $('s7-out');
+  const sumFull = $('s7-sumfull'), sumLine = $('s7-sumline');
+  const reasons = qsa('.reason', $('s7-reasons'));
+  const KEEP = 4;                       // most recent turns shown in full
+  const EXTRA = [
+    'User: Can you explain neural networks?', 'Assistant: Sure \u2014 layers of parameters\u2026',
+    'User: What is a loss function?',         'Assistant: It measures how wrong a prediction is\u2026',
+    'User: And backpropagation?',             'Assistant: It works backward through the layers\u2026',
+    'User: Does that need a GPU?',            'Assistant: At scale, yes \u2014 lots of parallel math\u2026'
+  ];
+  let opened = false, fillPct = 0, added = 0, compacted = false, shown = 0;
+  const lost = () => fillPct >= 100 && !compacted;   // the Marvin turn has fallen out of the window
+
+  function render(){
+    chat.hidden = opened;
+    hood.hidden = !opened;
+    punch.hidden = !opened;
+
+    /* the transcript stays a fixed size: past KEEP turns, the oldest collapse into a counter */
+    const visible = EXTRA.slice(Math.max(0, added - KEEP), added);
+    const collapsed = Math.max(0, added - KEEP);
+    recent.innerHTML = '';
+    visible.forEach(t => {
+      const d = document.createElement('div'); d.className = 'ln'; d.textContent = t; recent.appendChild(d);
+    });
+    earlier.hidden = collapsed === 0 && !compacted;
+    earlier.textContent = compacted
+      ? '\u22ee Summary of 25 earlier messages (robot = Marvin)'
+      : '\u22ee ' + collapsed + ' earlier message' + (collapsed === 1 ? '' : 's') + ' no longer sent';
+
+    fact.classList.toggle('faded', !compacted && fillPct >= 80 && fillPct < 100);
+    qsa('.ln', fact).forEach(l => l.classList.toggle('dropped', lost()));
+    fact.hidden = compacted;                       // the summary line now carries the fact instead
+    out.innerHTML = lost() ? '<span class="hot">&ldquo;I don\u2019t have that information.&rdquo;</span>' : '&ldquo;Marvin&rdquo;';
+
+    fill.style.width = fillPct + '%';
+    meter.classList.toggle('full', fillPct >= 80 && !compacted);
+    mpct.textContent = fillPct + '%';
+    mtxt.textContent = !opened ? 'Context window'
+      : lost() ? 'Full \u2014 the oldest turns had to go'
+      : compacted ? 'After compaction \u2014 same facts, fewer tokens'
+      : fillPct >= 80 ? 'Filling up' : 'Context window';
+
+    sum.hidden = !compacted;
+    sumFull.hidden = shown > 0;            // the detail has done its job once we move to "why it forgets"
+    sumLine.hidden = shown === 0;
+    why.hidden = !compacted;
+    reasons.forEach((r, i) => { r.hidden = i >= shown; r.classList.toggle('on', i < shown); });
+
+    /* one control pulses at a time: hood \u2192 continue \u2192 compact \u2192 why */
+    hoodBtn.hidden = opened && !compacted;
+    hoodBtn.textContent = !opened ? 'Look under the hood'
+      : shown < reasons.length ? 'Why might it forget? (' + (shown + 1) + ' / 4)' : 'All four shown';
+    hoodBtn.disabled = opened && shown >= reasons.length;
+    hoodBtn.classList.toggle('pulse', !opened || (compacted && shown < reasons.length));
+    moreBtn.disabled = !opened || added >= EXTRA.length;
+    moreBtn.classList.toggle('pulse', opened && !compacted && added < EXTRA.length && fillPct < 100);
+    compBtn.disabled = !opened || fillPct < 80 || compacted;
+    compBtn.classList.toggle('pulse', !compBtn.disabled);
+  }
+  hoodBtn.onclick = () => {
+    if (!opened){ opened = true; fillPct = 38; }
+    else if (compacted && shown < reasons.length) shown++;
+    render();
+  };
+  moreBtn.onclick = () => {
+    added = Math.min(EXTRA.length, added + 2);
+    fillPct = Math.min(100, fillPct + 16);
+    render();
+  };
+  compBtn.onclick = () => { compacted = true; fillPct = 46; render(); };
+  render();
+  return { reset(){ opened = false; fillPct = 0; added = 0; compacted = false; shown = 0; render(); } };
+})();
+
+/* ============================================================ 8 — synthesis, quiz, takeaways, recap */
+demos.synth = (() => {
+  const s = slides[7];
+  const ansEl = $('s8-ans'), yes = $('s8-yes'), no = $('s8-no');
+  const overlay = $('s8-overlay'), takeaways = qsa('.takeaway', overlay), hint = $('s8-takehint');
+  const banner = $('s8-banner'), bstep = $('s8-bstep'), btxt = $('s8-btxt');
+  const nodes = qsa('[data-r]', s);
+  let shown = 0, timer = null, ri = 0;
+
+  yes.onclick = () => {
+    ansEl.innerHTML = '<b style="color:var(--spill)">Usually not.</b> <span>Your message didn’t run backpropagation ' +
+      'and no parameters moved. It went into the model’s input.</span>';
+  };
+  no.onclick = () => {
+    ansEl.innerHTML = '<b style="color:var(--good)">✓ Right.</b> <span>Training changes parameters. Context supplies ' +
+      'information to an already-trained model.</span>';
+  };
+
+  /* --- four takeaways, one click at a time --- */
+  function paintTake(){
+    takeaways.forEach((t, i) => t.classList.toggle('on', i < shown));
+    hint.textContent = shown < takeaways.length ? 'Click anywhere for the next one' : 'That’s the lecture.';
+  }
+  $('s8-take').onclick = () => { overlay.hidden = false; shown = 1; paintTake(); };
+  overlay.onclick = e => {
+    if (e.target.id === 's8-takeclose'){ overlay.hidden = true; return; }
+    shown = Math.min(takeaways.length, shown + 1); paintTake();
+  };
+
+  /* --- 60-second recap: eight beats, ~7.5s each --- */
+  const RECAP = [
+    ['Parameters',      ['params'],                        'Parameters: adjustable numbers inside the model. Learning means changing them.'],
+    ['Training',        ['train', 'update'],               'Training: show examples, adjust parameters. This is the only step where the model itself changes.'],
+    ['Loss & backprop', ['loss', 'backprop'],              'Loss says how wrong it was; backpropagation says how each parameter contributed.'],
+    ['Evaluation',      ['eval'],                          'Evaluation: does the learned behavior generalize to examples it never trained on?'],
+    ['GPUs',            ['gpu'],                           'GPUs: the parallel numerical compute that makes training at this scale possible.'],
+    ['Tokens',          ['tokens'],                        'Tokens: your text becomes numbered pieces before the model ever sees it.'],
+    ['Context',         ['context'],                       'Context: what gets packed into this one request — information, not a change to the model.'],
+    ['Inference',       ['model2', 'probs', 'gen', 'infer'],'Inference: fixed parameters produce next-token probabilities, one token at a time.']
+  ];
+  function glow(keys){
+    nodes.forEach(n => n.classList.toggle('glow', keys.indexOf(n.dataset.r) > -1));
+  }
+  function beat(){
+    if (ri >= RECAP.length){ stop(); return; }
+    const [label, keys, txt] = RECAP[ri];
+    banner.hidden = false;
+    bstep.textContent = (ri + 1) + ' / 8 · ' + label;
+    btxt.textContent = txt;
+    glow(keys);
+    ri++;
+    timer = setTimeout(beat, 7500);
+  }
+  function stop(){
+    clearTimeout(timer); timer = null; ri = 0;
+    banner.hidden = true; glow([]);
+  }
+  $('s8-recap').onclick = () => { stop(); beat(); };
+  $('s8-bstop').onclick = e => { e.stopPropagation(); stop(); };
+  banner.onclick = () => { clearTimeout(timer); beat(); };   // click to skip ahead
+
+  return {
+    reset(){ stop(); overlay.hidden = true; shown = 0; paintTake(); ansEl.innerHTML = ''; },
+    leave: stop
+  };
+})();
+
+goto(0);
+</script>
+</body>
+</html>
