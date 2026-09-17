@@ -744,8 +744,7 @@
 <!-- ================================================== 2 ================================================== -->
 <section class="slide" data-demo="nest">
   <div class="s-head">
-    <h2>What does it mean for AI to &ldquo;learn&rdquo;?</h2>
-    <p class="lead" id="s1-lead"></p>
+    <h2 id="s1-head"></h2>
   </div>
   <div class="body">
 
@@ -763,7 +762,7 @@
     <div class="col grow">
       <div class="card grow" style="display:flex;flex-direction:column;gap:12px;min-height:0">
         <div>
-          <div class="cat-title" id="s1-title"></div>
+          <div class="cat-title" id="s1-title" hidden></div>
           <div class="cat-def" id="s1-def"></div>
         </div>
         <div class="ex-line">
@@ -776,13 +775,11 @@
             <div class="ttt-row">
               <div class="ttt" id="s1-board" aria-label="tic-tac-toe board: you are X"></div>
               <div class="ttt-side" id="s1-steps">
-                <p data-s="0">You are <b>✕</b>. Click a square to go first.</p>
-                <p>Then the AI (<span class="o">○</span>):</p>
+                <p data-s="0">You're <b>✕</b>. Go first.</p>
                 <ol>
-                  <li data-s="1"><span class="check">checks</span> each open square</li>
-                  <li data-s="2">to see if that move would <span class="win">win</span>, <span class="loss">lose</span>,
-                    or be <span class="neutral">neutral</span></li>
-                  <li data-s="3">and takes the <span class="win">win</span>, blocks you, or chooses randomly.</li>
+                  <li data-s="1"><span class="check">Check</span> every square</li>
+                  <li data-s="2"><span class="win">Win</span>, <span class="loss">lose</span>, or <span class="neutral">neutral</span>?</li>
+                  <li data-s="3">Take the <span class="win">win</span> or block</li>
                 </ol>
               </div>
             </div>
@@ -794,10 +791,10 @@
             </div>
             <div class="reg-legend" id="s1-legend">
               <span class="k over"><i></i>overpriced <b>&ndash;</b></span>
-              <span class="k fair"><i></i>on price, within &plusmn;$25k <b>&ndash;</b></span>
+              <span class="k fair"><i></i>on price <b>&ndash;</b></span>
               <span class="k under"><i></i>underpriced <b>&ndash;</b></span>
             </div>
-            <div class="reg-hint">Drag a dot &middot; click the chart to add one &middot; drag a dot off the chart to remove it</div>
+            <div class="reg-hint">Drag, add or remove dots</div>
           </div>
           <div class="dm" data-d="dl">
             <div class="dnn">
@@ -805,7 +802,7 @@
               <div class="dnn-net" id="s1-dnet"><svg viewBox="0 0 430 150"></svg><canvas class="wchart" id="s1-wchart" width="860" height="164"></canvas></div>
             </div>
             <div class="dnn-ctrl">
-              <span class="dnn-lab">Add a purchase:</span>
+              <span class="dnn-lab">Add:</span>
               <button class="dnn-add a" data-add="1"><i></i>blue</button><button class="dnn-add b" data-add="0"><i></i>orange</button>
               <span class="dnn-stat" id="s1-dstat"></span>
             </div>
@@ -1661,11 +1658,11 @@ demos.nest = (() => {
 
   const CAT = {
     ai: { title:'Artificial Intelligence', def:'Computers doing tasks that seem intelligent.',
-          ex:'✕ Tic-tac-toe: you vs. the AI', illus:'', take:'No learning here: a person wrote every rule.' },
+          ex:'✕ Tic-tac-toe', illus:'', take:'No learning: a person wrote the rules.' },
     ml: { title:'Machine Learning', def:'AI that learns from data.',
-          ex:'\u{1F3E0} Is this house overpriced?', illus:'Illustrative data', take:'The two numbers are learned from data.' },
-    dl: { title:'Deep Learning', def:'Machine learning with many-layered neural networks.',
-          ex:'\u{1F4B3} Is this card purchase fraud?', illus:'Made-up purchases · real training', take:'Layers of neurons combine simple pieces into a curve.' }
+          ex:'\u{1F3E0} Overpriced house?', illus:'', take:'Learned from data.' },
+    dl: { title:'Deep Learning', def:'Learning with layered neural networks.',
+          ex:'\u{1F4B3} Card fraud?', illus:'', take:'Layers combine into a curve.' }
   };
 
   /* ---------------- AI: play tic-tac-toe against hand-written rules ---------------- */
@@ -2121,9 +2118,10 @@ demos.nest = (() => {
       b.classList.toggle('on', b.dataset.k === k);
       if (wasHidden && !b.hidden){ b.classList.remove('grow-in'); void b.offsetWidth; b.classList.add('grow-in'); }
     });
-    $('s1-lead').innerHTML = ['Start with the broadest idea.', 'A narrower idea, inside AI.', 'Narrower still, inside machine learning.'][lvl];
+    $('s1-head').innerHTML = ['<span class="dim">Broadest:</span> Artificial Intelligence', '<span class="dim">More specific:</span> Machine Learning',
+      '<span class="dim">Most specific:</span> Deep Learning'][lvl];
     dms.forEach(d => d.classList.toggle('on', d.dataset.d === k));
-    titleEl.textContent = c.title;
+    titleEl.textContent = '';                 // the slide heading already names it
     defEl.textContent = c.def;
     exEl.textContent = c.ex;
     takeEl.textContent = c.take;
