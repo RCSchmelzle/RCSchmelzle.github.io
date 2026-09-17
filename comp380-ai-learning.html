@@ -1132,9 +1132,9 @@
   <div class="body">
     <div class="hmtiles">
       <div class="hmtile" data-hm="0"><canvas width="240" height="240"></canvas><div class="c">The four checks, stacked</div></div>
-      <div class="hmtile" data-hm="1"><canvas width="240" height="240"></canvas><div class="c">Stage 1 <span class="dim">9 checks</span></div></div>
-      <div class="hmtile" data-hm="2"><canvas width="240" height="240"></canvas><div class="c">Stages 1&ndash;3 <span class="dim">52 checks</span></div></div>
-      <div class="hmtile" data-hm="3"><canvas width="240" height="240"></canvas><div class="c">All 25 stages <span class="dim">2,913 checks</span></div></div>
+      <div class="hmtile" data-hm="1"><canvas width="240" height="240"></canvas><div class="c">Add more checks <span class="dim">9</span></div></div>
+      <div class="hmtile" data-hm="2"><canvas width="240" height="240"></canvas><div class="c">More checks <span class="dim">52</span></div></div>
+      <div class="hmtile" data-hm="3"><canvas width="240" height="240"></canvas><div class="c">All of them <span class="dim">2,913</span></div></div>
     </div>
     <div class="hmline" data-hm="4">Nobody drew that. It&rsquo;s the detector&rsquo;s own checks, stacked: the face it is looking for.</div>
   </div>
@@ -1145,7 +1145,7 @@
   </div>
   <div class="sn">
     <p class="say">&ldquo;Every check says: this patch should be darker than that one. Stack the four we just made and you get a crude face.
-      Stack all 2,913 of the real detector's checks and you get this.&rdquo;</p>
+      Add more checks. More. All 2,913 of the real detector's checks, and you get this.&rdquo;</p>
     <p class="beat">One click per tile. Land on the last one: nobody drew it, it's the rules made visible. Knowing the rules well enough to
       recognize a face means knowing them well enough to sketch one. Hold that thought for the end of the talk.</p>
   </div>
@@ -3668,7 +3668,7 @@ demos.hrules = (() => {
 
 /* ============================================================ checks stacked: what the detector is looking for */
 demos.hmake = (() => {
-  const d = revealDemo('hmake', 'hm', 4, 'hm-go', ['Stage 1 →', 'Stages 1–3 →', 'All 25 stages →', 'So… →', 'Next slide →']);
+  const d = revealDemo('hmake', 'hm', 4, 'hm-go', ['Add more checks →', 'More →', 'All of them →', 'So… →', 'Next slide →']);
   const HAND = [[[3, 8, 6, 4, -1], [9, 8, 6, 4, 1], [15, 8, 6, 4, -1]], [[6, 6, 12, 3, -1], [6, 9, 12, 3, 1]],
                 [[9, 6, 2, 9, -1], [11, 6, 2, 9, 1], [13, 6, 2, 9, -1]], [[3, 16, 18, 2, 1], [3, 18, 18, 2, -1], [3, 20, 18, 2, 1]]];
   const add = (m, rects, sgn) => rects.forEach(([x, y, w, h, wt]) => { for (let yy = y; yy < y + h; yy++) for (let xx = x; xx < x + w; xx++) m[yy * 24 + xx] += sgn * wt; });
