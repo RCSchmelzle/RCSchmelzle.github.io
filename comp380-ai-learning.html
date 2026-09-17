@@ -727,6 +727,14 @@
   .pcol .pq2{font-size:22px;color:var(--ink-dim);margin-top:-8px}
   .pfalse{font-size:19px;line-height:1.4;border-left:4px solid var(--flag);padding:4px 0 4px 14px}
   .pfalse b{color:var(--flag)}
+  /* rules as rectangles */
+  .hrsl .body{flex-direction:column;justify-content:center;gap:28px}
+  .hrtiles{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+  .hrtile{display:flex;flex-direction:column;align-items:center;gap:12px;transition:opacity .45s ease,transform .45s ease}
+  .hrtile canvas{width:240px;height:240px;border-radius:10px;display:block;box-shadow:0 0 0 1px var(--line);image-rendering:pixelated}
+  .hrtile .c{font-size:18px;font-weight:700;text-align:center;line-height:1.3}
+  .hrline{font-size:27px;font-weight:650;text-align:center;transition:opacity .45s ease,transform .45s ease}
+  .hrsl .off{opacity:0;transform:translateY(10px)}
   /* Haar scan */
   .hssl .body{gap:30px;align-items:center}
   #hs-cv{flex:0 0 auto;width:360px;height:450px;border-radius:12px;box-shadow:0 0 0 1px var(--line);display:block}
@@ -1091,6 +1099,33 @@
 </section>
 
 <!-- ================================================== 8 ================================================== -->
+<section class="slide hrsl" data-demo="hrules" data-h="0">
+  <div class="s-head">
+    <div class="s-eyebrow">Programmatic approaches</div>
+    <h2>Each rule becomes a light-and-dark check</h2>
+  </div>
+  <div class="body">
+    <div class="hrtiles">
+      <div class="hrtile" data-hr="0"><canvas width="240" height="240"></canvas><div class="c">Two dark spots, lighter between <span class="dim">(eyes)</span></div></div>
+      <div class="hrtile" data-hr="1"><canvas width="240" height="240"></canvas><div class="c">Eyes darker than the cheeks</div></div>
+      <div class="hrtile" data-hr="2"><canvas width="240" height="240"></canvas><div class="c">A lighter strip between <span class="dim">(nose)</span></div></div>
+      <div class="hrtile" data-hr="3"><canvas width="240" height="240"></canvas><div class="c">A darker line underneath <span class="dim">(mouth)</span></div></div>
+    </div>
+    <div class="hrline" data-hr="4">One question per check: is the <b>black</b> area darker than the <b>white</b> area?</div>
+  </div>
+  <div class="foot">
+    <button class="btn primary" id="hr-go">Eyes &rarr;</button>
+    <span class="credit">Photo: Sally Ride, NASA (1984), public domain. Rectangles after Viola &amp; Jones (2001).</span>
+  </div>
+  <div class="sn">
+    <p class="say">&ldquo;Take the rules you just named and turn each one into something a computer can check: a pair of rectangles.
+      Is the black one darker than the white one? Yes or no.&rdquo;</p>
+    <p class="beat">One click per rule. The face is shrunk to 24&times;24 pixels, which is all the classic detector looks at. Last click:
+      that yes/no question is the whole trick. Next slide runs thousands of them.</p>
+  </div>
+</section>
+
+<!-- ================================================== 9 ================================================== -->
 <section class="slide hssl" data-demo="hscan">
   <div class="s-head">
     <div class="s-eyebrow">Programmatic approaches</div>
@@ -1123,7 +1158,7 @@
       haarcascade_frontalface_default (Rainer Lienhart, Intel License)</span>
   </div>
   <div class="sn">
-    <p class="say">&ldquo;People turned 'two dark eyes with a lighter nose between them' into checks a computer can run.&rdquo;</p>
+    <p class="say">&ldquo;Now slide those checks over a whole photo.&rdquo;</p>
     <p class="beat">Each tile is one check: is the black part darker than the white part? Green means yes. Stage 1 is nine cheap
       checks, and it's allowed to say &ldquo;maybe&rdquo; too often.</p>
     <p class="beat">Click: the box slides and stops at a spot that passes stage 1. Stage 2 is stricter and throws it out. Click
@@ -1133,7 +1168,7 @@
   </div>
 </section>
 
-<!-- ================================================== 9 ================================================== -->
+<!-- ================================================== 10 ================================================== -->
 <section class="slide lsl" data-demo="limits">
   <div class="s-head">
     <div class="s-eyebrow">Programmatic approaches</div>
@@ -1182,12 +1217,12 @@
   </div>
 </section>
 
-<!-- ================================================== 10 ================================================== -->
+<!-- ================================================== 11 ================================================== -->
 <section class="slide" data-alias="map" data-k="p3">
   <div class="sn"><p class="beat">Part 3. Hand off: by-hand rules break when the world changes. Now the computer works out the rules from examples.</p></div>
 </section>
 
-<!-- ================================================== 11 ================================================== -->
+<!-- ================================================== 12 ================================================== -->
 <section class="slide dsl" data-demo="dface">
   <div class="s-head">
     <div class="s-eyebrow">Learning approaches</div>
@@ -1226,7 +1261,7 @@
   </div>
 </section>
 
-<!-- ================================================== 12 ================================================== -->
+<!-- ================================================== 13 ================================================== -->
 <section class="slide vsl" data-demo="pix">
   <div class="s-head">
     <div class="s-eyebrow">Learning approaches</div>
@@ -1247,7 +1282,7 @@
   </div>
 </section>
 
-<!-- ================================================== 13 ================================================== -->
+<!-- ================================================== 14 ================================================== -->
 <section class="slide vsl" data-demo="slide1">
   <div class="s-head">
     <div class="s-eyebrow">Learning approaches &middot; layer 1</div>
@@ -1269,7 +1304,7 @@
   </div>
 </section>
 
-<!-- ================================================== 14 ================================================== -->
+<!-- ================================================== 15 ================================================== -->
 <section class="slide vsl" data-demo="stack">
   <div class="s-head">
     <div class="s-eyebrow">Learning approaches &middot; layer 2</div>
@@ -1292,7 +1327,7 @@
   </div>
 </section>
 
-<!-- ================================================== 15 ================================================== -->
+<!-- ================================================== 16 ================================================== -->
 <section class="slide" data-demo="draw">
   <div class="s-head">
     <div class="s-eyebrow">Learning approaches &middot; a real network</div>
@@ -1359,12 +1394,12 @@
   </div>
 </section>
 
-<!-- ================================================== 16 ================================================== -->
+<!-- ================================================== 17 ================================================== -->
 <section class="slide" data-alias="map" data-k="p4">
   <div class="sn"><p class="beat">Part 4. Hand off: the network found its own rules. This part is how: trial and error, at enormous scale, and then testing.</p></div>
 </section>
 
-<!-- ================================================== 17 ================================================== -->
+<!-- ================================================== 18 ================================================== -->
 <section class="slide trsl" data-demo="trial" data-t="0">
   <div class="s-head">
     <div class="s-eyebrow">Learning the rules</div>
@@ -1380,7 +1415,7 @@
   </div>
 </section>
 
-<!-- ================================================== 18 ================================================== -->
+<!-- ================================================== 19 ================================================== -->
 <section class="slide wsl" data-demo="loop">
   <div class="s-head">
     <div class="s-eyebrow">Learning the rules</div>
@@ -1416,7 +1451,7 @@
   </div>
 </section>
 
-<!-- ================================================== 19 ================================================== -->
+<!-- ================================================== 20 ================================================== -->
 <section class="slide" data-demo="split">
   <div class="s-head">
     <div class="s-eyebrow">Learning the rules &middot; testing</div>
@@ -1477,7 +1512,7 @@
   </div>
 </section>
 
-<!-- ================================================== 20 ================================================== -->
+<!-- ================================================== 21 ================================================== -->
 <section class="slide" data-demo="chips">
   <div class="s-head">
     <div class="s-eyebrow">Optional &middot; scale</div>
@@ -1535,7 +1570,7 @@
   </div>
 </section>
 
-<!-- ================================================== 21 ================================================== -->
+<!-- ================================================== 22 ================================================== -->
 <section class="slide rcsl" data-demo="recap" data-r="0">
   <div class="s-head">
     <div class="s-eyebrow">Recap</div>
@@ -1564,7 +1599,7 @@
   </div>
 </section>
 
-<!-- ================================================== 22 ================================================== -->
+<!-- ================================================== 23 ================================================== -->
 <section class="slide igsl" data-demo="genai" data-g="0">
   <div class="s-head">
     <div class="s-eyebrow">Beyond faces</div>
@@ -1597,7 +1632,7 @@
   </div>
 </section>
 
-<!-- ================================================== 23 ================================================== -->
+<!-- ================================================== 24 ================================================== -->
 <section class="slide title">
   <div style="margin-top:auto">
     <div class="t-eyebrow">Extras</div>
@@ -1610,7 +1645,7 @@
   </div>
 </section>
 
-<!-- ================================================== 24 ================================================== -->
+<!-- ================================================== 25 ================================================== -->
 <section class="slide nestslide" data-demo="nest">
   <div class="s-head">
     <div class="s-eyebrow">What counts as AI?</div>
@@ -1698,7 +1733,7 @@
   </div>
 </section>
 
-<!-- ================================================== 25 ================================================== -->
+<!-- ================================================== 26 ================================================== -->
 <section class="slide" data-alias="nest" data-k="ml">
   <div class="sn">
     <p class="beat"><b>House prices.</b> Hit Learn. Nobody draws the line: it starts wrong and gets nudged until it fits the
@@ -1708,7 +1743,7 @@
   </div>
 </section>
 
-<!-- ================================================== 26 ================================================== -->
+<!-- ================================================== 27 ================================================== -->
 <section class="slide" data-alias="nest" data-k="dl">
   <div class="sn">
     <p class="beat"><b>Deep learning.</b> Hit Train. This one is real: 37 weights, trained in the browser on made-up card
@@ -1721,7 +1756,7 @@
   </div>
 </section>
 
-<!-- ================================================== 27 ================================================== -->
+<!-- ================================================== 28 ================================================== -->
 <section class="slide hsl" data-demo="haar">
   <div class="s-head">
     <div class="s-eyebrow">Seeing &middot; the classic way</div>
@@ -1758,7 +1793,7 @@
   </div>
 </section>
 
-<!-- ================================================== 28 ================================================== -->
+<!-- ================================================== 29 ================================================== -->
 <section class="slide fsl" data-demo="feat" data-stage="0">
   <div class="s-head">
     <div class="s-eyebrow">Step 1 &middot; Preprocess</div>
@@ -1818,7 +1853,7 @@
   </div>
 </section>
 
-<!-- ================================================== 29 ================================================== -->
+<!-- ================================================== 30 ================================================== -->
 <section class="slide bsl" data-demo="bend">
   <div class="s-head">
     <div class="s-eyebrow">Step 2 &middot; Training</div>
@@ -1889,7 +1924,7 @@
   </div>
 </section>
 
-<!-- ================================================== 30 ================================================== -->
+<!-- ================================================== 31 ================================================== -->
 <section class="slide isl" data-demo="infer">
   <div class="s-head">
     <div class="s-eyebrow">Step 3 &middot; Inference</div>
@@ -1938,7 +1973,7 @@
   </div>
 </section>
 
-<!-- ================================================== 31 ================================================== -->
+<!-- ================================================== 32 ================================================== -->
 <section class="slide rsl" data-demo="backwards">
   <div class="s-head">
     <div class="s-eyebrow">Step 4 &middot; Run it backwards</div>
@@ -1984,7 +2019,7 @@
   </div>
 </section>
 
-<!-- ================================================== 32 ================================================== -->
+<!-- ================================================== 33 ================================================== -->
 <section class="slide tsl" data-demo="gen">
   <div class="s-head">
     <h2>Generating text: the same idea, much bigger</h2>
@@ -2032,7 +2067,7 @@
   </div>
 </section>
 
-<!-- ================================================== 33 ================================================== -->
+<!-- ================================================== 34 ================================================== -->
 <section class="slide" data-demo="synth">
   <div class="s-head">
     <h2>Put the whole system together</h2>
@@ -3581,6 +3616,29 @@ function revealDemo(key, attr, max, btnId, labels){
 }
 demos.everyday = revealDemo('everyday', 'es', 4, 'e-go', ['Cooking →', 'Basketball →', 'And faces? →', 'What\'s the goal? →', 'Next slide →']);
 demos.trial = revealDemo('trial', 'ts', 1);
+
+/* ============================================================ rules as rectangles: the face at 24×24 with one check drawn on each */
+demos.hrules = (() => {
+  const d = revealDemo('hrules', 'hr', 4, 'hr-go', ['Cheeks →', 'Nose →', 'Mouth →', 'The question →', 'Next slide →']);
+  const CHECKS = [                                                // [x, y, w, h, black?] in 24×24 units, one check per rule
+    [[3, 8, 6, 4, 1], [9, 8, 6, 4, 0], [15, 8, 6, 4, 1]],
+    [[6, 6, 12, 3, 1], [6, 9, 12, 3, 0]],
+    [[9, 6, 2, 9, 1], [11, 6, 2, 9, 0], [13, 6, 2, 9, 1]],
+    [[3, 16, 18, 2, 0], [3, 18, 18, 2, 1], [3, 20, 18, 2, 0]]
+  ];
+  let painted = false;
+  function paint(){
+    if (painted) return; painted = true;
+    const small = document.createElement('canvas'); small.width = small.height = 24; const sg = small.getContext('2d');
+    sg.drawImage(FacePhoto.img, 75 * 2, 57 * 2, 57 * 2, 57 * 2, 0, 0, 24, 24);      // the detector's own window, at its own resolution
+    qsa('.hrtile canvas').forEach((c, i) => {
+      const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(small, 0, 0, 240, 240);
+      g.globalAlpha = 0.85; CHECKS[i].forEach(([x, y, w, h, dark]) => { g.fillStyle = dark ? '#000' : '#fff'; g.fillRect(x * 10, y * 10, w * 10, h * 10); }); g.globalAlpha = 1;
+    });
+  }
+  FacePhoto.onReady(paint);
+  return { ...d, enter(){ paint(); } };
+})();
 
 /* ============================================================ Haar scan: one box sliding, stage 1 then stage 2 */
 demos.hscan = (() => {
