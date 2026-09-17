@@ -33,6 +33,13 @@
 
   /* ---------- deck shell: a fixed 1280x720 stage scaled to fit any projector ---------- */
   .deck{height:100%;display:flex;flex-direction:column}
+  /* phones and small windows: the whole deck keeps its desktop shape and is scaled down to fit, with bars around it */
+  html.boxed body{background:#111418}
+  html.boxed .deck{position:fixed;left:50%;top:50%;width:1280px;height:800px;background:var(--bg);
+    transform-origin:center center;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+  .rotate-hint{display:none;position:fixed;left:0;right:0;bottom:calc(18px + env(safe-area-inset-bottom, 0px));text-align:center;
+    color:#c9ced6;font-size:14px;letter-spacing:.02em}
+  html.boxed.portrait .rotate-hint{display:block}
   .stage-wrap{flex:1;min-height:0;position:relative;overflow:hidden}
   /* the stage is centred by transform, not by the layout: grid/flex centring clamps to
      start once the item is taller than its box, which clipped the slide when the
@@ -48,6 +55,8 @@
   }
   .slide.active{display:flex}
   .s-head{display:flex;flex-direction:column;gap:5px;flex:0 0 auto}
+  .s-eyebrow{font-size:14px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--hot)}
+  .bdata{font-size:14.5px;line-height:1.4;border-left:3px solid var(--hot);padding-left:10px}
   .s-head h2{margin:0;font-size:37px;line-height:1.1;letter-spacing:-.015em;font-weight:700}
   .lead{margin:0;font-size:20px;color:var(--ink-dim);line-height:1.35}
   .body{flex:1;min-height:0;display:flex;gap:24px;align-items:stretch}
@@ -279,7 +288,7 @@
   .dnn-net canvas{position:absolute;border-radius:5px;box-shadow:0 0 0 1px var(--line);image-rendering:auto}
   .dnn-ctrl{display:flex;align-items:center;gap:6px;font-size:14px;flex-wrap:nowrap}
   .dnn-lab{color:var(--ink-dim)}
-  .dnn-ctrl button{font:inherit;font-size:13.5px;font-weight:650;padding:3px 10px;border-radius:999px;cursor:pointer;
+  .dnn-ctrl button{font:inherit;font-size:13.5px;font-weight:650;padding:3px 10px;border-radius:999px;cursor:pointer;white-space:nowrap;
     border:1px solid var(--line);background:var(--panel);color:var(--ink);display:inline-flex;align-items:center;gap:5px}
   .dnn-ctrl button:hover{border-color:var(--hot)}
   .dnn-ctrl button.on{border-color:var(--hot);background:var(--hot-soft);color:var(--hot)}
@@ -302,6 +311,22 @@
   .switch .lab{color:var(--ink-dim);font-weight:600;transition:color .18s;cursor:pointer}
   .switch .lab:hover{color:var(--hot)}
   .switch .lab.on{color:var(--hot)}
+  .cmp-wrap{flex:1;display:flex;align-items:center}
+  .cmp{width:100%;border-collapse:separate;border-spacing:0;background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    overflow:hidden;font-size:18px;line-height:1.35}
+  .cmp th,.cmp td{padding:13px 20px;text-align:left;vertical-align:middle;border-bottom:1px solid var(--line)}
+  .cmp tbody tr:last-child th,.cmp tbody tr:last-child td{border-bottom:0}
+  .cmp thead th{font-size:14px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);background:var(--sunk)}
+  .cmp thead th:nth-child(3){color:var(--hot)}
+  .cmp tbody th{width:22%;font-size:14px;font-weight:700;letter-spacing:.04em;color:var(--ink-dim)}
+  .cmp td{width:39%}
+  .cmp tr.key td,.cmp tr.key th{background:var(--hot-soft)}
+  .cmp tr.key th{color:var(--hot)}
+  .cmp-simple{font-size:30px;line-height:1.3;text-align:center}
+  .cmp-simple th,.cmp-simple td{text-align:center;width:50%;padding:26px 28px}
+  .cmp-simple thead th{font-size:18px}
+  .cmp-simple tr.q td{background:var(--hot-soft);color:var(--hot);font-size:20px;font-weight:800;letter-spacing:.06em;
+    text-transform:uppercase;padding:14px}
   .pipe-title{font-size:15px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);text-align:center;margin-bottom:8px}
   .pipe.dimmed{opacity:.42}
   .pipe{transition:opacity .22s}
@@ -337,6 +362,9 @@
   .wtag{align-self:flex-start;font-size:13px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
     padding:4px 12px;border-radius:999px;border:1.5px solid currentColor;color:var(--ink-dim)}
   .wtag.fw{color:var(--water)} .wtag.loss{color:var(--spill)} .wtag.bp{color:var(--sig)} .wtag.ok{color:var(--good)}
+  .wkey{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:17px;line-height:1.35;color:var(--ink-dim);
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+  .wkey b{color:var(--ink)}
   .wline{font-size:25px;font-weight:650;line-height:1.25;letter-spacing:-.005em}
   .wsub{font-size:16.5px;color:var(--ink-dim);line-height:1.45}
   .wsub b{color:var(--ink)}
@@ -460,6 +488,119 @@
   #b-stat{margin-left:auto;color:var(--ink-dim);font-variant-numeric:tabular-nums}
   #b-stat b{color:var(--ink)}
 
+  /* ---------- S6: how an email becomes a point ---------- */
+  .fsl .body{gap:30px;align-items:center}
+  #f-cv{width:440px;height:440px;flex:0 0 440px;border-radius:14px;background:var(--panel);box-shadow:0 0 0 1px var(--line);display:block}
+  .fcol{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px}
+  .fmails{display:flex;gap:14px}
+  .fmail{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 13px;font-size:14px;line-height:1.4;
+    border-top:4px solid var(--c)}
+  .fmail.mom{--c:#2f8fdd} .fmail.spam{--c:#e8590c}
+  .fmail .from{font-size:13px;color:var(--ink-dim)}
+  .fmail .from b{color:var(--ink);font-size:14.5px}
+  .fmail .subj{font-weight:700;margin:3px 0 2px}
+  .fmail .txt{color:var(--ink)}
+  .fmail .lnk{color:#2b6cb0;text-decoration:underline}
+  .fmail mark{background:transparent;color:inherit;border-radius:4px;padding:0 1px;transition:background .25s,box-shadow .25s}
+  .fsl[data-stage="2"] .fmail mark.f-sender,.fsl[data-stage="3"] .fmail mark.f-links,.fsl[data-stage="4"] .fmail mark.f-bangs{
+    background:color-mix(in srgb,#f2b705 45%,transparent);box-shadow:0 0 0 2px color-mix(in srgb,#f2b705 70%,transparent)}
+  .fchips{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px;min-height:25px}
+  .fchips span{font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;background:var(--sunk);
+    font-variant-numeric:tabular-nums;animation:wfade .3s ease-out both}
+  .fchips b{color:var(--c)}
+  .fsteps{font-size:17px;line-height:1.45;color:var(--ink-dim)}
+  .fsteps ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+  .fsteps li::marker{color:var(--hot);font-weight:700}
+  .fsteps li{transition:color .2s}
+  .fsteps li.on{color:var(--ink)}
+  .fsteps .fsub{margin:3px 0 0;padding-left:1.1em;list-style:disc;display:flex;flex-direction:column;gap:2px;font-size:16px}
+  .fsteps .fsub li::marker{color:var(--ink-dim)}
+  .fsteps{font-size:16.5px}
+  .fsl[data-stage="1"] .fmail{box-shadow:0 0 0 3px color-mix(in srgb,#f2b705 60%,transparent)}
+  .fsteps b{color:var(--ink)}
+
+  /* ---------- S8: inference on a new email ---------- */
+  .isl .body{gap:30px;align-items:center}
+  #i-cv{width:440px;height:440px;flex:0 0 440px;border-radius:14px;background:var(--panel);box-shadow:0 0 0 1px var(--line);display:block;cursor:grab}
+  #i-cv:active{cursor:grabbing}
+  .icol{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
+  .imail{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:14.5px;line-height:1.45;border-top:4px solid var(--hot)}
+  .imail .from{font-size:13.5px;color:var(--ink-dim)} .imail .from b{color:var(--ink)}
+  .imail .subj{font-weight:700;margin:2px 0}
+  .imail .lnk{color:#2b6cb0;text-decoration:underline}
+  .ictl{display:grid;grid-template-columns:92px 1fr 118px;gap:8px 12px;align-items:center;font-size:15px}
+  .ictl .nm{font-weight:700}
+  .ictl input[type=range]{width:100%;accent-color:var(--hot)}
+  .ictl .val{color:var(--ink-dim);font-variant-numeric:tabular-nums;font-size:14px}
+  .ictl .seg{display:flex;gap:6px;grid-column:2 / 4}
+  .ictl .seg button,.ipre button{font:inherit;font-size:13.5px;font-weight:650;padding:4px 11px;border-radius:999px;cursor:pointer;
+    border:1px solid var(--line);background:var(--panel);color:var(--ink);white-space:nowrap}
+  .ictl .seg button.on{border-color:var(--hot);background:var(--hot-soft);color:var(--hot)}
+  .ictl .seg button:hover,.ipre button:hover{border-color:var(--hot)}
+  .iresult{display:flex;align-items:center;gap:16px;background:var(--sunk);border-radius:12px;padding:10px 16px}
+  .iresult .lab{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim)}
+  .iresult .pct{font-size:38px;font-weight:800;font-variant-numeric:tabular-nums;min-width:3.2ch;line-height:1.1}
+  .iresult .bar{flex:1;height:14px;border-radius:7px;background:linear-gradient(90deg,#2f8fdd,#e8590c);position:relative;opacity:.9}
+  .iresult .bar i{position:absolute;top:-6px;bottom:-6px;width:4px;border-radius:2px;background:var(--ink);transition:left .15s}
+  .iresult .verdict{font-size:17px;font-weight:750;min-width:9ch;text-align:right}
+  .ipre{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px;color:var(--ink-dim)}
+
+  /* ---------- guess, check, adjust ---------- */
+  .gsl .body{gap:34px;align-items:center}
+  #g-svg{flex:0 0 620px;height:420px;display:block;background:var(--panel);border:1px solid var(--line);border-radius:14px}
+  .gcol{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px}
+  .gloop{display:flex;align-items:center;gap:8px}
+  .gloop .gs{flex:1;border:2px solid var(--line);border-radius:12px;padding:10px 8px;text-align:center;background:var(--panel);transition:all .2s}
+  .gloop .gs b{display:block;font-size:20px}
+  .gloop .gs span{font-size:13.5px;color:var(--ink-dim)}
+  .gloop .gs.on{border-color:var(--hot);background:var(--hot-soft)}
+  .gloop .gs.on b{color:var(--hot)}
+  .gloop .ar{font-size:22px}
+  .grepeat{text-align:center;font-size:14.5px;color:var(--hot);font-weight:700;margin-top:-8px}
+  .glog{width:100%;border-collapse:collapse;font-size:16.5px;font-variant-numeric:tabular-nums}
+  .glog th{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);text-align:left;padding:4px 8px;border-bottom:1px solid var(--line)}
+  .glog td{padding:6px 8px;border-bottom:1px solid var(--line)}
+  .glog tr{animation:wfade .3s ease-out both}
+  .glog .short{color:#2f8fdd;font-weight:700} .glog .long{color:#e8590c;font-weight:700} .glog .in{color:var(--good);font-weight:800}
+  .gmap{font-size:15.5px;line-height:1.5;color:var(--ink-dim);border-left:3px solid var(--hot);padding-left:12px}
+  .gmap b{color:var(--ink)}
+
+  /* ---------- run it backwards ---------- */
+  .rsl .body{gap:30px;align-items:center}
+  #r-cv{width:440px;height:440px;flex:0 0 440px;border-radius:14px;background:var(--panel);box-shadow:0 0 0 1px var(--line);display:block}
+  .rfeat{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;font-size:16px;align-items:center}
+  .rfeat .nm{font-weight:700} .rfeat .v{font-variant-numeric:tabular-nums;color:var(--ink-dim)} .rfeat .v b{color:var(--ink)}
+  .rnote{font-size:15.5px;line-height:1.45;color:var(--ink-dim);border-left:3px solid var(--hot);padding-left:12px}
+  .rnote b{color:var(--ink)}
+  /* ---------- generating text ---------- */
+  .tsl .body{gap:26px;align-items:center}
+  .tcmp{flex:0 0 560px;border-collapse:separate;border-spacing:0;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:16px;line-height:1.35;align-self:center}
+  .tcmp th,.tcmp td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  .tcmp tbody tr:last-child th,.tcmp tbody tr:last-child td{border-bottom:0}
+  .tcmp thead th{font-size:13px;letter-spacing:.1em;text-transform:uppercase;background:var(--sunk)}
+  .tcmp thead th:nth-child(3){color:var(--hot)}
+  .tcmp tbody th{font-size:13px;color:var(--ink-dim);width:22%;font-weight:700}
+  .tgen{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;justify-content:center}
+  .tgen .prompt{font-size:14px;color:var(--ink-dim)}
+  .tgen .sent{font-size:24px;line-height:1.4;min-height:2.9em;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+  .tgen .sent .new{color:var(--hot);font-weight:700}
+  .tgen .sent .blank{color:var(--hot);font-weight:800}
+  .ttie{font-size:15.5px;line-height:1.45;border-left:4px solid var(--hot);padding-left:12px}
+  .tleft{flex:0 0 520px;display:flex;flex-direction:column;gap:14px;justify-content:center}
+  .tleft .tcmp{flex:none;align-self:stretch;font-size:15px}
+  .tleft .tcmp th,.tleft .tcmp td{padding:8px 12px}
+  .tgen{gap:9px}
+  .tgen .prompt{font-size:14.5px;line-height:1.4}
+  .tgen .sent{font-size:22px;min-height:0;padding:10px 14px}
+  .tgen .sent u{text-decoration:none;border-bottom:4px solid var(--ax);padding-bottom:1px}
+  .tgen .theads,.tgen .tcand button{display:grid;grid-template-columns:84px repeat(3,62px) 1fr 44px;gap:8px;align-items:center}
+  .tgen .tcand .heat{display:block}
+  .theads{font-size:11.5px;font-weight:700;color:var(--ink-dim);line-height:1.15;padding:0 10px;min-height:2.4em}
+  .theads span{text-align:center;border-bottom:3px solid var(--ax);padding-bottom:3px}
+  .tcand button .w{min-width:0}
+  .tcand .heat{height:22px;border-radius:5px}
+  .heat.h2{background:#e8590c} .heat.h1{background:#f2b705} .heat.h0{background:#8fc1ec}
+
   /* ---------- S4: train / evaluate / inference ---------- */
   .stations{display:flex;align-items:stretch;gap:9px}
   .station{
@@ -581,6 +722,7 @@
 </head>
 <body>
 
+<div class="rotate-hint">&#8635; Turn your phone sideways for a bigger view</div>
 <div class="deck">
 <div class="stage-wrap"><div class="stage" id="stage">
 
@@ -664,9 +806,7 @@
               <div class="dnn-net" id="s1-dnet"><svg viewBox="0 0 430 150"></svg><canvas class="wchart" id="s1-wchart" width="860" height="164"></canvas></div>
             </div>
             <div class="dnn-ctrl">
-              <span class="dnn-lab">Data:</span>
-              <button data-set="circle">circle</button><button data-set="xor">corners</button><button data-set="moons">moons</button>
-              <span class="dnn-lab" style="margin-left:10px">Click to add:</span>
+              <span class="dnn-lab">Add a purchase:</span>
               <button class="dnn-add a" data-add="1"><i></i>blue</button><button class="dnn-add b" data-add="0"><i></i>orange</button>
               <span class="dnn-stat" id="s1-dstat"></span>
             </div>
@@ -696,10 +836,11 @@
       than $25k below is underpriced, anything inside the band is on price. Drag a house up or down and watch its label
       flip; move a few and the line itself shifts, which relabels the others.</p>
     <p class="beat"><b>Deep learning</b> &mdash; hit Train. This is real: 37 weights, trained by backpropagation right in the
-      browser. A straight line (last example) can't split a circle; stacking layers of neurons can. Point at the small
+      browser, on made-up card purchases (time of day across, amount up). Fraud sits in two places &mdash; big purchases in the
+      middle of the night, and tiny &ldquo;test&rdquo; charges at any hour &mdash; so no straight line (last example) can
+      separate it; stacking layers of neurons can. Point at the small
       squares: each is one neuron, showing which part of the plane it responds to (blue = on, orange = the opposite).
-      Layer 1 learns simple straight cuts; layer 2 combines them into curves. Click to add dots, or switch to corners or
-      moons, and it re-learns. Real models have billions of weights. Stop there &mdash; how weights get adjusted is slide 4.</p>
+      Layer 1 learns simple straight cuts; layer 2 combines them into curves. Click the chart to add a purchase and it re-learns. Real models have billions of weights. Stop there &mdash; how weights get adjusted is slide 5.</p>
     <p class="beat">Ramp into slide 3: we specify the procedure &rarr; learn a couple of parameters &rarr; learn enormous
       numbers of interconnected ones.</p>
   </div>
@@ -708,49 +849,21 @@
 <!-- ================================================== 3 ================================================== -->
 <section class="slide" data-demo="rules">
   <div class="s-head">
-    <h2>Programming vs. learning</h2>
+    <h2>Algorithmic programming vs. machine learning</h2>
     <p class="lead">Same goal &mdash; get the right answer. Completely different place the &ldquo;rules&rdquo; come from.</p>
   </div>
-  <div class="foot">
-    <div class="switch">
-      <span style="font-weight:700">Who writes the rules?</span>
-      <span class="lab on" id="s2-l">A human, by hand</span>
-      <button class="sw" id="s2-sw" aria-label="toggle who writes the rules"><i></i></button>
-      <span class="lab" id="s2-r">Learned from data</span>
-    </div>
-  </div>
   <div class="body">
-    <div class="col grow pipe" id="s2-pipeL">
-      <div class="card grow" style="display:flex;flex-direction:column;justify-content:center">
-        <div class="pipe-title">Traditional programming</div>
-        <div class="flow">
-          <div class="node">Data <small>+ human-written rules</small></div>
-          <div class="ar">&darr;</div>
-          <div class="node" id="s2-rules">The program <small>a procedure someone specified</small></div>
-          <div class="ar">&darr;</div>
-          <div class="node">Answer</div>
-        </div>
-      </div>
+    <div class="cmp-wrap">
+      <table class="cmp cmp-simple">
+        <thead>
+          <tr><th>Algorithmic programming</th><th>Machine learning</th></tr>
+        </thead>
+        <tbody>
+          <tr class="q"><td colspan="2">Who writes the rules?</td></tr>
+          <tr><td><b>A programmer</b>, step by step</td><td><b>Training</b> finds them from examples</td></tr>
+        </tbody>
+      </table>
     </div>
-    <div class="col grow pipe" id="s2-pipeR">
-      <div class="card grow" style="display:flex;flex-direction:column;justify-content:center">
-        <div class="pipe-title">Machine learning</div>
-        <div class="flow">
-          <div class="node">Examples <small>+ an objective to do well on</small></div>
-          <div class="ar">&darr;</div>
-          <div class="node">Training</div>
-          <div class="ar">&darr;</div>
-          <div class="node" id="s2-params">Learned parameters <small>numbers nobody typed in by hand</small></div>
-          <div class="ar">&darr;</div>
-          <div class="node">Predictions on new input</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="foot" style="gap:20px">
-    <div class="vocab" style="flex:0 0 400px"><b>Parameter</b> <span>(or <b>weight</b>): an adjustable number
-      inside a model that affects its output.</span></div>
-    <div class="defn-strip big-line grow">Learning = changing parameters based on data.</div>
   </div>
   <details class="gd">
     <summary>Go deeper</summary>
@@ -763,13 +876,46 @@
     <p class="say">&ldquo;In ordinary programming, a programmer explicitly specifies much of the procedure. In machine
       learning, we instead have adjustable parameters. Training finds parameter values that make the model perform
       well on examples.&rdquo;</p>
-    <p class="beat">Emphasize: <b>Learning = changing parameters based on data.</b> That one sentence carries the
-      whole first half of the deck.</p>
-    <p class="beat">Flip the toggle so the class sees the two things being swapped: hand-written rules &harr; learned parameters.</p>
+    <p class="beat">One question is the whole difference: who writes the rules? Point back to the examples &mdash; the
+      tic-tac-toe AI was all hand-written rules; the house-price line learned its own.</p>
   </div>
 </section>
 
 <!-- ================================================== 4 ================================================== -->
+<section class="slide gsl" data-demo="guess">
+  <div class="s-head">
+    <h2>How does training find the rules?</h2>
+    <p class="lead">The same way you learn a free throw: guess, check how wrong you were, adjust. Then do it again.</p>
+  </div>
+  <div class="body">
+    <svg id="g-svg" viewBox="0 0 620 420" aria-label="free throws getting closer to the hoop"></svg>
+    <div class="gcol">
+      <div class="gloop" id="g-loop">
+        <div class="gs" data-g="guess"><b>Guess</b><span>take the shot</span></div><div class="ar">&rarr;</div>
+        <div class="gs" data-g="check"><b>Check</b><span>how far off?</span></div><div class="ar">&rarr;</div>
+        <div class="gs" data-g="adjust"><b>Adjust</b><span>change how hard you throw</span></div>
+      </div>
+      <div class="grepeat">&#8635; repeat until it goes in</div>
+      <table class="glog"><thead><tr><th>Shot</th><th>Power</th><th>Result</th></tr></thead><tbody id="g-log"></tbody></table>
+      <div class="gmap" id="g-map" hidden>A neural network does exactly this. <b>Guess</b> = a prediction. <b>Check</b> = the loss
+        (how wrong). <b>Adjust</b> = nudge the weights. The only difference: millions of knobs instead of one, and millions of tries.</div>
+    </div>
+  </div>
+  <div class="foot">
+    <button class="btn primary" id="g-go">Take a shot &rarr;</button>
+    <button class="btn ghost" data-reset>Reset</button>
+  </div>
+  <div class="sn">
+    <p class="say">&ldquo;Nobody tells you exactly how hard to throw a free throw. You shoot, see how far off you were, and
+      adjust.&rdquo;</p>
+    <p class="beat">Step through three shots: 3 ft short, so throw harder; then 9 inches long, so a little softer; then it goes
+      in. Point out the adjustment got <b>smaller</b> as the miss got smaller.</p>
+    <p class="beat">Land the mapping, then go to the water slide: same loop, with the vocabulary &mdash; forward pass, loss,
+      backpropagation, update.</p>
+  </div>
+</section>
+
+<!-- ================================================== 5 ================================================== -->
 <section class="slide wsl" data-demo="loop">
   <div class="s-head">
     <h2>How does a neural network learn?</h2>
@@ -797,6 +943,8 @@
   <div class="sn">
     <p class="say">&ldquo;Pour. We were wrong. Look backward. Change this. Pour again. Better, still wrong. Look backward.
       Change this. Pour again. Correct.&rdquo;</p>
+    <p class="beat">Start by defining <b>parameter</b> and landing the sentence on screen: <b>Learning = changing parameters based
+      on data.</b> That one sentence carries the whole first half of the deck.</p>
     <p class="beat">Each wedge-and-knob is one <b>weight</b>. Pour first and let them see the 25&thinsp;/&thinsp;25&thinsp;/&thinsp;25&thinsp;/&thinsp;25
       miss before you say any vocabulary.</p>
     <p class="beat">On <b>Backpropagate</b>, point at the orange arrows: that is error information travelling <i>backward</i>,
@@ -809,7 +957,281 @@
   </div>
 </section>
 
-<!-- ================================================== 5 ================================================== -->
+<!-- ================================================== 6 ================================================== -->
+<section class="slide fsl" data-demo="feat" data-stage="0">
+  <div class="s-head">
+    <div class="s-eyebrow">Step 1 &middot; Preprocess</div>
+    <h2>How does an email become input data?</h2>
+    <p class="lead">Transforming data into numbers: a model can't read, so each email is broken into tokens, then analyzed into a few numbers.</p>
+  </div>
+  <div class="body">
+    <canvas id="f-cv" width="880" height="880" aria-label="two emails placed on number lines, then in 3D"></canvas>
+    <div class="fcol">
+      <div class="fmails">
+        <div class="fmail mom">
+          <div class="from">From: <mark class="f-sender"><b>Mom</b> &lt;mom@family.example&gt;</mark></div>
+          <div class="subj">Sunday dinner<mark class="f-bangs">!</mark></div>
+          <div class="txt">Are you still coming Sunday? Dad's making lasagna<mark class="f-bangs">!</mark> Here's the recipe:
+            <mark class="f-links"><span class="lnk">rcschmelzle.github.io/recipes/lasagna</span></mark></div>
+          <div class="fchips" id="f-chips-mom"></div>
+        </div>
+        <div class="fmail spam">
+          <div class="from">From: <mark class="f-sender"><b>free-money@notascam.example</b></mark></div>
+          <div class="subj">YOU WON<mark class="f-bangs">!!!</mark></div>
+          <div class="txt">Congratulations<mark class="f-bangs">!!!</mark> Claim your gift card now<mark class="f-bangs">!</mark>
+            <mark class="f-links"><span class="lnk">rcschmelzle.github.io/claim-prize-n0w</span></mark> Ends TODAY<mark class="f-bangs">!</mark></div>
+          <div class="fchips" id="f-chips-spam"></div>
+        </div>
+      </div>
+      <div class="fsteps">
+        <ol id="f-steps">
+          <li data-on="1"><b>Preprocess:</b> break the email into tokens &mdash; words, symbols, pieces of the link.</li>
+          <li data-on="2,3,4"><b>Analyze</b> the tokens:
+            <ul class="fsub">
+              <li data-on="2">Who sent it? Someone in your contacts, or a stranger.</li>
+              <li data-on="3">How suspicious is the link?</li>
+              <li data-on="4">How many ! marks?</li>
+            </ul></li>
+          <li data-on="5"><b>Put the three numbers together:</b> one email becomes one point in 3D.</li>
+          <li data-on="6"><b>Do it for every email.</b> That's the <b>input data</b>: most of it for training, some held back for testing.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="foot">
+    <button class="btn primary" id="f-go">Preprocess &rarr;</button>
+    <button class="btn ghost" data-reset>Reset</button>
+    <span class="illus">Made-up emails</span>
+    <div class="caveat grow">Real spam filters use hundreds of features like these (and learned ones too). Three is just the
+      most we can draw.</div>
+  </div>
+  <div class="sn">
+    <p class="say">&ldquo;A model can't read an email. So first we have to decide what numbers describe one.&rdquo;</p>
+    <p class="beat"><b>Preprocess</b> first: the email is chopped into tokens (the same idea an LLM uses, slide 10). The
+      model still can't use those directly, so we <b>analyze</b> them into numbers. Click through one feature at a time: the highlighted part of each email becomes a dot on its own number
+      line. Mom is in your contacts, links to a normal recipe site, and uses two ! marks; free-money@notascam.example is a stranger with a very
+      shady link and eight.</p>
+    <p class="beat">&ldquo;Put them together&rdquo;: three number lines become three axes, and each email's three dots slide
+      into one point. Then every other email lands in the same box. Choosing these features was a human decision &mdash;
+      and anything we didn't measure, the model can never see.</p>
+  </div>
+</section>
+
+<!-- ================================================== 7 ================================================== -->
+<section class="slide bsl" data-demo="bend">
+  <div class="s-head">
+    <div class="s-eyebrow">Step 2 &middot; Training</div>
+    <h2>Weights: what do they do?</h2>
+    <p class="lead">They stretch and bend the space, and training adjusts them until one flat cut splits spam from real mail.</p>
+  </div>
+  <div class="body">
+    <canvas id="b-cv" width="880" height="880" aria-label="grid and dots as each layer transforms them"></canvas>
+    <div class="bcol">
+      <div id="b-slide">
+        <div class="bscale" id="b-scale"></div>
+        <input type="range" id="b-t" min="0" max="6" step="0.01" value="0" aria-label="which layer to view">
+      </div>
+      <div class="bsteps" id="b-steps">
+        <p>Each layer does two things to every point:</p>
+        <ol>
+          <li data-b="stretch"><b>Stretch.</b> Multiply by the layer's weights and add a bias. The space stretches, turns and
+            shifts, but grid lines stay straight.</li>
+          <li data-b="bend"><b>Bend.</b> Squash every value through the neuron's activation (tanh). Big values flatten toward
+            the edges, so the grid curves.</li>
+          <li data-b="split" id="b-split">After the last layer, <b>one straight line</b> splits the two groups.</li>
+        </ol>
+      </div>
+      <div class="bspam" id="b-spam" hidden>
+        <p>Each dot is an <b>email</b>: how <b>suspicious its link</b> is, how many <b>!</b> marks, and whether the <b>sender is in your
+          contacts</b>. <span class="k-spam">Spam</span> / <span class="k-ham">not spam</span>.</p>
+        <p class="berrs" id="b-errs"></p>
+        <p class="bdata"><b>Training data</b> (these emails) is what the weights learn from. <b>Test data</b> is emails held back and
+          never trained on, used afterward to check it works on mail it hasn't seen.</p>
+      </div>
+      <div class="brow" hidden>                                <!-- flat / circle views hidden; spam only -->
+        <span class="lab">View:</span>
+        <button data-view="2d">flat &middot; 2 neurons per layer</button><button data-view="3d">3D &middot; 3 neurons</button><button data-view="spam">3D &middot; spam filter</button>
+      </div>
+      <div class="brow">
+        <button id="b-play">&#9654; Play the bend</button>
+        <span class="lab" style="margin-left:8px">Data:</span>
+        <span id="b-data2"><button data-bset="moons">moons</button> <button data-bset="xor">corners</button></span>
+        <span id="b-data3" hidden><button class="on" disabled>circle</button> <span class="lab">drag the picture to turn it</span></span>
+        <span id="b-data4" hidden><button class="on" disabled>78 emails</button></span>
+        <span id="b-stat"></span>
+      </div>
+    </div>
+  </div>
+  <div class="foot">
+    <button class="btn primary" id="b-go">Train</button>
+    <button class="btn ghost" data-reset>Reset</button>
+    <span class="illus">Made-up emails &middot; real training</span>
+    <div class="caveat grow">This network has a single layer of just 3 neurons, so every step can be drawn in 3D. Real networks
+      do the same stretching and bending in thousands of dimensions.</div>
+  </div>
+  <div class="sn">
+    <p class="say">&ldquo;So what is a layer actually doing? It's bending space. Watch.&rdquo;</p>
+    <p class="beat">Before training, hit <b>Play the bend</b>: the random starting weights twist the box, but nothing gets
+      split and there's no plane yet. Then <b>Train</b> (about 20 seconds; the picture updates live) and play it again.</p>
+    <p class="beat">Say the two moves out loud as the slider passes them: <b>stretch</b> (weights and bias, straight lines
+      stay straight) and <b>bend</b> (tanh squashes, lines curve). Every layer is just those two.</p>
+    <p class="beat"><b>Spam filter</b>: the input axes are real features (link suspicion, ! marks, sender in contacts), and a layer of 3
+      neurons stretches and bends that box before one plane cuts it. Train it: the plane fades in as it gets surer. Then point
+      at the ringed mistakes: a few real emails get filtered, a few spams get through. Those emails look <i>identical</i> to
+      the others in these three features, so no amount of bending can separate them &mdash; the fix is better information (a new
+      feature), not more layers. And who pays for each kind of mistake is a design choice.</p>
+    <p class="beat">After training, hit <b>Unbend it</b> (or drag the slider back): the flat wall rides back through the bend and
+      the stretch and turns into the curved surface it really is among the original emails. A flat cut after bending is a
+      curved cut in the space you started with.</p>
+    <p class="beat">Drag the slider to stop on any layer. The plane at the end is the only &ldquo;decision&rdquo; the network
+      makes; all the real work was reshaping the space first.</p>
+  </div>
+</section>
+
+<!-- ================================================== 8 ================================================== -->
+<section class="slide isl" data-demo="infer">
+  <div class="s-head">
+    <div class="s-eyebrow">Step 3 &middot; Inference</div>
+    <h2>How is this used?</h2>
+    <p class="lead">A new email arrives: is it spam? Training is over and the weights are locked; the network just <b>uses</b> what it learned.</p>
+  </div>
+  <div class="body">
+    <canvas id="i-cv" width="880" height="880" aria-label="the learned curved boundary among the training emails, and a new email"></canvas>
+    <div class="icol">
+      <div class="imail">
+        <div class="from">From: <b id="i-from"></b></div>
+        <div class="subj" id="i-subj"></div>
+        <div id="i-body"></div>
+      </div>
+      <div class="ictl">
+        <span class="nm">Sender</span>
+        <span class="seg"><button data-c="1">in your contacts</button><button data-c="0">a stranger</button></span>
+        <span class="nm">Link</span><input type="range" id="i-link" min="0" max="10" step="1" aria-label="how suspicious the link is"><span class="val" id="i-linkv"></span>
+        <span class="nm">! marks</span><input type="range" id="i-bang" min="0" max="15" step="1" aria-label="how many exclamation marks"><span class="val" id="i-bangv"></span>
+      </div>
+      <div class="iresult">
+        <div><div class="lab">Chance it's spam</div><div class="pct" id="i-pct"></div></div>
+        <div class="bar"><i id="i-bar"></i></div>
+        <div class="verdict" id="i-verdict"></div>
+      </div>
+      <div class="ipre">Try:
+        <button data-p="9,12,0">shady link, stranger, lots of !</button>
+        <button data-p="1,2,1">from Mom</button>
+        <button data-p="8,1,1">a hacked friend</button>
+        <button data-p="5,0,0">a newsletter</button>
+      </div>
+    </div>
+  </div>
+  <div class="foot">
+    <span class="illus real">&#128274; Weights locked &middot; inference only</span>
+    <div class="caveat grow">The percentage is the network's confidence, not a guarantee. It can be very sure and still wrong &mdash;
+      like the copycat spams that look exactly like real mail.</div>
+  </div>
+  <div class="sn">
+    <p class="say">&ldquo;This is what happens every time an email actually hits your inbox. No learning &mdash; just the frozen network,
+      one forward pass.&rdquo;</p>
+    <p class="beat">The red sheet is the boundary it learned, unbent back into the original email space. Move the sliders: the
+      new email's dot moves, and when it crosses the sheet the verdict flips.</p>
+    <p class="beat">Try &ldquo;a hacked friend&rdquo;: in your contacts, but a shady link. Ask the class what a filter should do when
+      it's 50/50 &mdash; and who gets hurt by each kind of mistake.</p>
+  </div>
+</section>
+
+<!-- ================================================== 9 ================================================== -->
+<section class="slide rsl" data-demo="backwards">
+  <div class="s-head">
+    <div class="s-eyebrow">Step 4 &middot; Run it backwards</div>
+    <h2>Can you sneak past the filter?</h2>
+    <p class="lead">The weights stay locked. This time the <b>email</b> is what gets adjusted, a little at a time, until the filter calls it safe.</p>
+  </div>
+  <div class="body">
+    <canvas id="r-cv" width="880" height="880" aria-label="a spam email sliding across the learned boundary as its features change"></canvas>
+    <div class="icol">
+      <div class="imail">
+        <div class="from">From: <b>security-alert@acc0unt-verify.example</b></div>
+        <div class="subj" id="r-subj"></div>
+        <div id="r-body"></div>
+      </div>
+      <div class="rfeat">
+        <span class="nm">Link suspicion</span><span class="v" id="r-link"></span>
+        <span class="nm">! marks</span><span class="v" id="r-bang"></span>
+        <span class="nm">Sender</span><span class="v">a stranger <i>(it can't fake being in your contacts)</i></span>
+      </div>
+      <div class="iresult">
+        <div><div class="lab">Chance it's spam</div><div class="pct" id="r-pct"></div></div>
+        <div class="bar"><i id="r-bar"></i></div>
+        <div class="verdict" id="r-verdict"></div>
+      </div>
+      <div class="rnote">The same <b>guess, check, adjust</b> loop as the free throws, but turned around: training adjusted the
+        <b>weights</b> to fit the emails; this adjusts the <b>email</b> to fit the model. Spammers do exactly this.</div>
+    </div>
+  </div>
+  <div class="foot">
+    <button class="btn primary" id="r-go">Make it pass &rarr;</button>
+    <button class="btn ghost" data-reset>Reset</button>
+    <span class="illus real">&#128274; Weights locked</span>
+    <div class="caveat grow">A lower score doesn't make it a safer email. The scam is exactly the same; only the three things the
+      filter looks at changed.</div>
+  </div>
+  <div class="sn">
+    <p class="say">&ldquo;What if you were the spammer? The filter is trained and locked. Can you get past it?&rdquo;</p>
+    <p class="beat">Press <b>Make it pass</b>: each step nudges the email in whichever direction lowers the spam score the most.
+      Watch the trail cross the red sheet. Link suspicion and ! marks fall; the sender can't change.</p>
+    <p class="beat">Ask: is the email any less of a scam? No. That's the arms race between filters and spammers, and why real
+      filters keep adding features and retraining. But notice what's missing: we changed three numbers, not an actual email.
+      Writing the words is the next slide.</p>
+  </div>
+</section>
+
+<!-- ================================================== 10 ================================================== -->
+<section class="slide tsl" data-demo="gen">
+  <div class="s-head">
+    <h2>Generating text: the same idea, much bigger</h2>
+    <p class="lead">An LLM does inference too. Its question is just different: not &ldquo;spam or not?&rdquo; but <b>&ldquo;which token comes next?&rdquo;</b></p>
+  </div>
+  <div class="body">
+    <div class="tleft">
+    <table class="tcmp">
+      <thead><tr><th></th><th>Spam filter</th><th>LLM</th></tr></thead>
+      <tbody>
+        <tr><th>Each input is</th><td>3 numbers (3 axes)</td><td>thousands of numbers per token</td></tr>
+        <tr><th>The question</th><td>Spam or not?</td><td>Which token comes next? scored for every token it knows (~100,000)</td></tr>
+        <tr><th>The output</th><td>one probability</td><td>a probability for every token, adding up to 100%</td></tr>
+        <tr><th>Training loss</th><td>high when it calls spam &ldquo;safe&rdquo; (or the reverse)</td><td>high when it gave little probability to the word that actually came next</td></tr>
+      </tbody>
+    </table>
+      <div class="ttie">Training showed it billions of real sentences; every time it put little probability on the word that
+        actually came next, the loss went up and the weights got nudged.</div>
+    </div>
+    <div class="tgen">
+      <div class="prompt">Like 20 questions: each axis asks &ldquo;does this word fit <i>this part</i> of the text?&rdquo; &mdash; hot or cold.
+        Click a word, or let it pick.</div>
+      <div class="sent" id="t-sent"></div>
+      <div class="theads" id="t-heads"></div>
+      <div class="cand tcand" id="t-cand"></div>
+      <div style="display:flex;gap:8px;align-items:center"><button class="btn" id="t-pick">Let it pick</button>
+        <span class="dim" style="font-size:13.5px"><span style="color:#e8590c">&#9632;</span> hot &nbsp; <span style="color:#f2b705">&#9632;</span> warm &nbsp; <span style="color:#8fc1ec">&#9632;</span> cold</span></div>
+      <div class="illus" style="align-self:flex-start">Illustrative &mdash; real axes number in the thousands and don't come with names</div>
+    </div>
+  </div>
+  <div class="foot">
+    <button class="btn ghost" data-reset>Reset</button>
+    <div class="caveat grow">A model that has learned what normal emails sound like can also write scam emails that don't sound
+      like scams, and none of the spam filter's three features would catch them.</div>
+  </div>
+  <div class="sn">
+    <p class="say">&ldquo;Last slide we changed three numbers. To actually write an email, you need a model whose output is words.&rdquo;</p>
+    <p class="beat">Walk the table row by row: same inference, same training loop, just a far bigger question. Then build the
+      sentence: each click is one full inference, and the chosen token is appended before it predicts again.</p>
+    <p class="beat">Play it like 20 questions: each coloured axis is one question about the text so far (is it personal? about a
+      plan? a time?). &ldquo;Dinner&rdquo; is hot on all three and &ldquo;taxes&rdquo; is cold, so dinner gets most of the
+      probability. Be clear that real axes number in the thousands and don't have tidy names; these are stand-ins.</p>
+    <p class="beat">Probability vs. loss: the model outputs probabilities; loss only exists during training, when there's a real
+      next word to compare against. Close on the ethics: fluent scams that dodge feature-based filters.</p>
+  </div>
+</section>
+
+<!-- ================================================== 11 ================================================== -->
 <section class="slide" data-demo="draw">
   <div class="s-head">
     <h2>A real neural network: draw something</h2>
@@ -876,76 +1298,7 @@
   </div>
 </section>
 
-<!-- ================================================== 6 ================================================== -->
-<section class="slide bsl" data-demo="bend">
-  <div class="s-head">
-    <h2>What does each layer actually do?</h2>
-    <p class="lead">It bends space. Tiny networks you can actually draw, untangling two groups until a single straight cut splits them.</p>
-  </div>
-  <div class="body">
-    <canvas id="b-cv" width="880" height="880" aria-label="grid and dots as each layer transforms them"></canvas>
-    <div class="bcol">
-      <div id="b-slide">
-        <div class="bscale" id="b-scale"></div>
-        <input type="range" id="b-t" min="0" max="6" step="0.01" value="0" aria-label="which layer to view">
-      </div>
-      <div class="bsteps" id="b-steps">
-        <p>Each layer does two things to every point:</p>
-        <ol>
-          <li data-b="stretch"><b>Stretch.</b> Multiply by the layer's weights and add a bias. The space stretches, turns and
-            shifts, but grid lines stay straight.</li>
-          <li data-b="bend"><b>Bend.</b> Squash every value through the neuron's activation (tanh). Big values flatten toward
-            the edges, so the grid curves.</li>
-          <li data-b="split" id="b-split">After the last layer, <b>one straight line</b> splits the two groups.</li>
-        </ol>
-      </div>
-      <div class="bspam" id="b-spam" hidden>
-        <p>Each dot is an <b>email</b>: how many <b>links</b>, how many <b>!</b> marks, and whether the <b>sender is in your
-          contacts</b>. <span class="k-spam">Spam</span> / <span class="k-ham">not spam</span>.</p>
-        <p class="berrs" id="b-errs"></p>
-      </div>
-      <div class="brow">
-        <span class="lab">View:</span>
-        <button data-view="2d">flat &middot; 2 neurons per layer</button><button data-view="3d">3D &middot; 3 neurons</button><button data-view="spam">3D &middot; spam filter</button>
-      </div>
-      <div class="brow">
-        <button id="b-play">&#9654; Play the bend</button>
-        <span class="lab" style="margin-left:8px">Data:</span>
-        <span id="b-data2"><button data-bset="moons">moons</button> <button data-bset="xor">corners</button></span>
-        <span id="b-data3" hidden><button class="on" disabled>circle</button> <span class="lab">drag the picture to turn it</span></span>
-        <span id="b-data4" hidden><button class="on" disabled>80 emails</button> <span class="lab">drag the picture to turn it</span></span>
-        <span id="b-stat"></span>
-      </div>
-    </div>
-  </div>
-  <div class="foot">
-    <button class="btn primary" id="b-go">Train</button>
-    <button class="btn ghost" data-reset>Reset</button>
-    <span class="illus">Made-up dots &middot; real training</span>
-    <div class="caveat grow">The flat view uses 2 neurons per layer and both 3D views use one layer of 3, so every layer can
-      be drawn. Real networks do the same stretching and bending in thousands of dimensions.</div>
-  </div>
-  <div class="sn">
-    <p class="say">&ldquo;So what is a layer actually doing? It's bending space. Watch.&rdquo;</p>
-    <p class="beat">Before training, hit <b>Play the bend</b>: the random weights twist the grid, but the groups stay
-      tangled. Then <b>Train</b> (about 20 seconds; the picture updates live), and play it again: layer by layer the groups
-      get pulled apart until a single straight line splits them.</p>
-    <p class="beat">Say the two moves out loud as the slider passes them: <b>stretch</b> (weights and bias, straight lines
-      stay straight) and <b>bend</b> (tanh squashes, lines curve). Every layer is just those two.</p>
-    <p class="beat">Then switch to <b>3D</b>. The circle can't be untangled on a flat sheet, but a layer of 3 neurons lifts the
-      dots off the page: the middle rises and the ring stays low (or the other way around), and a flat plane slides between
-      them. Drag the picture to turn it. That's why width matters as well as depth.</p>
-    <p class="beat"><b>Spam filter</b>: the input axes are real features (links, ! marks, sender in contacts), and a layer of 3
-      neurons stretches and bends that box before one plane cuts it. Train it: the plane fades in as it gets surer. Then point
-      at the ringed mistakes: a few real emails get filtered, a few spams get through. Those emails look <i>identical</i> to
-      the others in these three features, so no amount of bending can separate them &mdash; the fix is better information (a new
-      feature), not more layers. And who pays for each kind of mistake is a design choice.</p>
-    <p class="beat">Drag the slider to stop on any layer. The line at the end is the only &ldquo;decision&rdquo; the network
-      makes; all the real work was reshaping the space first.</p>
-  </div>
-</section>
-
-<!-- ================================================== 7 ================================================== -->
+<!-- ================================================== 12 ================================================== -->
 <section class="slide" data-demo="split">
   <div class="s-head">
     <h2>Training &ne; testing &ne; using</h2>
@@ -1007,7 +1360,7 @@
   </div>
 </section>
 
-<!-- ================================================== 8 ================================================== -->
+<!-- ================================================== 13 ================================================== -->
 <section class="slide" data-demo="chips">
   <div class="s-head">
     <h2>Why GPUs matter</h2>
@@ -1068,161 +1421,7 @@
   </div>
 </section>
 
-<!-- ================================================== 9 ================================================== -->
-<section class="slide" data-demo="tok">
-  <div class="s-head">
-    <h2>How does text become numbers?</h2>
-    <p class="lead">An LLM never sees words the way you do. <i class="dim">Edit the sentence if you like, then tokenize it.</i></p>
-  </div>
-  <div class="body">
-    <div class="col" style="flex:0 0 600px">
-      <input class="txtin" id="s6-in" value="The students are learning about artificial intelligence.">
-      <div class="foot">
-        <button class="btn primary" id="s6-tok">Tokenize</button>
-        <button class="btn ghost" data-reset>Reset</button>
-        <span class="illus">Illustrative segmentation &amp; IDs</span>
-      </div>
-      <div class="card sunk grow"><div class="tokrow" id="s6-toks"></div></div>
-    </div>
-    <div class="col grow">
-      <div class="card grow">
-        <h3>Next-token demo</h3>
-        <div class="sent" id="s6-sent"></div>
-        <div class="cand" id="s6-cand" style="margin-top:11px"></div>
-        <div style="margin-top:10px"><span class="illus">Illustrative probabilities &mdash; not from a real model</span></div>
-      </div>
-      <div class="card sunk">
-        <div class="vocab" style="font-size:16px"><b>During training:</b> <span>prediction &rarr; loss &rarr; backprop &rarr; parameter updates</span></div>
-        <div class="vocab" style="font-size:16px;margin-top:4px"><b>During inference:</b> <span>use the learned parameters to generate</span></div>
-      </div>
-    </div>
-  </div>
-  <div class="row-flow">
-    <div class="node tight">Text</div><div class="ar">&rarr;</div>
-    <div class="node tight">Tokens</div><div class="ar">&rarr;</div>
-    <div class="node tight">Numerical representations</div><div class="ar">&rarr;</div>
-    <div class="node tight">Transformer / attention</div><div class="ar">&rarr;</div>
-    <div class="node tight">Probabilities for the next token</div>
-  </div>
-  <details class="gd">
-    <summary>Go deeper</summary>
-    <div class="gd-body">Tokens come from a learned vocabulary (tens of thousands of entries) built by an algorithm like
-      <b>byte-pair encoding</b>; common words are single tokens, rare ones split into pieces, and the same word can tokenize
-      differently with or without a leading space. Each token ID indexes an <b>embedding</b> &mdash; a long list of numbers.
-      <b>Attention</b> lets each position draw on the others, so the representation of a word depends on its context.
-      Generation then samples from the probability distribution (<b>temperature</b>, top-p), which is why the same prompt
-      can give different answers.</div>
-  </details>
-  <div class="sn">
-    <p class="say">&ldquo;An LLM doesn't operate directly on words as we see them. Text is divided into tokens, which can
-      be words, pieces of words, punctuation, and other text units. Those are represented numerically and processed by the
-      Transformer. Ultimately, the model produces probabilities for what token should come next.&rdquo;</p>
-    <p class="beat">Then connect back to slide 4 explicitly: same prediction step &mdash; in training we measure its error
-      and update; at inference we just take the answer.</p>
-    <p class="beat">Click a low-probability token on purpose to show that generation is a choice from a distribution.</p>
-  </div>
-</section>
-
-<!-- ================================================== 10 ================================================== -->
-<section class="slide" data-demo="ctx">
-  <div class="s-head">
-    <h2>Does a chatbot actually remember you?</h2>
-    <p class="lead">It answered correctly. The interesting question is <i>where that fact was living</i> &mdash;
-      and what happens when the window runs out of room.</p>
-  </div>
-  <div class="body">
-    <div class="col" style="flex:0 0 500px">
-      <div class="card grow" id="s7-left" style="display:flex;flex-direction:column;justify-content:center;min-height:0">
-        <div class="chat" id="s7-chat">
-          <div class="bub you">My robot's name is Marvin.</div>
-          <div class="bub bot">Got it.</div>
-          <div class="bub you">What's my robot's name?</div>
-          <div class="bub bot">Marvin.</div>
-        </div>
-        <div class="hood" id="s7-hood" hidden>
-          <div class="hl">What the model receives <span class="dim" style="font-weight:400;text-transform:none;letter-spacing:0">&mdash; one request</span></div>
-          <div class="ln sys">System / developer instructions</div>
-          <div class="ln sys" id="s7-earlier" hidden></div>
-          <div id="s7-fact">
-            <div class="ln">User: My robot's name is Marvin.</div>
-            <div class="ln">Assistant: Got it.</div>
-          </div>
-          <div id="s7-recent"></div>
-          <div class="ln">User: What's my robot's name?</div>
-          <div class="ar" style="margin:3px 0">&darr;</div>
-          <div class="node tight on" style="margin:0 auto;max-width:190px">Model</div>
-          <div class="ar" style="margin:3px 0">&darr;</div>
-          <div class="ln" id="s7-out" style="text-align:center;font-weight:700">&ldquo;Marvin&rdquo;</div>
-        </div>
-      </div>
-      <div class="punch" id="s7-punch" hidden>Context is not the same thing as training.</div>
-    </div>
-    <div class="col grow">
-      <div class="card" style="padding:13px 15px">
-        <div class="vocab"><b>Context window</b> <span>&mdash; the amount of information the model can work with in a
-          single inference.</span></div>
-        <div class="meterwrap" style="margin-top:9px">
-          <div class="meter" id="s7-meter"><i></i></div>
-          <div class="meter-lab"><span id="s7-mtxt">Context window</span><span id="s7-mpct">0%</span></div>
-        </div>
-        <div class="foot" style="margin-top:9px">
-          <button class="btn" id="s7-more" disabled>Continue conversation</button>
-          <button class="btn" id="s7-compact" disabled>Compact context</button>
-        </div>
-      </div>
-      <div class="card sunk" id="s7-sum" style="padding:10px 14px" hidden>
-        <h3 style="margin-bottom:6px">After compaction</h3>
-        <div id="s7-sumfull">
-          <div class="vocab" style="font-size:15.5px;line-height:1.35">Summary:<br>
-            &bull; User has a robot named Marvin.<br>
-            &bull; They are learning about AI.<br>
-            &bull; They asked about neural networks.</div>
-          <div class="vocab dim" style="font-size:14px;line-height:1.35;margin-top:6px">Real applications can select,
-            summarize, retrieve, or otherwise manage previous information rather than sending an unlimited transcript
-            every time.</div>
-        </div>
-        <div class="vocab" id="s7-sumline" style="font-size:15px;line-height:1.3" hidden>Summary: robot = Marvin
-          &middot; learning about AI &middot; asked about neural networks.</div>
-      </div>
-      <div class="col grow" id="s7-why" style="gap:6px" hidden>
-        <div class="big-line" style="font-size:17px">So why might a chatbot &ldquo;forget&rdquo;?</div>
-        <div class="reasons" id="s7-reasons">
-          <div class="reason">The information isn't in the current context.</div>
-          <div class="reason">Older information was dropped.</div>
-          <div class="reason">Compaction or summarization omitted an important detail.</div>
-          <div class="reason">The information is present, but the model fails to use it correctly.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="foot" style="gap:14px">
-    <button class="btn primary" id="s7-hoodbtn">Look under the hood</button>
-    <button class="btn ghost" data-reset>Reset</button>
-    <div class="caveat grow">Some products also have separate <b>persistent-memory</b> systems. Persistent memory and the
-      active context window are different mechanisms &mdash; and products don't all implement them the same way.</div>
-  </div>
-  <details class="gd">
-    <summary>Go deeper</summary>
-    <div class="gd-body">Each request re-sends a prompt; the model holds no state between calls on its own. Attention cost
-      grows steeply with length, so the window is finite and long chats get managed: truncation, summarization, or
-      <b>retrieval</b> (fetch only the relevant pieces from a store). A persistent-memory feature is usually a database plus
-      retrieval on top of an unchanged model &mdash; the weights stay fixed. Parameters can be changed after the fact
-      (<b>fine-tuning</b>), but that is a deliberate training run, not something your chat message triggers.</div>
-  </details>
-  <div class="sn">
-    <p class="say">&ldquo;When I told the chatbot &lsquo;Marvin,&rsquo; we generally didn't run backpropagation and
-      retrain the neural network. Instead, chatbot software can package relevant conversation information into the model's
-      input. The trained model then uses that information.&rdquo;</p>
-    <p class="beat">Sequence: <b>Look under the hood</b> &rarr; <b>Continue conversation</b> until the window fills.
-      Watch what happens: the Marvin turn is the oldest, so it is the first thing dropped &mdash; and the answer changes to
-      &ldquo;I don&rsquo;t have that information.&rdquo; Nothing was unlearned; the fact simply stopped being sent.</p>
-    <p class="beat">Then <b>Compact context</b> &mdash; the summary puts the fact back in far fewer tokens and the answer
-      returns. Now ask the class why chatbots forget, and reveal the four reasons one at a time.</p>
-    <p class="beat">Do read the caveat out loud &mdash; otherwise they leave thinking every chatbot just replays the transcript.</p>
-  </div>
-</section>
-
-<!-- ================================================== 11 ================================================== -->
+<!-- ================================================== 14 ================================================== -->
 <section class="slide" data-demo="synth">
   <div class="s-head">
     <h2>Put the whole system together</h2>
@@ -1360,10 +1559,17 @@ const dots = slides.map((_, i) => {
   return b;
 });
 
+const deckEl = qs('.deck');
 function fit(){
+  // small screens get the whole deck at desktop size (1280 x 800), letterboxed to fit
+  const W = innerWidth, H = innerHeight, boxed = W < 1000 || H < 620;
+  document.documentElement.classList.toggle('boxed', boxed);
+  document.documentElement.classList.toggle('portrait', boxed && H > W);
+  deckEl.style.transform = boxed ? 'translate(-50%,-50%) scale(' + Math.min(W / 1280, H / 800) + ')' : '';
   const s = Math.min(wrap.clientWidth / 1280, wrap.clientHeight / 720);
   stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
 }
+addEventListener('resize', fit);
 new ResizeObserver(fit).observe(wrap);
 fit();
 
@@ -1383,8 +1589,17 @@ function goto(i){
   notesBody.innerHTML = sn ? sn.innerHTML : '<p class="beat">No notes for this slide.</p>';
   history.replaceState(null, '', '#' + (i + 1));
 }
-$('next').onclick = () => goto(idx + 1);
-$('prev').onclick = () => goto(idx - 1);
+// forward/back first steps through a slide's own stages (if it has any), then moves to the next slide
+function advance(dir){
+  const d = demos[slides[idx].dataset.demo];
+  if (d && d.step && d.step(dir)) return;
+  goto(idx + dir);
+  const n = demos[slides[idx].dataset.demo];
+  if (dir < 0 && n && n.atEnd) n.atEnd();                // coming back lands on the slide's last stage
+  if (dir > 0 && n && n.atStart) n.atStart();            // going forward always starts at its first
+}
+$('next').onclick = () => advance(1);
+$('prev').onclick = () => advance(-1);
 
 function resetCurrent(){
   const d = demos[slides[idx].dataset.demo];
@@ -1411,8 +1626,8 @@ document.addEventListener('keydown', e => {
   if (/^(INPUT|TEXTAREA)$/.test((e.target || {}).tagName)) return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const k = e.key;
-  if (k === 'ArrowRight' || k === 'PageDown'){ goto(idx + 1); e.preventDefault(); }
-  else if (k === 'ArrowLeft' || k === 'PageUp'){ goto(idx - 1); e.preventDefault(); }
+  if (k === 'ArrowRight' || k === 'PageDown'){ advance(1); e.preventDefault(); }
+  else if (k === 'ArrowLeft' || k === 'PageUp'){ advance(-1); e.preventDefault(); }
   else if (k === 'Home'){ goto(0); e.preventDefault(); }
   else if (k === 'End'){ goto(slides.length - 1); e.preventDefault(); }
   else if (k === 's' || k === 'S'){ $('notesBtn').click(); e.preventDefault(); }
@@ -1436,7 +1651,7 @@ demos.nest = (() => {
     ml: { title:'Machine Learning', def:'AI that learns from data.',
           ex:'\u{1F3E0} Is this house overpriced?', illus:'Illustrative data', take:'The two numbers are learned from data.' },
     dl: { title:'Deep Learning', def:'Machine learning with many-layered neural networks.',
-          ex:'\u{1F9E0} Split two groups no straight line can', illus:'Made-up dots · real training', take:'Layers of neurons combine simple pieces into a curve.' }
+          ex:'\u{1F4B3} Is this card purchase fraud?', illus:'Made-up purchases · real training', take:'Layers of neurons combine simple pieces into a curve.' }
   };
 
   /* ---------------- AI: play tic-tac-toe against hand-written rules ---------------- */
@@ -1486,7 +1701,7 @@ demos.nest = (() => {
       const open = b.map((v, i) => v ? -1 : i).filter(i => i >= 0);
       const verdict = Object.fromEntries(open.map(i => [i, judge(b, i)]));
       // the first AI turn of a game goes slowly so the steps can be explained; later turns are quick
-      const [tCheck, tRules, tPick] = aiTurns++ === 0 ? [400, 1900, 3600] : [150, 550, 1050];
+      const [tCheck, tRules, tPick] = aiTurns++ === 0 ? [400, 1900, 3600] : [300, 1100, 2100];
       later(tCheck, () => { paint(Object.fromEntries(open.map(i => [i, 'cand']))); step(1); });
       // every checked square gets a verdict: green = win, red = lose, dashed white = neutral
       later(tRules, () => { paint(Object.fromEntries(open.map(i => [i, verdict[i] === 'ok' ? 'neutral' : verdict[i]]))); step(2); });
@@ -1669,6 +1884,16 @@ demos.nest = (() => {
 
     // ---- datasets in [-1, 1]²; label 1 = blue, 0 = orange
     const SETS = {
+      // made-up card purchases: x = time of day, y = amount (log scale, $1–$2,000); 1 = normal, 0 = fraud
+      fraud(){ const d = [];
+        const add = (h, amt, normal) => d.push([((h % 24) + 24) % 24 / 24 * 2 - 1, Math.log10(Math.max(1, Math.min(2000, amt))) / Math.log10(2000) * 2 - 1, normal]);
+        const logU = (a, b) => Math.exp(Math.log(a) + rand() * (Math.log(b) - Math.log(a)));
+        for (let i = 0; i < 44; i++) add(8 + rand() * 14, logU(6, 300), 1);          // everyday daytime spending
+        for (let i = 0; i < 7; i++)  add(17 + rand() * 4, logU(400, 1500), 1);       // an evening big purchase
+        for (let i = 0; i < 7; i++)  add(22 + rand() * 4, logU(8, 40), 1);           // late-night food delivery
+        for (let i = 0; i < 18; i++) add(1 + rand() * 4, logU(300, 2000), 0);        // big purchases at 1–5am
+        for (let i = 0; i < 12; i++) add(rand() * 24, logU(1, 2.5), 0);              // tiny "test" charges, any time
+        return d; },
       circle(){ const d = []; for (let i = 0; i < 80; i++){ const inner = i % 2 === 0, a = rand() * 2 * Math.PI;
         const r = inner ? rand() * 0.42 : 0.62 + rand() * 0.3; d.push([r * Math.cos(a), r * Math.sin(a), inner ? 1 : 0]); } return d; },
       xor(){ const d = []; while (d.length < 80){ const x = rand() * 1.8 - 0.9, y = rand() * 1.8 - 0.9;
@@ -1813,6 +2038,15 @@ demos.nest = (() => {
         pg.fillStyle = `rgb(${(t ? BLUE : ORANGE).join(',')})`; pg.fill();
         pg.lineWidth = 2; pg.strokeStyle = '#fff'; pg.stroke();
       }
+      if (setName === 'fraud'){                                // axis labels for the purchase chart
+        const lab = (txt, x, y, align) => { pg.textAlign = align; pg.lineWidth = 3; pg.strokeStyle = 'rgba(255,255,255,.85)';
+          pg.strokeText(txt, x, y); pg.fillStyle = '#3d434b'; pg.fillText(txt, x, y); };
+        pg.font = '600 10px system-ui, sans-serif'; pg.textBaseline = 'alphabetic';
+        [['12am', -1], ['6am', -0.5], ['noon', 0], ['6pm', 0.5]].forEach(([t, v]) => lab(t, toPx(v) + 2, 235, 'left'));
+        [['$1', 1], ['$10', 10], ['$100', 100], ['$1k', 1000]].forEach(([t, a]) => lab(t, 3, toPx(-(Math.log10(a) / Math.log10(2000) * 2 - 1)) - 3, 'left'));
+        pg.font = '700 11px system-ui, sans-serif';
+        lab('time of day →', 236, 222, 'right'); lab('amount ↑', 236, 13, 'right');
+      }
       edges.forEach(({ l, get }) => { const w = get();
         l.setAttribute('stroke', w >= 0 ? `rgb(${BLUE})` : `rgb(${ORANGE})`);
         l.setAttribute('stroke-width', Math.min(5, 0.4 + Math.abs(w) * 1.3).toFixed(2));
@@ -1833,8 +2067,10 @@ demos.nest = (() => {
     function play(){ if (running) return; running = true; actBtn.textContent = 'Pause'; raf = requestAnimationFrame(loop); }
     function pause(){ running = false; cancelAnimationFrame(raf); actBtn.textContent = step ? 'Keep training' : 'Train'; }
     function useSet(name){
-      setName = name; seed = { circle:3, xor:5, moons:9 }[name]; data = SETS[name]();
+      setName = name; seed = { fraud:31, circle:3, xor:5, moons:9 }[name]; data = SETS[name]();
       setBtns.forEach(b => b.classList.toggle('on', b.dataset.set === name));
+      const names = name === 'fraud' ? ['normal', 'fraud'] : ['blue', 'orange'];
+      addBtns.forEach((b, i) => b.innerHTML = '<i></i>' + names[i]);
       const was = running; pause(); init(); draw(); if (was) play();
     }
 
@@ -1851,7 +2087,7 @@ demos.nest = (() => {
     addBtns[0].classList.add('on');
 
     buildNet();
-    function reset(){ pause(); useSet('circle'); pause(); }
+    function reset(){ pause(); useSet('fraud'); pause(); }
     reset();
     return { act(){ if (running) pause(); else play(); }, reset, leave: pause,
              debug: () => ({ step, loss, n: data.length }) };
@@ -1885,6 +2121,13 @@ demos.nest = (() => {
   show('ai');
   return {
     reset(){ show('ai'); },
+    step(dir){                                 // AI → ML → DL with the forward arrow
+      const order = ['ai', 'ml', 'dl'], i = order.indexOf(cur) + dir;
+      if (i < 0 || i >= order.length) return false;
+      show(order[i]); return true;
+    },
+    atEnd(){ show('dl'); },
+    atStart(){ show('ai'); },
     leave(){                                   // never leave the action button stuck mid-animation
       Object.values(SUB).forEach(d => d.leave && d.leave());
       SUB[cur].reset();
@@ -1893,25 +2136,91 @@ demos.nest = (() => {
 })();
 
 /* ============================================================ 2 — who writes the rules */
-demos.rules = (() => {
-  const sw = $('s2-sw'), L = $('s2-l'), R = $('s2-r');
-  const pipeL = $('s2-pipeL'), pipeR = $('s2-pipeR');
-  const nRules = $('s2-rules'), nParams = $('s2-params');
-  let learned = false;
-  function render(){
-    sw.classList.toggle('right', learned);
-    L.classList.toggle('on', !learned);
-    R.classList.toggle('on', learned);
-    pipeL.classList.toggle('dimmed', learned);
-    pipeR.classList.toggle('dimmed', !learned);
-    nRules.classList.toggle('on', !learned);
-    nParams.classList.toggle('on', learned);
+demos.rules = { reset(){} };                    // a static comparison table now; nothing to reset
+
+/* ============================================================ guess, check, adjust (free throws) */
+demos.guess = (() => {
+  const s = qs('.slide[data-demo=guess]');
+  const svg = $('g-svg'), log = $('g-log'), btn = $('g-go'), map = $('g-map'), boxes = qsa('.gs', s);
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (t, at, parent = svg) => { const e = document.createElementNS(NS, t); for (const k in at) e.setAttribute(k, at[k]); parent.appendChild(e); return e; };
+  // one knob ("power"). miss in feet = (power − 50) × 0.75; each adjustment moves power by −1.25 × miss / 0.75
+  const SHOTS = [46, 51, 49.75];
+  const miss = p => (p - 50) * 0.75;
+  const RX = 80, RY = 300, HX = 520, HY = 170, FT = 30;          // release point, hoop, pixels per foot
+  const BLUE = '#2f8fdd', ORANGE = '#e8590c', GOOD = 'var(--good)';
+
+  // court
+  el('line', { x1:20, y1:380, x2:600, y2:380, stroke:'var(--line)', 'stroke-width':3 });
+  el('rect', { x:555, y:95, width:8, height:285, fill:'var(--ink-dim)' });                        // pole
+  el('rect', { x:545, y:110, width:10, height:90, rx:2, fill:'var(--ink-dim)' });                 // backboard
+  el('line', { x1:HX - 26, y1:HY, x2:HX + 26, y2:HY, stroke:'#e8590c', 'stroke-width':5, 'stroke-linecap':'round' });   // rim
+  el('path', { d:`M${HX - 24},${HY + 2} L${HX - 14},${HY + 34} L${HX + 14},${HY + 34} L${HX + 24},${HY + 2}`, fill:'none', stroke:'var(--ink-dim)', 'stroke-width':1.5, 'stroke-dasharray':'4 3' });
+  el('circle', { cx:RX - 20, cy:RY + 20, r:22, fill:'none', stroke:'var(--ink-dim)', 'stroke-width':3 });   // player's head
+  el('line', { x1:RX - 20, y1:RY + 42, x2:RX - 20, y2:380, stroke:'var(--ink-dim)', 'stroke-width':3 });
+  const arcs = el('g', {}), marks = el('g', {});
+  const ball = el('circle', { r:11, fill:'#e8590c', stroke:'#8a3a08', 'stroke-width':1.5, opacity:0 });
+  const label = el('text', { x:310, y:60, 'text-anchor':'middle', 'font-size':24, 'font-weight':800, fill:'var(--ink)', 'font-family':'inherit' });
+  const knob = el('text', { x:40, y:40, 'font-size':18, 'font-weight':700, fill:'var(--ink-dim)', 'font-family':'inherit' });
+
+  const arcPath = p => { const lx = HX + miss(p) * FT, ly = HY, cx = (RX + lx) / 2, cy = Math.min(RY, ly) - 190 - (p - 46) * 6;
+    return { d:`M${RX},${RY} Q${cx},${cy} ${lx},${ly}`, lx, ly, cx, cy }; };
+  const verdict = p => { const m = miss(p); return Math.abs(m) < 0.3 ? ['in', 'Swish!'] : m < 0 ? ['short', `${Math.abs(m) >= 1 ? Math.abs(m).toFixed(0) + ' ft' : Math.round(Math.abs(m) * 12) + ' in'} short`] : ['long', `${m >= 1 ? m.toFixed(0) + ' ft' : Math.round(m * 12) + ' in'} long`]; };
+
+  // stages: 0 ready; then for each shot: guess (flies), check (miss shown), adjust (knob changes) — last shot ends at check
+  const STAGES = [['ready']];
+  SHOTS.forEach((_, i) => { STAGES.push(['guess', i], ['check', i]); if (i < SHOTS.length - 1) STAGES.push(['adjust', i]); });
+  let stage = 0, anim = 0;
+  const BTN = { ready:'Take a shot →', guess:'Check →', check:'Adjust →', adjust:'Take the next shot →' };
+
+  function render(animate){
+    cancelAnimationFrame(anim);
+    const [kind, idx] = STAGES[stage];
+    boxes.forEach(b => b.classList.toggle('on', b.dataset.g === kind));
+    arcs.innerHTML = ''; marks.innerHTML = ''; log.innerHTML = '';
+    const doneShots = kind === 'ready' ? 0 : kind === 'guess' ? idx : idx + 1;
+    // earlier shots, faded
+    for (let i = 0; i < doneShots; i++){
+      const a = arcPath(SHOTS[i]), [cls] = verdict(SHOTS[i]);
+      const last = i === doneShots - 1;
+      el('path', { d:a.d, fill:'none', stroke:cls === 'in' ? 'var(--good)' : cls === 'short' ? BLUE : ORANGE, 'stroke-width':last ? 3.5 : 2, 'stroke-dasharray':last ? '' : '6 6', opacity:last ? 1 : 0.4 }, arcs);
+      if (last && cls !== 'in'){
+        el('line', { x1:HX, y1:HY - 30, x2:a.lx, y2:HY - 30, stroke:'var(--ink)', 'stroke-width':2, 'marker-end':'' }, marks);
+        el('line', { x1:HX, y1:HY - 38, x2:HX, y2:HY - 22, stroke:'var(--ink)', 'stroke-width':2 }, marks);
+        el('line', { x1:a.lx, y1:HY - 38, x2:a.lx, y2:HY - 22, stroke:'var(--ink)', 'stroke-width':2 }, marks);
+      }
+      const [c2, txt] = verdict(SHOTS[i]);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${i + 1}</td><td>${SHOTS[i].toFixed(i === 2 ? 1 : 0)}</td><td class="${c2}">${txt}</td>`;
+      log.appendChild(tr);
+    }
+    const nextPower = kind === 'ready' ? SHOTS[0] : kind === 'adjust' ? SHOTS[idx + 1] : SHOTS[Math.min(idx, SHOTS.length - 1)];
+    knob.textContent = `power: ${nextPower.toFixed(nextPower % 1 ? 1 : 0)}`;
+    map.hidden = !(kind === 'check' && idx === SHOTS.length - 1);
+    label.textContent = kind === 'ready' ? 'First guess: power 46'
+      : kind === 'guess' ? '' : kind === 'check' ? verdict(SHOTS[idx])[1]
+      : `${verdict(SHOTS[idx])[0] === 'short' ? 'Too short, so throw harder' : 'Too long, so a bit softer'}: ${SHOTS[idx].toFixed(0)} → ${SHOTS[idx + 1].toFixed(SHOTS[idx + 1] % 1 ? 1 : 0)}`;
+    label.setAttribute('fill', kind === 'check' ? (verdict(SHOTS[idx])[0] === 'in' ? 'var(--good)' : 'var(--ink)') : 'var(--ink)');
+    btn.textContent = stage === STAGES.length - 1 ? 'Next slide →' : BTN[STAGES[stage + 1] ? STAGES[stage][0] : 'ready'];
+    ball.setAttribute('opacity', 0);
+    if (kind === 'guess'){
+      const a = arcPath(SHOTS[idx]), t0 = performance.now(), dur = animate ? 1100 : 0;
+      const pathEl = el('path', { d:a.d, fill:'none', stroke:'var(--ink-dim)', 'stroke-width':2, 'stroke-dasharray':'3 6' }, arcs);
+      const fly = now => { const f = dur ? Math.min(1, (now - t0) / dur) : 1, u = 1 - f;
+        ball.setAttribute('cx', u * u * RX + 2 * u * f * a.cx + f * f * a.lx);
+        ball.setAttribute('cy', u * u * RY + 2 * u * f * a.cy + f * f * a.ly);
+        ball.setAttribute('opacity', 1);
+        if (f < 1) anim = requestAnimationFrame(fly); };
+      anim = requestAnimationFrame(fly);
+      svg.appendChild(ball);
+    }
   }
-  sw.onclick = () => { learned = !learned; render(); };
-  L.onclick = () => { learned = false; render(); };
-  R.onclick = () => { learned = true; render(); };
-  render();
-  return { reset(){ learned = false; render(); } };
+  function step(dir){ const n = stage + dir; if (n < 0 || n >= STAGES.length) return false; stage = n; render(dir > 0); return true; }
+  btn.onclick = () => { if (!step(1)) advance(1); };
+  function reset(){ stage = 0; render(false); }
+  reset();
+  return { reset, step, atStart(){ stage = 0; render(false); }, atEnd(){ stage = STAGES.length - 1; render(false); },
+           leave(){ cancelAnimationFrame(anim); } };
 })();
 
 /* ============================================================ 4 — the training loop, as water */
@@ -2064,8 +2373,12 @@ demos.loop = (() => {
   const PANEL = [
     () => `<div class="wtag">Start</div>
       <div class="wline">Three splitters. Each one is a <b>weight</b>.</div>
-      <div class="wsub">A <b>weight</b> is an adjustable number that affects how strongly information influences what comes next.
-        Here, turning a knob slides a wedge and changes how the water splits.</div>`,
+      <div class="wkey"><span>&#128167; <b>Water</b></span><span>the input</span>
+        <span>&#9651; <b>Wedges</b></span><span>the model</span>
+        <span>&#9719; <b>Knob settings</b></span><span>the weights: how far each wedge is tilted to one side</span></div>
+      <div class="vocab" style="font-size:18px"><b>Parameter</b> <span>(or <b>weight</b>): an adjustable number inside a model
+        that affects its output. Here, turning a knob slides a wedge and changes how the water splits.</span></div>
+      <div class="defn-strip big-line" style="font-size:24px">Learning = changing parameters based on data.</div>`,
     () => `<div class="wtag fw">Forward pass</div>
       <div class="wline">Use the current weights to produce an output.</div>${table(W(1))}`,
     () => `<div class="wtag loss">Loss / error</div>
@@ -2451,23 +2764,22 @@ demos.bend = (() => {
       const r = inner ? rand() * 0.42 : 0.62 + rand() * 0.3; d.push([r * Math.cos(a), r * Math.sin(a), inner ? 1 : 0]); } return d; }
   };
 
-  // made-up emails: [links, ! marks, sender in contacts (0/1), spam (0/1), jitter]
+  // made-up emails: [link suspicion 0–10, ! marks, sender in contacts (0/1), spam (0/1), jitter]
   function makeEmails(){
     seed = 21; const d = [];
-    for (let i = 0; i < 76; i++){
-      const spam = i % 2 === 0;
-      const contact = spam ? (rand() < 0.08 ? 1 : 0) : (rand() < 0.75 ? 1 : 0);          // some spam comes from a hacked friend
-      const links = spam ? Math.round(3 + rand() * 9) : (rand() < 0.2 ? Math.round(3 + rand() * 5) : Math.round(rand() * 3));  // newsletters have links
-      const bangs = spam ? Math.round(1 + rand() * 13) : Math.round(rand() * rand() * 6);
-      d.push([links, bangs, contact, spam ? 1 : 0, (rand() - 0.5) * 0.14]);
-    }
-    // hard ones: link-heavy newsletters from strangers, and spam from a hacked friend that looks like normal mail
-    [[9, 4, 0], [10, 6, 0]].forEach(([l, b, c]) => d.push([l, b, c, 0, (rand() - 0.5) * 0.14]));
-    [[2, 1, 1], [3, 2, 1]].forEach(([l, b, c]) => d.push([l, b, c, 1, (rand() - 0.5) * 0.14]));
+    const R = (a, b) => Math.round(a + rand() * (b - a));
+    const add = (l, b, c, spam) => d.push([Math.max(0, Math.min(10, l)), Math.max(0, Math.min(15, b)), c, spam, (rand() - 0.5) * 0.14]);
+    for (let i = 0; i < 24; i++) add(R(0, 3), rand() < 0.3 ? R(5, 12) : R(0, 3), 1, 0);    // friends & family (some get excited!!!)
+    for (let i = 0; i < 6; i++)  add(R(4, 6), R(0, 2), 1, 0);                             // friends forwarding odd-looking links
+    for (let i = 0; i < 12; i++) add(R(2, 7), R(0, 3), 0, 0);                             // receipts & newsletters from strangers
+    for (let i = 0; i < 16; i++) add(R(6, 10), R(0, 15), 0, 1);                           // spam with a shady link
+    for (let i = 0; i < 14; i++) add(R(0, 4), R(8, 15), 0, 1);                            // spam with a safe-looking link, but shouting
+    for (let i = 0; i < 4; i++)  add(R(7, 9), R(1, 5), 1, 1);                             // a hacked friend sending a shady link
+    [[2, 1, 1], [3, 2, 1]].forEach(([l, b, c]) => add(l, b, c, 1));                       // looks exactly like real mail: no fix possible
     return d;
   }
-  // position in the input cube: x = links, y = sender in contacts (up), z = ! marks
-  const emailPos = ([links, bangs, contact, , jit]) => [links / 12 * 2 - 1, (contact ? 0.8 : -0.8) + jit, bangs / 15 * 2 - 1];
+  // position in the input cube: x = link suspicion, y = sender in contacts (up), z = ! marks
+  const emailPos = ([links, bangs, contact, , jit]) => [links / 10 * 2 - 1, (contact ? 0.8 : -0.8) + jit, bangs / 15 * 2 - 1];
 
   /* ---- one small tanh network: `inDim` inputs → `width` neurons, `depth` times → one flat cut ---- */
   function makeNet(width, depth, initSeed, { decay = 5e-4, lr = 0.05, inDim = 2 } = {}){
@@ -2521,13 +2833,13 @@ demos.bend = (() => {
   let mode = '2d', setName = 'moons', data2, data3, emails;
   let flat = makeNet(2, 3, 3);
   const deep = makeNet(3, 1, 2, { decay:5e-3 });                         // more decay keeps the lifted dots off the cube's edges
-  const spamDeep = makeNet(3, 1, 5, { decay:3e-3, lr:0.003, inDim:3 });   // 3 features → 3 hidden neurons → a plane
+  const spamDeep = makeNet(3, 1, 2, { decay:3e-3, lr:0.0018, inDim:3 });   // 3 features → 3 hidden neurons → a plane
   const pair = d => [[d[0], d[1]], d[2]];
   const VIEW = {
     '2d':  { net:() => flat, items:() => data2, sample:pair },
     '3d':  { net:() => deep, items:() => data3, sample:pair, floor:inp => [inp[0], 0, -inp[1]], blue:t => !!t, goal:0.2,
              split:'Lifted into 3D, <b>one flat plane</b> splits the two groups.', group:'one layer of 3 neurons' },
-    spam:  { net:() => spamDeep, items:() => emails, sample:e => [emailPos(e), e[3]], floor:inp => inp, blue:t => !t, goal:0.23,
+    spam:  { net:() => spamDeep, items:() => emails, sample:e => [emailPos(e), e[3]], floor:inp => inp, blue:t => !t, goal:0.205,
              split:'Bent into the cube, <b>one flat plane</b> splits <span class="k-spam">spam</span> from <span class="k-ham">not spam</span>.',
              group:'one layer of 3 neurons' }
   };
@@ -2582,15 +2894,96 @@ demos.bend = (() => {
 
   /* ---- 3D views: one layer of 3 neurons lifts / bends the input, then a flat plane cuts ---- */
   let yaw = 0.7, pitch = 0.5, spin = true, drag = null;
+  // spam view: turn and shift the whole space (rigidly, so nothing is distorted) so the network's cut is always the
+  // same vertical wall, x = 0. The wall stays put; training moves the emails around it. Spam ends up on the +x side.
+  function alignToCut(N){
+    const w = Array.from(N.head.w), nw = Math.hypot(...w) || 1, n = w.map(v => v / nw), d = -N.head.b[0] / nw;
+    let u = [0, 1, 0].map((v, i) => v - n[1] * n[i]);
+    if (Math.hypot(...u) < 0.1) u = [0, 0, 1].map((v, i) => v - n[2] * n[i]);
+    const nu = Math.hypot(...u); u = u.map(v => v / nu);
+    const v2 = [n[1] * u[2] - n[2] * u[1], n[2] * u[0] - n[0] * u[2], n[0] * u[1] - n[1] * u[0]];
+    const dotp = (a, p) => a[0] * p[0] + a[1] * p[1] + a[2] * p[2];
+    const fn = p => [dotp(n, p) - d, dotp(u, p), dotp(v2, p)];
+    fn.basis = { n, u, v2, d };
+    return fn;
+  }
+  // The learned boundary in the ORIGINAL email box, found directly there: evaluate the network's score on a 3D grid filling
+  // the box and trace where it crosses zero (marching tetrahedra). The surface is evenly detailed and ends exactly at the box.
+  let boundaryCache = null;
+  function boundaryInBox(N){
+    if (boundaryCache && boundaryCache.net === N && boundaryCache.step === N.step) return boundaryCache.out;
+    if (boundaryCache && boundaryCache.net === N && N.step > boundaryCache.step && N.step - boundaryCache.step < 16 && N.step < LAST) return boundaryCache.out;
+    const RES = 18, S = RES + 1, W = N.layers[0].W, bb = N.layers[0].b, w = N.head.w, c0 = N.head.b[0];
+    const coord = i => -1 + 2 * i / RES, vals = new Float64Array(S * S * S), id = (i, j, k) => (i * S + j) * S + k;
+    for (let i = 0; i < S; i++) for (let j = 0; j < S; j++) for (let k = 0; k < S; k++){
+      const x = [coord(i), coord(j), coord(k)];
+      let z = c0;
+      for (let r = 0; r < 3; r++) z += w[r] * Math.tanh(W[r * 3] * x[0] + W[r * 3 + 1] * x[1] + W[r * 3 + 2] * x[2] + bb[r]);
+      vals[id(i, j, k)] = z;
+    }
+    const cross = (pa, va, pb, vb) => { const f = va / (va - vb); return pa.map((v, q) => v + (pb[q] - v) * f); };
+    const OFF = [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0], [0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]];
+    const TETS = [[0, 5, 1, 6], [0, 1, 2, 6], [0, 2, 3, 6], [0, 3, 7, 6], [0, 7, 4, 6], [0, 4, 5, 6]];
+    const polys = [];
+    for (let i = 0; i < RES; i++) for (let j = 0; j < RES; j++) for (let k = 0; k < RES; k++){
+      const cp = OFF.map(([a, b, c]) => [coord(i + a), coord(j + b), coord(k + c)]), cv = OFF.map(([a, b, c]) => vals[id(i + a, j + b, k + c)]);
+      for (const t of TETS){
+        const pos = t.filter(q => cv[q] > 0), neg = t.filter(q => cv[q] <= 0);
+        if (!pos.length || !neg.length) continue;
+        if (pos.length === 2){
+          const [p1, p2] = pos, [n1, n2] = neg;
+          polys.push([cross(cp[p1], cv[p1], cp[n1], cv[n1]), cross(cp[p1], cv[p1], cp[n2], cv[n2]), cross(cp[p2], cv[p2], cp[n2], cv[n2]), cross(cp[p2], cv[p2], cp[n1], cv[n1])]);
+        } else {
+          const [lone] = pos.length === 1 ? pos : neg, rest = t.filter(q => q !== lone);
+          polys.push(rest.map(q => cross(cp[lone], cv[lone], cp[q], cv[q])));
+        }
+      }
+    }
+    // contour lines on a few slices through the box, like grid lines drawn on the sheet
+    const lines = [];
+    const slice = (fixed, val2d) => {
+      for (let a = 0; a < RES; a++) for (let b = 0; b < RES; b++){
+        const corners = [[a, b], [a + 1, b], [a + 1, b + 1], [a, b + 1]], v = corners.map(([p, q]) => val2d(p, q));
+        const hits = [];
+        for (let e = 0; e < 4; e++){ const [p, q] = corners[e], [p2, q2] = corners[(e + 1) % 4], va = v[e], vb = v[(e + 1) % 4];
+          if ((va > 0) !== (vb > 0)){ const f = va / (va - vb); hits.push(fixed(coord(p + (p2 - p) * f), coord(q + (q2 - q) * f))); } }
+        if (hits.length >= 2) lines.push([hits[0], hits[1]]);
+        if (hits.length === 4) lines.push([hits[2], hits[3]]);
+      }
+    };
+    for (let i = RES / 3; i < RES; i += RES / 3){                          // just two slices each way
+      slice((y, z) => [coord(i), y, z], (p, q) => vals[id(i, p, q)]);        // slices across the link-suspicion axis
+      slice((x, y) => [x, y, coord(i)], (p, q) => vals[id(p, q, i)]);        // slices across the ! marks axis
+    }
+    const out = { polys, lines };
+    boundaryCache = { net:N, step:N.step, out };
+    return out;
+  }
+  const inv3 = m => {
+    const [a, b, c, d, e, f, g2, h, i] = m, A = e * i - f * h, B = -(d * i - f * g2), C = d * h - e * g2, det = a * A + b * B + c * C;
+    if (Math.abs(det) < 1e-9) return null;
+    return [A, -(b * i - c * h), b * f - c * e, B, a * i - c * g2, -(a * f - c * d), C, -(a * h - b * g2), a * e - b * d].map(v => v / det);
+  };
   function drawLifted(t){
     const V = view(), N = V.net(), { rule, dim, ink } = colors();
+    // the input stays square to its axes; the turn toward the fixed wall happens gradually through stretch and bend
+    const fixedWall = mode === 'spam', toWall = fixedWall ? alignToCut(N) : null;
+    const turn = toWall ? ease(Math.min(1, t / stages())) : 0;
+    const align = p => { if (!turn) return p; const q = toWall(p); return p.map((v, i) => v + (q[i] - v) * turn); };
     const place = inp => { const P = N.pipe(inp); P[0] = V.floor(inp); return P; };
-    const pts = V.items().map(item => { const [inp, label] = V.sample(item), P = place(inp);
-      return { p:lerpAt(P, t), blue:V.blue(label), wrong:N.step > 0 && (N.prob(P[2]) > 0.5) !== !!label }; });
+    const pts = V.items().map(item => { const [inp, label] = V.sample(item), raw = N.pipe(inp);
+      const P = raw.slice(); P[0] = V.floor(inp);
+      return { p:align(lerpAt(P, t)), blue:V.blue(label), wrong:N.step > 0 && (N.prob(raw[2]) > 0.5) !== !!label }; });
     const cen = [0, 1, 2].map(i => pts.reduce((a, d) => a + d.p[i], 0) / pts.length);
     const r = Math.max(0.3, ...pts.map(d => Math.hypot(d.p[0] - cen[0], d.p[1] - cen[1], d.p[2] - cen[2])));
-    const moving = follow({ mode, cx:cen[0], cy:cen[1], cz:cen[2], r });
-    const cyw = Math.cos(yaw), syw = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    // spam: camera stays centred on the wall, zooming out only while the stretched dots reach further than the cube
+    const reach = Math.max(...pts.map(d => Math.hypot(...d.p))) * 1.08;
+    const moving = fixedWall ? follow({ mode, cx:0, cy:0, cz:0, r:Math.max(1.8, reach) }) : follow({ mode, cx:cen[0], cy:cen[1], cz:cen[2], r });
+    // spam: the camera is locked. It starts at the previous slide's angle and turns to look straight along the wall by the
+    // bend, so the finished cut is a red vertical line down the middle.
+    const lockK = fixedWall ? ease(Math.min(1, t / stages())) : 0;
+    const yawNow = fixedWall ? -0.38 * (1 - lockK) : yaw, pitchNow = fixedWall ? 0.26 * (1 - lockK) : pitch;
+    const cyw = Math.cos(yawNow), syw = Math.sin(yawNow), cp = Math.cos(pitchNow), sp = Math.sin(pitchNow);
     const proj = ([x, y, z]) => {
       x -= cam.cx; y -= cam.cy; z -= cam.cz;
       const x1 = cyw * x + syw * z, z1 = -syw * x + cyw * z;
@@ -2602,33 +2995,52 @@ demos.bend = (() => {
     g.clearRect(0, 0, PX, PX);
 
     // after the bend everything sits inside a cube: show its edges once we're there
-    const cubeA = Math.max(0, Math.min(1, (t - 1.3) / 0.6));
+    const cubeA = fixedWall ? 0 : Math.max(0, Math.min(1, (t - 1.3) / 0.6));      // spam view: no bounding box
     if (cubeA > 0){
       g.globalAlpha = cubeA * 0.7; g.lineWidth = 2; g.strokeStyle = dim; g.setLineDash([8, 8]);
-      CUBE_EDGES.forEach(e => line(e)); g.setLineDash([]); g.globalAlpha = 1;
+      CUBE_EDGES.forEach(e => line(e.map(align))); g.setLineDash([]); g.globalAlpha = 1;
     }
     g.lineWidth = 2; g.strokeStyle = rule;
     if (mode === 'spam'){
       // the input box itself, carried through the layer: watch its edges stretch and curl
       const steps = Array.from({ length:24 }, (_, i) => i / 23);
-      CUBE_EDGES.forEach(([a, b]) => line(steps.map(f => lerpAt(place(a.map((v, i) => v + (b[i] - v) * f)), t))));
+      CUBE_EDGES.forEach(([a, b]) => line(steps.map(f => align(lerpAt(place(a.map((v, i) => v + (b[i] - v) * f)), t)))));
       const labA = Math.max(0, 1 - t / 0.5);
       if (labA > 0){
         g.globalAlpha = labA; g.font = '600 26px system-ui, sans-serif'; g.fillStyle = dim; g.textAlign = 'center';
-        [[[1.25, -1, -1], 'more links →'], [[-1, -1, 1.35], 'more ! marks →'], [[-1, 1.25, -1], 'in contacts ↑']].forEach(([end, label]) => {
+        [[[1.25, -1, -1], 'shadier link →'], [[-1, -1, 1.35], 'more ! marks →'], [[-1, 1.25, -1], 'in contacts ↑']].forEach(([end, label]) => {
           const P = proj(end); g.fillText(label, P[0], P[1] - 10); });
         g.globalAlpha = 1;
       }
     } else {
       for (const v of GRID.filter((_, i) => i % 2 === 0)) for (const vertical of [true, false])
-        line(SAMPLES.map(u => lerpAt(place(vertical ? [v, u] : [u, v]), t)));
+        line(SAMPLES.map(u => align(lerpAt(place(vertical ? [v, u] : [u, v]), t))));
+    }
+
+    // spam, once trained: the cut carried back through the bend (atanh) and the stretch (inverse weights),
+    // so dragging the slider back shows the curved surface it really is in the original email box
+    if (fixedWall && N.step > 0){
+      const sureNow = Math.max(0, Math.min(1, (Math.LN2 - N.loss) / (Math.LN2 - V.goal))) ** 2;
+      const meshA = sureNow * (1 - Math.max(0, Math.min(1, (t - (stages() - 0.4)) / 0.4)));
+      if (meshA > 0.01){
+        const { polys, lines } = boundaryInBox(N);
+        const at = x => { const P = N.pipe(x); return proj(align(lerpAt(P, t))); };
+        g.globalAlpha = meshA; g.fillStyle = 'rgba(193,18,31,.13)';
+        for (const pl of polys){ g.beginPath(); pl.forEach((x, k) => { const q = at(x); k ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.closePath(); g.fill(); }
+        g.strokeStyle = 'rgba(193,18,31,.55)'; g.lineWidth = 2; g.beginPath();
+        for (const [p, q] of lines){ const A = at(p), B = at(q); g.moveTo(A[0], A[1]); g.lineTo(B[0], B[1]); }
+        g.stroke(); g.globalAlpha = 1;
+      }
     }
 
     // the flat plane in the bent space, clipped to the cube; it fades in as the network gets more certain
     const sure = N.step ? Math.max(0, Math.min(1, (Math.LN2 - N.loss) / (Math.LN2 - V.goal))) ** 2 : 0;
     const planeA = Math.max(0, Math.min(1, (t - (stages() - 0.4)) / 0.4)) * sure;
     let plane = null;
-    if (planeA > 0.01){
+    if (planeA > 0.01 && fixedWall){
+      const S = 1.45;                                                       // the wall: x = 0, always in the same place
+      plane = { corners:[[0, -S, -S], [0, S, -S], [0, S, S], [0, -S, S]].map(proj), depth:proj([0, 0, 0])[2] };
+    } else if (planeA > 0.01){
       const w = Array.from(N.head.w), b = N.head.b[0], nw = Math.hypot(...w) || 1, nh = w.map(v => v / nw);
       const any = Math.abs(nh[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0];
       const cross = (a, c) => [a[1] * c[2] - a[2] * c[1], a[2] * c[0] - a[0] * c[2], a[0] * c[1] - a[1] * c[0]];
@@ -2661,6 +3073,20 @@ demos.bend = (() => {
       dot(d.q[0], d.q[1], 8.5 * d.q[3], d.blue);
     }
     if (!planeDrawn) drawPlane();
+    // along the bottom: which way means spam. The score grows toward +x; follow that direction on screen.
+    if (fixedWall && planeA > 0.01){
+      const o = proj([0, 0, 0]), px = proj([1, 0, 0]), spamRight = px[0] >= o[0];
+      const y = PX - 70, L = 90, R = PX - 90, cL = spamRight ? BLUE : ORANGE, cR = spamRight ? ORANGE : BLUE;
+      g.globalAlpha = planeA; g.lineWidth = 5; g.lineCap = 'round';
+      const grad = g.createLinearGradient(L, y, R, y); grad.addColorStop(0, `rgb(${cL})`); grad.addColorStop(1, `rgb(${cR})`);
+      g.strokeStyle = grad; g.beginPath(); g.moveTo(L, y); g.lineTo(R, y); g.stroke();
+      [[R, 1, cR], [L, -1, cL]].forEach(([x, dir, c]) => { g.strokeStyle = `rgb(${c})`; g.beginPath();
+        g.moveTo(x - dir * 22, y - 14); g.lineTo(x, y); g.lineTo(x - dir * 22, y + 14); g.stroke(); });
+      g.font = '700 28px system-ui, sans-serif'; g.textBaseline = 'bottom';
+      g.textAlign = 'right'; g.fillStyle = `rgb(${cR})`; g.fillText(spamRight ? 'likely spam' : 'less likely spam', R, y - 16);
+      g.textAlign = 'left'; g.fillStyle = `rgb(${cL})`; g.fillText(spamRight ? 'less likely spam' : 'likely spam', L, y - 16);
+      g.textBaseline = 'alphabetic'; g.lineCap = 'butt'; g.globalAlpha = 1;
+    }
     if (mode === 'spam') errs.innerHTML = N.step
       ? `Mistakes (ringed): <b>${fp}</b> real email${fp === 1 ? '' : 's'} wrongly filtered &middot; <b>${fn}</b> spam got through &middot; plane <b>${Math.round(sure * 100)}%</b> sure`
       : 'Not trained yet: no plane, and every email is a coin flip.';
@@ -2689,6 +3115,7 @@ demos.bend = (() => {
     const idx = Math.ceil(t - 1e-6) - 1, cur = t >= stages() - 0.05 ? 'split' : idx < 0 ? '' : idx % 2 === 0 ? 'stretch' : 'bend';
     lines3.forEach(el => el.classList.toggle('on', el.dataset.b === cur));
     stops.forEach((el, i) => el.classList.toggle('on', Math.abs(t - i) < 0.5));
+    if (!play) playBtn.innerHTML = t >= stages() - 0.01 ? '&#9664; Unbend it' : '&#9654; Play the bend';
     const n = net();
     stat.innerHTML = n.step ? `step <b>${n.step.toLocaleString()}</b> · loss <b>${n.loss.toFixed(3)}</b> · <b>${Math.round(n.acc * 100)}%</b> right`
                             : 'not trained yet';
@@ -2699,7 +3126,8 @@ demos.bend = (() => {
     const V = view(), n = V.net();
     if (training){ n.train(V.items(), V.sample); n.train(V.items(), V.sample);
       if (n.step >= LAST){ training = false; goBtn.textContent = 'Train more'; } }
-    if (play){ const v = play.from + (now - play.t0) / 1000 * (mode === '2d' ? 0.9 : 0.6); slider.value = Math.min(stages(), v); if (v >= stages()) stopPlay(); }
+    if (play){ const v = play.from + play.dir * (now - play.t0) / 1000 * (mode === '2d' ? 0.9 : 0.6);
+      slider.value = Math.max(0, Math.min(stages(), v)); if ((play.dir > 0 && v >= stages()) || (play.dir < 0 && v <= 0)) stopPlay(); }
     if (mode !== '2d' && spin && !drag) yaw += 0.004;
     const moving = draw();
     if (training || play || moving || (mode !== '2d' && active && spin)) raf = requestAnimationFrame(tick);
@@ -2708,16 +3136,25 @@ demos.bend = (() => {
   function stopPlay(){ play = null; playBtn.innerHTML = '&#9654; Play the bend'; }
   playBtn.onclick = () => {
     if (play){ stopPlay(); return; }
-    const from = +slider.value >= stages() - 0.01 ? 0 : +slider.value;
-    slider.value = from; play = { from, t0:performance.now() }; playBtn.innerHTML = '&#10074;&#10074; Pause'; kick();
+    const from = +slider.value, dir = from >= stages() - 0.01 ? -1 : 1;          // at the end, play it back to the input
+    play = { from, dir, t0:performance.now() }; playBtn.innerHTML = '&#10074;&#10074; Pause'; kick();
   };
   slider.addEventListener('input', () => { stopPlay(); kick(); });
+  // letting go between two stops glides to whichever stop is closer
+  slider.addEventListener('change', () => {
+    const from = +slider.value, to = Math.round(from);
+    if (Math.abs(to - from) < 0.01) return;
+    const t0 = performance.now();
+    const glide = now => { const f = Math.min(1, (now - t0) / 260); slider.value = from + (to - from) * ease(f); kick();
+      if (f < 1 && !play) requestAnimationFrame(glide); };
+    requestAnimationFrame(glide);
+  });
   goBtn.onclick = () => {
     if (training){ training = false; goBtn.textContent = net().step ? 'Keep training' : 'Train'; return; }
     if (net().step >= LAST) net().step = LAST - 1200;
     training = true; goBtn.textContent = 'Pause'; kick();
   };
-  cv.addEventListener('pointerdown', e => { if (mode === '2d') return; drag = { x:e.clientX, y:e.clientY, yaw, pitch }; spin = false; cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener('pointerdown', e => { if (mode !== '3d') return; drag = { x:e.clientX, y:e.clientY, yaw, pitch }; spin = false; cv.setPointerCapture(e.pointerId); });
   cv.addEventListener('pointermove', e => { if (!drag) return;
     yaw = drag.yaw + (e.clientX - drag.x) * 0.012; pitch = Math.max(-1.3, Math.min(1.3, drag.pitch + (e.clientY - drag.y) * 0.012)); kick(); });
   const endDrag = () => { drag = null; };
@@ -2743,11 +3180,411 @@ demos.bend = (() => {
   viewBtns.forEach(b => b.onclick = () => setView(b.dataset.view));
 
   seed = 3; data3 = SETS.circle(); emails = makeEmails();
-  function reset(){ stopPlay(); training = false; deep.init(); spamDeep.init(); yaw = 0.7; pitch = 0.5; spin = true; useSet('moons'); setView('2d'); }
+  function reset(){ stopPlay(); training = false; deep.init(); spamDeep.init(); yaw = -0.38; pitch = 0.26; spin = false; useSet('moons'); setView('spam'); }
   reset();
-  return { reset, enter(){ active = true; kick(); },
+  return { reset, enter(){ active = true; kick(); }, shared:{ emails:() => emails, emailPos, boundaryInBox, net:() => spamDeep,
+    ensureTrained(){ while (spamDeep.step < LAST) spamDeep.train(emails, VIEW.spam.sample); } },
            leave(){ active = false; training = false; stopPlay(); if (goBtn.textContent === 'Pause') goBtn.textContent = net().step ? 'Keep training' : 'Train'; },
            debug:() => ({ mode, step:net().step, acc:net().acc, loss:net().loss }) };
+})();
+
+/* ============================================================ 6 — how an email becomes a point */
+demos.feat = (() => {
+  const s = qs('.slide[data-demo=feat]');
+  const cv = $('f-cv'), g = cv.getContext('2d'), goBtn = $('f-go'), steps = qsa('#f-steps li', s);
+  const { emails, emailPos } = demos.bend.shared;
+  const PX = 880, BLUE = [47, 143, 221], ORANGE = [232, 89, 12];
+  // the two example emails: [link suspicion, ! marks, in contacts, spam, jitter]
+  const MOM = [1, 2, 1, 0, 0], SPAM = [9, 8, 0, 1, 0];
+  const EX = [{ e:MOM, name:'Mom', c:BLUE, chips:$('f-chips-mom') }, { e:SPAM, name:'free-money@notascam', c:ORANGE, chips:$('f-chips-spam') }];
+  const AXES = [                                             // [label, which 3D axis, tick labels at 3D coordinates]
+    { label:'sender in your contacts?', axis:1, ticks:[[-0.8, 'no'], [0.8, 'yes']], chip:e => `in contacts: <b>${e[2] ? 'yes' : 'no'}</b>` },
+    { label:'how suspicious is the link?', axis:0, ticks:[[-1, 'safe'], [-0.2, '4'], [0.6, '8'], [1, 'shady']], chip:e => `link suspicion: <b>${e[0]}</b>/10` },
+    { label:'! marks', axis:2, ticks:[0, 5, 10, 15].map(v => [v / 15 * 2 - 1, v]), chip:e => `! marks: <b>${e[1]}</b>` }
+  ];
+  const BTN = ['Preprocess →', 'Who sent it? →', 'How suspicious is the link? →', 'How many ! marks? →', 'Put them together →', 'Add every other email →', 'Next slide →'];
+  // preprocessing: the text split into tokens (illustrative: words, punctuation, pieces of the link)
+  const tokensOf = el => (el.textContent.replace(/\s+/g, ' ').match(/[A-Za-z0-9']+|[^\sA-Za-z0-9]/g) || []);
+  const mails = qsa('.fmail', s), TOK = mails.map(el => tokensOf(el).slice(2));      // drop the leading "From:"
+  function drawTokens(el){
+    const css = getComputedStyle(s), panel = css.getPropertyValue('--panel').trim(), inkc = css.getPropertyValue('--ink').trim();
+    g.font = '600 22px ui-monospace, Menlo, Consolas, monospace'; g.textBaseline = 'middle'; g.textAlign = 'left';
+    let shown = 0;
+    [[0, BLUE, 70, 'Mom'], [1, ORANGE, 470, 'free-money@notascam']].forEach(([k, c, top, nm]) => {
+      g.font = '700 24px system-ui, sans-serif'; g.fillStyle = `rgb(${c})`; g.fillText(nm + ' → ' + TOK[k].length + ' tokens', 40, top);
+      g.font = '600 20px ui-monospace, Menlo, Consolas, monospace';
+      let x = 40, y = top + 46;
+      TOK[k].forEach((t, i) => {
+        const w = g.measureText(t).width + 18;
+        if (x + w > PX - 40){ x = 40; y += 40; }
+        if (y > top + 46 + 40 * 7) return;
+        const a = clamp((el - i * 28 - k * 250) / 200); if (a <= 0) return; shown++;
+        g.globalAlpha = a; g.fillStyle = panel; g.strokeStyle = `rgb(${c})`; g.lineWidth = 2;
+        g.beginPath(); g.roundRect(x, y - 16, w, 32, 7); g.fill(); g.stroke();
+        g.fillStyle = inkc; g.fillText(t, x + 9, y + 1); g.globalAlpha = 1;
+        x += w + 7;
+      });
+    });
+    g.textBaseline = 'alphabetic';
+  }
+
+  // the same camera the next slide starts with, so the hand-off is seamless
+  const yaw = -0.38, pitch = 0.26, R = 1.8, cyw = Math.cos(yaw), syw = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+  const proj = ([x, y, z]) => { const x1 = cyw * x + syw * z, z1 = -syw * x + cyw * z, y2 = cp * y - sp * z1, z2 = sp * y + cp * z1;
+    const k = 3.4 / (3.4 - z2 / R), S = PX * 0.36 / R; return [PX / 2 + x1 * S * k, PX / 2 - y2 * S * k, k]; };
+  const axisEnds3 = a => { const p = [-1, -1, -1], q = [-1, -1, -1]; q[a] = 1; return [p, q]; };
+  const onAxis3 = (a, v) => { const p = [-1, -1, -1]; p[a] = v; return p; };
+  const lineRow = i => ({ a:[120, 230 + i * 230], b:[760, 230 + i * 230] });           // the 1D layout
+  const ease = f => f < 0.5 ? 2 * f * f : 1 - (-2 * f + 2) ** 2 / 2;
+  const lerp = (a, b, f) => [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
+  const clamp = v => Math.max(0, Math.min(1, v));
+  const colors = () => { const css = getComputedStyle(s); return { rule:css.getPropertyValue('--line').trim(), dim:css.getPropertyValue('--ink-dim').trim(), ink:css.getPropertyValue('--ink').trim() }; };
+  const dot = ([x, y], r, c) => { g.beginPath(); g.arc(x, y, r, 0, 2 * Math.PI); g.fillStyle = `rgb(${c})`; g.fill(); g.lineWidth = r / 3; g.strokeStyle = '#fff'; g.stroke(); };
+  const label = (txt, x, y, c, align) => {                   // text with a halo so it stays readable over lines and dots
+    g.textAlign = align; g.lineWidth = 7; g.lineJoin = 'round'; g.strokeStyle = getComputedStyle(s).getPropertyValue('--panel').trim();
+    g.strokeText(txt, x, y); g.fillStyle = `rgb(${c})`; g.fillText(txt, x, y); };
+
+  let stage = 0, t0 = 0, raf = 0;
+  function draw(now){
+    const outer = stage;                                     // 0 start, 1 tokens, 2–4 features, 5 together, 6 everyone
+    raf = 0;
+    const el = now - t0, { rule, dim, ink } = colors();
+    g.clearRect(0, 0, PX, PX);
+    g.textBaseline = 'alphabetic';
+    if (outer === 1){ drawTokens(el); if (el < 2600) raf = requestAnimationFrame(draw); return; }
+    const fs = Math.max(0, outer - 1);                       // the feature steps start after preprocessing
+    const assemble = fs < 4 ? 0 : fs === 4 ? clamp(el / 2200) : 1;   // 0 = number lines, 1 = 3D point
+    const uAxes = ease(clamp(assemble / 0.55)), uMerge = ease(clamp((assemble - 0.55) / 0.45));
+    const shown = Math.min(fs, 3);
+
+    // cube (fades in as the axes arrive)
+    if (uAxes > 0.3){
+      g.globalAlpha = clamp((uAxes - 0.3) / 0.7); g.strokeStyle = rule; g.lineWidth = 2;
+      for (const a of [-1, 1]) for (const b of [-1, 1]) for (const [i, j, k] of [[0, 1, 2], [1, 2, 0], [2, 0, 1]]){
+        const p = [0, 0, 0], q = [0, 0, 0]; p[i] = -1; q[i] = 1; p[j] = q[j] = a; p[k] = q[k] = b;
+        const P = proj(p), Q = proj(q); g.beginPath(); g.moveTo(P[0], P[1]); g.lineTo(Q[0], Q[1]); g.stroke();
+      }
+      g.globalAlpha = 1;
+    }
+    // the three feature axes: number lines that swing into 3D
+    AXES.forEach((ax, i) => {
+      if (i >= shown) return;
+      const appear = fs === i + 1 ? clamp(el / 400) : 1;
+      const [p3, q3] = axisEnds3(ax.axis), row = lineRow(i);
+      const A = lerp(row.a, proj(p3), uAxes), B = lerp(row.b, proj(q3), uAxes);
+      const at = v => lerp(A, B, (v + 1) / 2);
+      g.globalAlpha = appear; g.strokeStyle = dim; g.lineWidth = 4; g.beginPath(); g.moveTo(A[0], A[1]); g.lineTo(B[0], B[1]); g.stroke();
+      // ticks + label, only while it's still a number line
+      g.globalAlpha = appear * (1 - uAxes);
+      g.font = '600 24px system-ui, sans-serif'; g.fillStyle = dim; g.textAlign = 'center';
+      ax.ticks.forEach(([v, lab]) => { const P = at(v); g.fillRect(P[0] - 1.5, P[1] - 10, 3, 20); g.fillText(lab, P[0], P[1] + 42); });
+      g.font = '700 28px system-ui, sans-serif'; g.fillStyle = ink; g.textAlign = 'left'; g.fillText(ax.label, A[0], A[1] - 60);
+      // the same label parked at the end of the 3D axis
+      g.globalAlpha = appear * clamp((uAxes - 0.6) / 0.4); g.font = '600 26px system-ui, sans-serif'; g.fillStyle = dim; g.textAlign = 'center';
+      const endLab = ['shadier link →', 'in contacts ↑', 'more ! marks →'][ax.axis], far = [[1.25, -1, -1], [-1, 1.25, -1], [-1, -1, 1.35]][ax.axis];
+      const E = proj(far); g.fillText(endLab, E[0], E[1] - 10);
+      g.globalAlpha = 1;
+    });
+
+    // everyone else, once we get there
+    if (fs >= 5){
+      const others = emails();
+      others.forEach((e, k) => { const a = fs === 5 && raf !== -1 ? clamp((el - k * 22) / 260) : 1; if (a <= 0) return;
+        const P = proj(emailPos(e)); g.globalAlpha = a; dot(P, 8.5 * P[2], e[3] ? ORANGE : BLUE); });
+      g.globalAlpha = 1;
+    }
+    // the two examples: one dot per axis, merging into one point
+    EX.forEach(({ e, name, c }, n) => {
+      const pos3 = emailPos(e), final = proj(pos3);
+      const parts = AXES.slice(0, shown).map((ax, i) => {
+        const [p3, q3] = axisEnds3(ax.axis), row = lineRow(i);
+        const A = lerp(row.a, proj(p3), uAxes), B = lerp(row.b, proj(q3), uAxes);
+        return lerp(A, B, (pos3[ax.axis] + 1) / 2);
+      });
+      if (uMerge > 0){
+        g.setLineDash([10, 10]); g.lineWidth = 2.5; g.strokeStyle = `rgba(${c},${(0.8 * (fs >= 5 ? 0.35 : 1)).toFixed(2)})`;
+        parts.forEach(P => { g.beginPath(); g.moveTo(P[0], P[1]); g.lineTo(final[0], final[1]); g.stroke(); });
+        g.setLineDash([]);
+      }
+      if (uMerge < 1) parts.forEach((P, i) => {
+        const appear = fs === i + 1 ? clamp((el - 250) / 350) : 1;
+        g.globalAlpha = appear; dot(lerp(P, final, uMerge), 16, c); g.globalAlpha = 1;
+        if (uAxes === 0){ g.font = '700 22px system-ui, sans-serif'; g.globalAlpha = appear;
+          label(name, P[0], P[1] - 26, c, 'center'); g.globalAlpha = 1; }
+      });
+      else {
+        dot(final, 17, c);
+        g.font = '700 26px system-ui, sans-serif';
+        if (n === 0) label(name, final[0] + 26, final[1] - 16, c, 'left'); else label(name, final[0] - 26, final[1] + 38, c, 'right');
+      }
+    });
+    if (outer === 0){ g.font = '600 30px system-ui, sans-serif'; g.fillStyle = dim; g.textAlign = 'center';
+      g.fillText('Two emails. No numbers yet.', PX / 2, PX / 2); }
+
+    const busy = (fs >= 1 && fs <= 3 && el < 700) || (fs === 4 && el < 2300) || (fs === 5 && el < emails().length * 22 + 400);
+    if (busy) raf = requestAnimationFrame(draw);
+  }
+  function render(animate){
+    s.dataset.stage = stage;
+    qsa('[data-on]', s).forEach(li => li.classList.toggle('on', li.dataset.on.split(',').includes(String(stage))));
+    EX.forEach(({ e, chips }) => { chips.innerHTML = AXES.slice(0, Math.min(Math.max(0, stage - 1), 3)).map(ax => `<span>${ax.chip(e)}</span>`).join(''); });
+    goBtn.textContent = BTN[stage];
+    cancelAnimationFrame(raf); raf = 0;
+    t0 = animate ? performance.now() : -1e9;
+    draw(performance.now());
+  }
+  function step(dir){
+    const next = stage + dir;
+    if (next < 0 || next > 6) return false;
+    stage = next; render(dir > 0); return true;
+  }
+  goBtn.onclick = () => { if (!step(1)) advance(1); };
+  function reset(){ stage = 0; render(false); }
+  reset();
+  return { reset, step, atEnd(){ stage = 6; render(false); }, atStart(){ stage = 0; render(false); },  // demos.feat
+           leave(){ cancelAnimationFrame(raf); raf = 0; } };
+})();
+
+/* ============================================================ 8 — inference on a new email */
+demos.infer = (() => {
+  const s = qs('.slide[data-demo=infer]');
+  const cv = $('i-cv'), g = cv.getContext('2d'), sh = demos.bend.shared;
+  const linkIn = $('i-link'), bangIn = $('i-bang'), senderBtns = qsa('[data-c]', s);
+  const PX = 880, BLUE = [47, 143, 221], ORANGE = [232, 89, 12];
+  let contact = 0, yaw = -0.38, pitch = 0.26, drag = null, raf = 0;
+
+  // made-up paths on this site that don't exist (dead links), getting sketchier as suspicion rises
+  const LINKS = [[2, 'rcschmelzle.github.io/trip-plans'], [5, 'rcschmelzle.github.io/s/3kQz9'],
+                 [8, 'rcschmelzle.github.io/free-gift-card/claim'], [10, 'rcschmelzle.github.io/acc0unt-verify/login.php?id=8812']];
+  const linkText = v => LINKS.find(([hi]) => v <= hi)[1];
+  const linkWord = v => v <= 2 ? 'looks safe' : v <= 5 ? 'hmm' : v <= 8 ? 'sketchy' : 'very shady';
+
+  const proj = ([x, y, z]) => {
+    const R = 2.2, cyw = Math.cos(yaw), syw = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    const x1 = cyw * x + syw * z, z1 = -syw * x + cyw * z, y2 = cp * y - sp * z1, z2 = sp * y + cp * z1;
+    const k = 3.4 / (3.4 - z2 / R), S = PX * 0.36 / R; return [PX / 2 + x1 * S * k, PX / 2 - y2 * S * k, z2, k];
+  };
+  const dot = ([x, y], r, c, a = 1) => { g.globalAlpha = a; g.beginPath(); g.arc(x, y, r, 0, 2 * Math.PI); g.fillStyle = `rgb(${c})`; g.fill();
+    g.lineWidth = r / 3; g.strokeStyle = '#fff'; g.stroke(); g.globalAlpha = 1; };
+
+  function draw(){
+    raf = 0;
+    const N = sh.net(), css = getComputedStyle(s), rule = css.getPropertyValue('--line').trim(), dim = css.getPropertyValue('--ink-dim').trim(), ink = css.getPropertyValue('--ink').trim();
+    g.clearRect(0, 0, PX, PX);
+    // the email box and its axes
+    g.strokeStyle = rule; g.lineWidth = 2;
+    for (const a of [-1, 1]) for (const b of [-1, 1]) for (const [i, j, k] of [[0, 1, 2], [1, 2, 0], [2, 0, 1]]){
+      const p = [0, 0, 0], q = [0, 0, 0]; p[i] = -1; q[i] = 1; p[j] = q[j] = a; p[k] = q[k] = b;
+      const P = proj(p), Q = proj(q); g.beginPath(); g.moveTo(P[0], P[1]); g.lineTo(Q[0], Q[1]); g.stroke();
+    }
+    g.font = '600 26px system-ui, sans-serif'; g.fillStyle = dim; g.textAlign = 'center';
+    [[[1.25, -1, -1], 'shadier link →'], [[-1, -1, 1.35], 'more ! marks →'], [[-1, 1.25, -1], 'in contacts ↑']].forEach(([e, t]) => { const P = proj(e); g.fillText(t, P[0], P[1] - 10); });
+
+    // the learned boundary, unbent into this space and trimmed flush to the box
+    const { polys, lines } = sh.boundaryInBox(N);
+    const pts = sh.emails().map(e => ({ q:proj(sh.emailPos(e)), spam:e[3] }));
+    const cur = [+linkIn.value, +bangIn.value, contact, 0, 0], curPos = sh.emailPos(cur), curQ = proj(curPos);
+    const pSpam = N.prob(N.pipe(curPos)[2]);
+    const sheetDepth = proj([0, 0, 0])[2];
+    pts.filter(d => d.q[2] <= sheetDepth).forEach(d => dot(d.q, 7 * d.q[3], d.spam ? ORANGE : BLUE, 0.45));
+    g.fillStyle = 'rgba(193,18,31,.13)';
+    for (const pl of polys){ g.beginPath(); pl.forEach((x, k) => { const q = proj(x); k ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.closePath(); g.fill(); }
+    g.strokeStyle = 'rgba(193,18,31,.5)'; g.lineWidth = 2; g.beginPath();
+    for (const [p, q] of lines){ const A = proj(p), B = proj(q); g.moveTo(A[0], A[1]); g.lineTo(B[0], B[1]); }
+    g.stroke();
+    pts.filter(d => d.q[2] > sheetDepth).forEach(d => dot(d.q, 7 * d.q[3], d.spam ? ORANGE : BLUE, 0.45));
+    // guides from the new email down to its three axis values
+    g.setLineDash([8, 8]); g.strokeStyle = dim; g.lineWidth = 2;
+    [[curPos[0], -1, -1], [-1, curPos[1], -1], [-1, -1, curPos[2]]].forEach(p => { const P = proj(p); g.beginPath(); g.moveTo(curQ[0], curQ[1]); g.lineTo(P[0], P[1]); g.stroke(); });
+    g.setLineDash([]);
+    const col = BLUE.map((v, k) => Math.round(v + (ORANGE[k] - v) * pSpam));      // colour follows the score
+    g.beginPath(); g.arc(curQ[0], curQ[1], (26 + 26 * Math.abs(pSpam - 0.5)) * curQ[3], 0, 2 * Math.PI); g.fillStyle = `rgba(${col},.2)`; g.fill();
+    dot(curQ, 17 * curQ[3], col);
+    g.textAlign = 'left'; g.lineWidth = 8; g.lineJoin = 'round'; g.strokeStyle = css.getPropertyValue('--panel').trim();
+    g.font = '900 44px system-ui, sans-serif'; const big = Math.round(pSpam * 100) + '% spam';
+    g.strokeText(big, curQ[0] + 34, curQ[1] - 16); g.fillStyle = `rgb(${col})`; g.fillText(big, curQ[0] + 34, curQ[1] - 16);
+    g.font = '700 24px system-ui, sans-serif'; g.strokeText('new email', curQ[0] + 36, curQ[1] + 16); g.fillStyle = ink; g.fillText('new email', curQ[0] + 36, curQ[1] + 16);
+
+    // the readout
+    const pct = Math.round(pSpam * 100);
+    $('i-pct').textContent = pct + '%'; $('i-pct').style.color = `rgb(${col})`;
+    $('i-bar').style.left = `calc(${pSpam * 100}% - 2px)`;
+    $('i-verdict').innerHTML = pSpam > 0.5 ? '<span style="color:#e8590c">&rarr; Spam folder</span>' : '<span style="color:#2f8fdd">&rarr; Inbox</span>';
+  }
+  const kick = () => { if (!raf) raf = requestAnimationFrame(draw); };
+
+  function update(){
+    const l = +linkIn.value, b = +bangIn.value;
+    senderBtns.forEach(x => x.classList.toggle('on', +x.dataset.c === contact));
+    $('i-from').textContent = contact ? 'Alex Rivera <alex.rivera@mail.example>' : 'security-alert@acc0unt-verify.example';
+    const lead = Math.min(b, 3);
+    $('i-subj').textContent = (contact ? 'Trip plans' : 'Your account is locked') + '!'.repeat(lead);
+    const body = document.createElement('span');
+    body.append((contact ? 'Here are the details, take a look' : 'Verify your account now to avoid suspension') + '!'.repeat(b - lead) + ' ');
+    const a = document.createElement('span'); a.className = 'lnk'; a.textContent = linkText(l); body.append(a);
+    $('i-body').replaceChildren(body);
+    $('i-linkv').textContent = `${l}/10 · ${linkWord(l)}`;
+    $('i-bangv').textContent = `${b} !`;
+    kick();
+  }
+  const set = (l, b, c) => { linkIn.value = l; bangIn.value = b; contact = c; update(); };
+  linkIn.addEventListener('input', update); bangIn.addEventListener('input', update);
+  senderBtns.forEach(x => x.onclick = () => { contact = +x.dataset.c; update(); });
+  qsa('[data-p]', s).forEach(x => x.onclick = () => set(...x.dataset.p.split(',').map(Number)));
+  cv.addEventListener('pointerdown', e => { drag = { x:e.clientX, y:e.clientY, yaw, pitch }; cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener('pointermove', e => { if (!drag) return;
+    yaw = drag.yaw + (e.clientX - drag.x) * 0.012; pitch = Math.max(-1.3, Math.min(1.3, drag.pitch + (e.clientY - drag.y) * 0.012)); kick(); });
+  cv.addEventListener('pointerup', () => drag = null); cv.addEventListener('pointercancel', () => drag = null);
+
+  function reset(){ yaw = -0.38; pitch = 0.26; set(9, 4, 0); }
+  reset();
+  return { reset, enter(){ sh.ensureTrained(); update(); }, probe:() => $('i-pct').textContent };
+})();
+
+/* ============================================================ run it backwards */
+demos.backwards = (() => {
+  const s = qs('.slide[data-demo=backwards]');
+  const cv = $('r-cv'), g = cv.getContext('2d'), sh = demos.bend.shared, go = $('r-go');
+  const PX = 880, BLUE = [47, 143, 221], ORANGE = [232, 89, 12], yaw = -0.38, pitch = 0.26;
+  const LINKS = [[2, 'rcschmelzle.github.io/account/help'], [5, 'rcschmelzle.github.io/s/3kQz9'],
+                 [8, 'rcschmelzle.github.io/free-gift-card/claim'], [10, 'rcschmelzle.github.io/acc0unt-verify/login.php?id=8812']];
+  const START = [9, 12];                                   // link suspicion, ! marks (sender: a stranger)
+  let pos, trail, timer = 0, raf = 0;
+  const proj = ([x, y, z]) => { const R = 2.2, cyw = Math.cos(yaw), syw = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    const x1 = cyw * x + syw * z, z1 = -syw * x + cyw * z, y2 = cp * y - sp * z1, z2 = sp * y + cp * z1;
+    const k = 3.4 / (3.4 - z2 / R), S = PX * 0.36 / R; return [PX / 2 + x1 * S * k, PX / 2 - y2 * S * k, z2, k]; };
+  const dot = ([x, y], r, c, a = 1) => { g.globalAlpha = a; g.beginPath(); g.arc(x, y, r, 0, 2 * Math.PI); g.fillStyle = `rgb(${c})`; g.fill();
+    g.lineWidth = r / 3; g.strokeStyle = '#fff'; g.stroke(); g.globalAlpha = 1; };
+  const score = p => { const N = sh.net(); return N.prob(N.pipe(p)[2]); };
+  const feats = p => [Math.round((p[0] + 1) / 2 * 10), Math.round((p[2] + 1) / 2 * 15)];
+  const shade = pr => BLUE.map((v, k) => Math.round(v + (ORANGE[k] - v) * pr));
+
+  function draw(){
+    raf = 0;
+    const N = sh.net(), css = getComputedStyle(s), rule = css.getPropertyValue('--line').trim(), dim = css.getPropertyValue('--ink-dim').trim(),
+          ink = css.getPropertyValue('--ink').trim(), panel = css.getPropertyValue('--panel').trim();
+    g.clearRect(0, 0, PX, PX);
+    g.strokeStyle = rule; g.lineWidth = 2;
+    for (const a of [-1, 1]) for (const b of [-1, 1]) for (const [i, j, k] of [[0, 1, 2], [1, 2, 0], [2, 0, 1]]){
+      const p = [0, 0, 0], q = [0, 0, 0]; p[i] = -1; q[i] = 1; p[j] = q[j] = a; p[k] = q[k] = b;
+      const P = proj(p), Q = proj(q); g.beginPath(); g.moveTo(P[0], P[1]); g.lineTo(Q[0], Q[1]); g.stroke();
+    }
+    g.font = '600 26px system-ui, sans-serif'; g.fillStyle = dim; g.textAlign = 'center';
+    [[[1.25, -1, -1], 'shadier link →'], [[-1, -1, 1.35], 'more ! marks →'], [[-1, 1.25, -1], 'in contacts ↑']].forEach(([e, t]) => { const P = proj(e); g.fillText(t, P[0], P[1] - 10); });
+    const { polys, lines } = sh.boundaryInBox(N), depth = proj([0, 0, 0])[2];
+    const pts = sh.emails().map(e => ({ q:proj(sh.emailPos(e)), spam:e[3] }));
+    pts.filter(d => d.q[2] <= depth).forEach(d => dot(d.q, 7 * d.q[3], d.spam ? ORANGE : BLUE, 0.35));
+    g.fillStyle = 'rgba(193,18,31,.13)';
+    for (const pl of polys){ g.beginPath(); pl.forEach((x, k) => { const q = proj(x); k ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.closePath(); g.fill(); }
+    g.strokeStyle = 'rgba(193,18,31,.5)'; g.lineWidth = 2; g.beginPath();
+    for (const [a, b] of lines){ const A = proj(a), B = proj(b); g.moveTo(A[0], A[1]); g.lineTo(B[0], B[1]); }
+    g.stroke();
+    pts.filter(d => d.q[2] > depth).forEach(d => dot(d.q, 7 * d.q[3], d.spam ? ORANGE : BLUE, 0.35));
+    // the trail of adjustments, each step coloured by its score
+    trail.forEach((p, k) => { if (!k) return; const A = proj(trail[k - 1]), B = proj(p);
+      g.strokeStyle = `rgb(${shade(score(p))})`; g.lineWidth = 5; g.beginPath(); g.moveTo(A[0], A[1]); g.lineTo(B[0], B[1]); g.stroke(); });
+    trail.forEach((p, k) => { if (k % 4 || k === trail.length - 1) return; dot(proj(p), 6, shade(score(p))); });
+    const pr = score(pos), Q = proj(pos), col = shade(pr);
+    g.beginPath(); g.arc(Q[0], Q[1], (26 + 26 * Math.abs(pr - 0.5)) * Q[3], 0, 2 * Math.PI); g.fillStyle = `rgba(${col},.2)`; g.fill();
+    dot(Q, 17 * Q[3], col);
+    g.textAlign = 'left'; g.lineWidth = 8; g.lineJoin = 'round'; g.strokeStyle = panel;
+    g.font = '900 44px system-ui, sans-serif'; const big = Math.round(pr * 100) + '% spam';
+    g.strokeText(big, Q[0] + 34, Q[1] - 16); g.fillStyle = `rgb(${col})`; g.fillText(big, Q[0] + 34, Q[1] - 16);
+
+    const [l, b] = feats(pos);
+    $('r-link').innerHTML = `<b>${l}</b>/10` + (trail.length > 1 ? ` <span>(was ${START[0]})</span>` : '');
+    $('r-bang').innerHTML = `<b>${b}</b>` + (trail.length > 1 ? ` <span>(was ${START[1]})</span>` : '');
+    const lead = Math.min(b, 3);
+    $('r-subj').textContent = 'Your account is locked' + '!'.repeat(lead);
+    const body = document.createElement('span');
+    body.append('Verify your account now to avoid suspension' + '!'.repeat(b - lead) + ' ');
+    const a = document.createElement('span'); a.className = 'lnk'; a.textContent = LINKS.find(([hi]) => l <= hi)[1]; body.append(a);
+    $('r-body').replaceChildren(body);
+    $('r-pct').textContent = Math.round(pr * 100) + '%'; $('r-pct').style.color = `rgb(${col})`;
+    $('r-bar').style.left = `calc(${pr * 100}% - 2px)`;
+    $('r-verdict').innerHTML = pr > 0.5 ? '<span style="color:#e8590c">&rarr; Spam folder</span>' : '<span style="color:#2f8fdd">&rarr; Inbox</span>';
+  }
+  const kick = () => { if (!raf) raf = requestAnimationFrame(draw); };
+
+  // one adjustment: move the email a small step in whichever direction lowers the spam score fastest (sender stays fixed)
+  function nudge(){
+    const e = 1e-3, p0 = score(pos);
+    const gx = (score([pos[0] + e, pos[1], pos[2]]) - p0) / e, gz = (score([pos[0], pos[1], pos[2] + e]) - p0) / e;
+    const len = Math.hypot(gx, gz) || 1;
+    pos = [Math.max(-1, Math.min(1, pos[0] - 0.06 * gx / len)), pos[1], Math.max(-1, Math.min(1, pos[2] - 0.06 * gz / len))];
+    trail.push(pos);
+  }
+  function run(){
+    clearInterval(timer);
+    go.disabled = true; go.textContent = 'Adjusting…';
+    let steps = 0;
+    timer = setInterval(() => {
+      nudge(); steps++; kick();
+      if (score(pos) < 0.3 || steps > 60){ clearInterval(timer); go.disabled = false; go.textContent = 'Start over'; }
+    }, 110);
+  }
+  go.onclick = () => { if (trail.length > 1 && go.textContent === 'Start over') reset(); else run(); };
+  function reset(){ clearInterval(timer); pos = sh.emailPos([START[0], START[1], 0, 0, 0]); trail = [pos]; go.disabled = false; go.textContent = 'Make it pass →'; kick(); }
+  reset();
+  return { reset, enter(){ sh.ensureTrained(); kick(); }, leave(){ clearInterval(timer); go.disabled = false; },
+           probe:() => ({ p:Math.round(score(pos) * 100), f:feats(pos), n:trail.length }) };
+})();
+
+/* ============================================================ generating text, one token at a time */
+demos.gen = (() => {
+  const sentEl = $('t-sent'), candEl = $('t-cand'), heads = $('t-heads');
+  const START = 'Hey Mom, are we still on for Sunday';
+  const AX = { fam:'#7b61c9', plan:'#1b9e8a', day:'#4c9a2a', ask:'#7b61c9', meal:'#1b9e8a', mom:'#4c9a2a' };
+  const SHORT = { fam:'personal', plan:'a plan', day:'a time', ask:'a question', meal:'the event', mom:'to Mom' };
+  // illustrative: for each context, three named axes, and each candidate's fit on them (2 hot, 1 warm, 0 cold) + probability
+  const NEXT = {
+    '':       { axes:['fam', 'plan', 'day'], c:[['dinner', [2, 2, 2], 61], ['?', [0, 2, 1], 20], ['night', [1, 1, 2], 9], ['brunch', [2, 2, 1], 6], ['taxes', [0, 0, 1], 0.3]] },
+    'dinner': { axes:['ask', 'meal', 'mom'], c:[['?', [2, 1, 1], 72], ['at', [1, 2, 1], 14], ['with', [1, 2, 2], 8], ['meeting', [1, 0, 0], 0.4]] },
+    'brunch': { axes:['ask', 'meal', 'mom'], c:[['?', [2, 1, 1], 70], ['at', [1, 2, 1], 18], ['with', [1, 2, 2], 7], ['meeting', [1, 0, 0], 0.4]] },
+    'night':  { axes:['ask', 'meal', 'mom'], c:[['?', [2, 1, 1], 66], ['at', [1, 1, 1], 15], ['dinner', [1, 2, 2], 10], ['shift', [1, 0, 0], 1]] },
+    'with':   { axes:['ask', 'meal', 'mom'], c:[['Grandma', [1, 2, 2], 34], ['everyone', [1, 2, 2], 29], ['Dad', [1, 2, 2], 22], ['clients', [0, 1, 0], 0.5]] },
+    'at':     { axes:['ask', 'meal', 'mom'], c:[['your', [1, 2, 2], 36], ['6', [1, 2, 1], 30], ['Grandma\'s', [1, 2, 2], 18], ['work', [0, 0, 0], 1]] },
+    'your':   { axes:['ask', 'meal', 'mom'], c:[['place', [2, 2, 2], 68], ['house', [2, 2, 2], 25], ['office', [1, 0, 0], 1]] }
+  };
+  const FALLBACK = { axes:['ask', 'meal', 'mom'], c:[['?', [2, 1, 1], 60], ['!', [1, 1, 2], 25], ['.', [0, 1, 1], 12]] };
+  let chosen = [];
+  const join = words => words.reduce((t, w) => t + (/^[?.!,]|^'/.test(w) ? '' : ' ') + w, '');
+  function paint(){
+    const last = chosen.length ? chosen[chosen.length - 1] : '';
+    const done = ['?', '!', '.'].includes(last) || chosen.length >= 7;
+    const ctx = NEXT[last] || FALLBACK;
+    sentEl.innerHTML = '';
+    // the words each current axis is listening to get underlined in its colour
+    const u = (txt, key) => { const e = document.createElement('u'); e.style.setProperty('--ax', done ? 'transparent' : AX[key]); e.textContent = txt; return e; };
+    const first = ctx.axes[0] === 'fam';
+    sentEl.append('Hey ', u('Mom', first ? 'fam' : 'mom'), ', ', u('are we still on for', first ? 'plan' : 'ask'), ' ', first ? u('Sunday', 'day') : 'Sunday');
+    chosen.forEach((w, i) => {
+      const lead = /^[?.!,]|^'/.test(w) ? '' : ' ';
+      if (!first && ['dinner', 'brunch', 'night'].includes(w)){ sentEl.append(lead, u(w, 'meal')); return; }
+      if (i === chosen.length - 1){ const n = document.createElement('span'); n.className = 'new'; n.textContent = w; sentEl.append(lead, n); }
+      else sentEl.append(lead + w);
+    });
+    if (!done){ const b = document.createElement('span'); b.className = 'blank'; b.textContent = ' ___'; sentEl.append(b); }
+    heads.innerHTML = done ? '' : '<span style="border:0"></span>' + ctx.axes.map(k => `<span style="--ax:${AX[k]}">${SHORT[k]}</span>`).join('') + '<span style="border:0;text-align:left">chance</span><span style="border:0"></span>';
+    candEl.innerHTML = '';
+    if (done){ const d = document.createElement('div'); d.className = 'vocab dim'; d.style.fontSize = '15.5px';
+      d.textContent = 'Every word was chosen the same way: check the fit on every axis, turn that into probabilities, pick one, repeat.'; candEl.append(d); $('t-pick').disabled = true; return; }
+    $('t-pick').disabled = false;
+    ctx.c.forEach(([w, heat, pct]) => {
+      const b = document.createElement('button');
+      b.innerHTML = '<span class="w"></span>' + heat.map(h => `<i class="heat h${h}" title="${['cold', 'warm', 'hot'][h]}"></i>`).join('') +
+        '<span class="bar"><i style="width:' + Math.max(1.5, pct) + '%"></i></span><span class="pct">' + (pct < 1 ? '<1' : pct) + '%</span>';
+      b.querySelector('.w').textContent = w; b.onclick = () => { chosen.push(w); paint(); }; candEl.append(b);
+    });
+  }
+  $('t-pick').onclick = () => {
+    const last = chosen.length ? chosen[chosen.length - 1] : '', opts = (NEXT[last] || FALLBACK).c, total = opts.reduce((a, o) => a + o[2], 0);
+    let r = Math.random() * total; for (const [w, , pct] of opts){ r -= pct; if (r <= 0){ chosen.push(w); break; } }
+    paint();
+  };
+  function reset(){ chosen = []; paint(); }
+  reset();
+  return { reset, probe:() => sentEl.textContent };
 })();
 
 /* ============================================================ 4 — train / evaluate / infer */
@@ -2847,166 +3684,6 @@ demos.chips = (() => {
   return { reset: clear, leave: stop };
 })();
 
-/* ============================================================ 6 — text to tokens (illustrative) */
-demos.tok = (() => {
-  const inp = $('s6-in'), btn = $('s6-tok'), row = $('s6-toks');
-  const sentEl = $('s6-sent'), candEl = $('s6-cand');
-  const DEFAULT = inp.value;
-
-  // A real tokenizer uses a learned vocabulary. This split is hand-tuned to *look* like one.
-  const SUB = {
-    artificial:['artific','ial'], intelligence:['intellig','ence'], learning:['learn','ing'],
-    students:['student','s'], understanding:['understand','ing'], computer:['comput','er']
-  };
-  const tid = s => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
-    return 1000 + Math.abs(h) % 48000; };
-
-  function tokenize(text){
-    const chunks = text.match(/\s*[A-Za-z0-9']+|\s*[^\sA-Za-z0-9']/g) || [];
-    const out = [];
-    chunks.forEach(ch => {
-      const lead = /^\s/.test(ch) ? ' ' : '';
-      const w = ch.trim();
-      const parts = SUB[w.toLowerCase()] || (w.length > 9 ? [w.slice(0, 6), w.slice(6)] : [w]);
-      parts.forEach((p, i) => out.push((i === 0 ? lead : '') + p));
-    });
-    return out;
-  }
-  function paint(){
-    row.innerHTML = '';
-    tokenize(inp.value).forEach((t, i) => {
-      const d = document.createElement('div');
-      d.className = 'tok'; d.style.animationDelay = (i * 0.03) + 's';
-      d.innerHTML = '<span class="t"></span><span class="id">' + tid(t) + '</span>';
-      qs('.t', d).textContent = t;
-      row.appendChild(d);
-    });
-  }
-  btn.onclick = paint;
-  inp.addEventListener('keydown', e => { if (e.key === 'Enter') paint(); });
-
-  /* --- next-token demo: fake distributions, clearly labelled as such --- */
-  const BASE = 'The cat sat on the';
-  const CHAIN = {
-    _start: [['mat', 72], ['roof', 12], ['banana', 0.2]],
-    mat:     [['.', 64], ['and', 18], ['purring', 3]],
-    roof:    [['.', 52], ['of', 26], ['again', 7]],
-    banana:  [['.', 38], ['?!', 21], ['which', 9]],
-    _more:   [['.', 58], ['and', 16], ['then', 6]]
-  };
-  let chosen = [];
-  function sentence(){
-    let s = BASE;
-    chosen.forEach((w, i) => { s += (/^[.,!?;:]/.test(w) ? '' : ' ') + '<span class="' + (i === chosen.length - 1 ? 'new' : '') + '">' + w + '</span>'; });
-    return s;
-  }
-  function paintNext(){
-    const last = chosen.length ? chosen[chosen.length - 1] : '_start';
-    const done = /^[.!?]/.test(last || '');
-    sentEl.innerHTML = sentence() + (done ? '' : ' <span class="blank">___</span>');
-    candEl.innerHTML = '';
-    if (done){
-      const d = document.createElement('div');
-      d.className = 'vocab dim'; d.style.fontSize = '15.5px';
-      d.textContent = 'End of sentence. Every word above was picked the same way — one token at a time, from a distribution.';
-      candEl.appendChild(d);
-      return;
-    }
-    (CHAIN[last] || CHAIN._more).forEach(([w, p]) => {
-      const b = document.createElement('button');
-      b.innerHTML = '<span class="w"></span><span class="bar"><i style="width:' + Math.max(1.5, p) + '%"></i></span>' +
-                    '<span class="pct">' + p + '%</span>';
-      qs('.w', b).textContent = w;
-      b.onclick = () => { chosen.push(w); paintNext(); };
-      candEl.appendChild(b);
-    });
-  }
-  paint(); paintNext();
-  return { reset(){ inp.value = DEFAULT; chosen = []; paint(); paintNext(); } };
-})();
-
-/* ============================================================ 7 — context vs. training */
-demos.ctx = (() => {
-  const hoodBtn = $('s7-hoodbtn'), moreBtn = $('s7-more'), compBtn = $('s7-compact');
-  const chat = $('s7-chat'), hood = $('s7-hood'), punch = $('s7-punch'), sum = $('s7-sum'), why = $('s7-why');
-  const meter = $('s7-meter'), fill = qs('i', $('s7-meter')), mtxt = $('s7-mtxt'), mpct = $('s7-mpct');
-  const earlier = $('s7-earlier'), fact = $('s7-fact'), recent = $('s7-recent'), out = $('s7-out');
-  const sumFull = $('s7-sumfull'), sumLine = $('s7-sumline');
-  const reasons = qsa('.reason', $('s7-reasons'));
-  const KEEP = 4;                       // most recent turns shown in full
-  const EXTRA = [
-    'User: Can you explain neural networks?', 'Assistant: Sure \u2014 layers of parameters\u2026',
-    'User: What is a loss function?',         'Assistant: It measures how wrong a prediction is\u2026',
-    'User: And backpropagation?',             'Assistant: It works backward through the layers\u2026',
-    'User: Does that need a GPU?',            'Assistant: At scale, yes \u2014 lots of parallel math\u2026'
-  ];
-  let opened = false, fillPct = 0, added = 0, compacted = false, shown = 0;
-  const lost = () => fillPct >= 100 && !compacted;   // the Marvin turn has fallen out of the window
-
-  function render(){
-    chat.hidden = opened;
-    hood.hidden = !opened;
-    punch.hidden = !opened;
-
-    /* the transcript stays a fixed size: past KEEP turns, the oldest collapse into a counter */
-    const visible = EXTRA.slice(Math.max(0, added - KEEP), added);
-    const collapsed = Math.max(0, added - KEEP);
-    recent.innerHTML = '';
-    visible.forEach(t => {
-      const d = document.createElement('div'); d.className = 'ln'; d.textContent = t; recent.appendChild(d);
-    });
-    earlier.hidden = collapsed === 0 && !compacted;
-    earlier.textContent = compacted
-      ? '\u22ee Summary of ' + (added + 2) + ' earlier messages (robot = Marvin)'
-      : '\u22ee ' + collapsed + ' earlier message' + (collapsed === 1 ? '' : 's') + ' no longer sent';
-
-    qsa('.ln', fact).forEach(l => {
-      l.classList.toggle('faded', !compacted && fillPct >= 80 && fillPct < 100);
-      l.classList.toggle('dropped', lost());
-    });
-    fact.hidden = compacted;                       // the summary line now carries the fact instead
-    out.innerHTML = lost() ? '<span class="hot">&ldquo;I don\u2019t have that information.&rdquo;</span>' : '&ldquo;Marvin&rdquo;';
-
-    fill.style.width = fillPct + '%';
-    meter.classList.toggle('full', fillPct >= 80 && !compacted);
-    mpct.textContent = fillPct + '%';
-    mtxt.textContent = !opened ? 'Context window'
-      : lost() ? 'Full \u2014 the oldest turns had to go'
-      : compacted ? 'After compaction \u2014 same facts, fewer tokens'
-      : fillPct >= 80 ? 'Filling up' : 'Context window';
-
-    sum.hidden = !compacted;
-    sumFull.hidden = shown > 0;            // the detail has done its job once we move to "why it forgets"
-    sumLine.hidden = shown === 0;
-    why.hidden = !compacted;
-    reasons.forEach((r, i) => { r.hidden = i >= shown; r.classList.toggle('on', i < shown); });
-
-    /* one control pulses at a time: hood \u2192 continue \u2192 compact \u2192 why */
-    hoodBtn.hidden = opened && !compacted;
-    hoodBtn.textContent = !opened ? 'Look under the hood'
-      : shown < reasons.length ? 'Why might it forget? (' + (shown + 1) + ' / 4)' : 'All four shown';
-    hoodBtn.disabled = opened && shown >= reasons.length;
-    hoodBtn.classList.toggle('pulse', !opened || (compacted && shown < reasons.length));
-    moreBtn.disabled = !opened || added >= EXTRA.length;
-    moreBtn.classList.toggle('pulse', opened && !compacted && added < EXTRA.length && fillPct < 100);
-    compBtn.disabled = !opened || fillPct < 80 || compacted;
-    compBtn.classList.toggle('pulse', !compBtn.disabled);
-  }
-  hoodBtn.onclick = () => {
-    if (!opened){ opened = true; fillPct = 38; }
-    else if (compacted && shown < reasons.length) shown++;
-    render();
-  };
-  moreBtn.onclick = () => {
-    added = Math.min(EXTRA.length, added + 2);
-    fillPct = Math.min(100, fillPct + 16);
-    render();
-  };
-  compBtn.onclick = () => { compacted = true; fillPct = 46; render(); };
-  render();
-  return { reset(){ opened = false; fillPct = 0; added = 0; compacted = false; shown = 0; render(); } };
-})();
-
 /* ============================================================ 8 — synthesis, quiz, takeaways, recap */
 demos.synth = (() => {
   const s = qs('.slide[data-demo=synth]');
@@ -3070,22 +3747,22 @@ demos.synth = (() => {
 
   /* --- click any box: one line on what it is, and where the deck covered it --- */
   const EXPLAIN = {
-    train:    [7, 'Training data: the examples the parameters are fitted to. What goes in shapes what comes out.'],
+    train:    [12, 'Training data: the examples the parameters are fitted to. What goes in shapes what comes out.'],
     params:   [3, 'Neural network: layers of parameters \u2014 adjustable numbers. At this stage they are still changing.'],
-    loss2:    [4, 'Prediction: the forward pass. The network produces its current best guess for a training example.'],
-    loss:     [4, 'Loss: a single number for how wrong that prediction was.'],
-    backprop: [4, 'Backpropagation: calculates how each parameter contributed to the loss. It does not change them itself.'],
-    update:   [4, 'Update parameters: the optimizer nudges every parameter toward lower loss. Then repeat, many times.'],
-    gpu:      [8, 'GPU compute: the loop is mostly parallel numerical work, repeated across enormous numbers of examples.'],
-    eval:     [7, 'Evaluate: test on held-out data it never trained on. Does the learned behavior generalize?'],
-    model:    [7, 'Trained model: training is over, so the parameters are fixed. Everything on the right uses it as-is.'],
+    loss2:    [5, 'Prediction: the forward pass. The network produces its current best guess for a training example.'],
+    loss:     [5, 'Loss: a single number for how wrong that prediction was.'],
+    backprop: [5, 'Backpropagation: calculates how each parameter contributed to the loss. It does not change them itself.'],
+    update:   [5, 'Update parameters: the optimizer nudges every parameter toward lower loss. Then repeat, many times.'],
+    gpu:      [13, 'GPU compute: the loop is mostly parallel numerical work, repeated across enormous numbers of examples.'],
+    eval:     [12, 'Evaluate: test on held-out data it never trained on. Does the learned behavior generalize?'],
+    model:    [12, 'Trained model: training is over, so the parameters are fixed. Everything on the right uses it as-is.'],
     msg:      [10, 'Your message: new information for this one request.'],
     context:  [10, 'Conversation context: whatever the surrounding software chooses to send along \u2014 selected, summarized, or retrieved.'],
-    tokens:   [9, 'Tokens: message and context are split into numbered pieces the model can work with.'],
-    model2:   [9, 'Trained model: the same fixed parameters, run forward. No loss, no backprop.'],
-    probs:    [9, 'Next-token probabilities: a score for every possible next token. One gets chosen.'],
-    gen:      [9, 'Generated response: probable text, not guaranteed-true text.'],
-    infer:    [9, 'One token at a time: each chosen token is appended and the model runs again. Parameters never move.']
+    tokens:   [6, 'Tokens: message and context are split into numbered pieces the model can work with.'],
+    model2:   [10, 'Trained model: the same fixed parameters, run forward. No loss, no backprop.'],
+    probs:    [10, 'Next-token probabilities: a score for every possible next token. One gets chosen.'],
+    gen:      [10, 'Generated response: probable text, not guaranteed-true text.'],
+    infer:    [10, 'One token at a time: each chosen token is appended and the model runs again. Parameters never move.']
   };
   let explaining = null;
   function explain(key){
