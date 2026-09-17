@@ -183,6 +183,14 @@
   .nest.grow-in{animation:pop .45s ease-out both}
   .nest.on>.nlab{color:var(--hot)}
   .nest.n-dl>.nlab{margin-bottom:0}
+  .nest .nex{display:none}
+  .nestcol{flex:1;align-items:center;justify-content:center}
+  .nestcol .nest.n-ai{width:760px;padding:30px 34px}
+  .nestcol .nest.n-ml{padding:26px 30px;margin-top:6px}
+  .nestcol .nest.n-dl{padding:26px 30px;margin-top:6px}
+  .nestcol .nest .nlab{font-size:24px;margin-bottom:0;cursor:pointer}
+  .nestcol .nest .nex{display:inline;margin-left:14px;font-size:18px;color:var(--ink-dim)}
+  .nestcol .nest > .nest{margin-top:20px}
   .deflist{display:flex;flex-direction:column;gap:11px}
   .spread{flex:1;justify-content:space-between}
   .mid-v{justify-content:center}
@@ -749,17 +757,17 @@
   <div class="body">
 
     <!-- ---------- left: the persistent hierarchy ---------- -->
-    <div class="col mid-v" style="flex:0 0 330px">
-      <div class="nest n-ai" data-k="ai"><span class="nlab">Artificial Intelligence</span>
-        <div class="nest n-ml" data-k="ml"><span class="nlab">Machine Learning</span>
-          <div class="nest n-dl" data-k="dl"><span class="nlab">Deep Learning</span>
+    <div class="col mid-v nestcol" id="s1-nestcol" hidden>
+      <div class="nest n-ai" data-k="ai"><span class="nlab">Artificial Intelligence</span><span class="nex">tic-tac-toe</span>
+        <div class="nest n-ml" data-k="ml"><span class="nlab">Machine Learning</span><span class="nex">house prices</span>
+          <div class="nest n-dl" data-k="dl"><span class="nlab">Deep Learning</span><span class="nex">card fraud</span>
           </div>
         </div>
       </div>
     </div>
 
     <!-- ---------- right: only the selected category ---------- -->
-    <div class="col grow">
+    <div class="col grow" id="s1-cardcol">
       <div class="card grow" style="display:flex;flex-direction:column;gap:12px;min-height:0">
         <div>
           <div class="cat-title" id="s1-title" hidden></div>
@@ -813,13 +821,11 @@
       </div>
     </div>
   </div>
-  <div class="foot">
+  <div class="foot" id="s1-foot">
     <button class="btn primary" id="s1-act">Step through it</button>
     <button class="btn ghost" data-reset>Reset</button>
   </div>
   <div class="sn">
-    <p class="say">&ldquo;AI is the broadest term. Machine learning is one way we build AI. Deep learning is one
-      approach to machine learning. So ChatGPT is AI, but AI does not mean ChatGPT.&rdquo;</p>
     <p class="beat"><b>Tic-tac-toe</b> &mdash; play a volunteer's moves. On every turn the AI checks each open square and applies
       a hand-written rule: take a win, block you, otherwise pick a neutral square at random. It only looks one move
       ahead, so it is beatable with a fork (two threats at once). No matter how often it loses that way, it never
@@ -848,13 +854,23 @@
       middle of the night, and tiny &ldquo;test&rdquo; charges at any hour &mdash; so no straight line (last example) can
       separate it; stacking layers of neurons can. Point at the small
       squares: each is one neuron, showing which part of the plane it responds to (blue = on, orange = the opposite).
-      Layer 1 learns simple straight cuts; layer 2 combines them into curves. Click the chart to add a purchase and it re-learns. Real models have billions of weights. Stop there &mdash; how weights get adjusted is slide 7.</p>
-    <p class="beat">Ramp into slide 5: we specify the procedure &rarr; learn a couple of parameters &rarr; learn enormous
-      numbers of interconnected ones.</p>
+      Layer 1 learns simple straight cuts; layer 2 combines them into curves. Click the chart to add a purchase and it re-learns. Real models have billions of weights. Stop there &mdash; how weights get adjusted is slide 8.</p>
   </div>
 </section>
 
 <!-- ================================================== 5 ================================================== -->
+<section class="slide" data-alias="nest" data-k="all">
+  <div class="sn">
+    <p class="say">&ldquo;AI is the broadest term. Machine learning is one way we build AI. Deep learning is one
+      approach to machine learning. So ChatGPT is AI, but AI does not mean ChatGPT.&rdquo;</p>
+    <p class="beat">Point at each example as its box lands: rules someone wrote &rarr; two numbers learned from data &rarr;
+      lots of numbers, in layers.</p>
+    <p class="beat">Ramp into slide 6: we specify the procedure &rarr; learn a couple of parameters &rarr; learn enormous
+      numbers of interconnected ones.</p>
+  </div>
+</section>
+
+<!-- ================================================== 6 ================================================== -->
 <section class="slide" data-demo="rules">
   <div class="s-head">
     <h2>Algorithmic programming vs. machine learning</h2>
@@ -889,7 +905,7 @@
   </div>
 </section>
 
-<!-- ================================================== 6 ================================================== -->
+<!-- ================================================== 7 ================================================== -->
 <section class="slide gsl" data-demo="guess">
   <div class="s-head">
     <h2>How does training find the rules?</h2>
@@ -923,7 +939,7 @@
   </div>
 </section>
 
-<!-- ================================================== 7 ================================================== -->
+<!-- ================================================== 8 ================================================== -->
 <section class="slide wsl" data-demo="loop">
   <div class="s-head">
     <h2>How does a neural network learn?</h2>
@@ -965,7 +981,7 @@
   </div>
 </section>
 
-<!-- ================================================== 8 ================================================== -->
+<!-- ================================================== 9 ================================================== -->
 <section class="slide fsl" data-demo="feat" data-stage="0">
   <div class="s-head">
     <div class="s-eyebrow">Step 1 &middot; Preprocess</div>
@@ -1015,7 +1031,7 @@
   </div>
   <div class="sn">
     <p class="say">&ldquo;A model can't read an email. So first we have to decide what numbers describe one.&rdquo;</p>
-    <p class="beat"><b>Preprocess</b> first: the email is chopped into tokens (the same idea an LLM uses, slide 12). The
+    <p class="beat"><b>Preprocess</b> first: the email is chopped into tokens (the same idea an LLM uses, slide 13). The
       model still can't use those directly, so we <b>analyze</b> them into numbers. Click through one feature at a time: the highlighted part of each email becomes a dot on its own number
       line. Mom is in your contacts, links to a normal recipe site, and uses two ! marks; free-money@notascam.example is a stranger with a very
       shady link and eight.</p>
@@ -1025,7 +1041,7 @@
   </div>
 </section>
 
-<!-- ================================================== 9 ================================================== -->
+<!-- ================================================== 10 ================================================== -->
 <section class="slide bsl" data-demo="bend">
   <div class="s-head">
     <div class="s-eyebrow">Step 2 &middot; Training</div>
@@ -1096,7 +1112,7 @@
   </div>
 </section>
 
-<!-- ================================================== 10 ================================================== -->
+<!-- ================================================== 11 ================================================== -->
 <section class="slide isl" data-demo="infer">
   <div class="s-head">
     <div class="s-eyebrow">Step 3 &middot; Inference</div>
@@ -1145,7 +1161,7 @@
   </div>
 </section>
 
-<!-- ================================================== 11 ================================================== -->
+<!-- ================================================== 12 ================================================== -->
 <section class="slide rsl" data-demo="backwards">
   <div class="s-head">
     <div class="s-eyebrow">Step 4 &middot; Run it backwards</div>
@@ -1191,7 +1207,7 @@
   </div>
 </section>
 
-<!-- ================================================== 12 ================================================== -->
+<!-- ================================================== 13 ================================================== -->
 <section class="slide tsl" data-demo="gen">
   <div class="s-head">
     <h2>Generating text: the same idea, much bigger</h2>
@@ -1239,7 +1255,7 @@
   </div>
 </section>
 
-<!-- ================================================== 13 ================================================== -->
+<!-- ================================================== 14 ================================================== -->
 <section class="slide" data-demo="draw">
   <div class="s-head">
     <h2>A real neural network: draw something</h2>
@@ -1306,7 +1322,7 @@
   </div>
 </section>
 
-<!-- ================================================== 14 ================================================== -->
+<!-- ================================================== 15 ================================================== -->
 <section class="slide" data-demo="split">
   <div class="s-head">
     <h2>Training &ne; testing &ne; using</h2>
@@ -1368,7 +1384,7 @@
   </div>
 </section>
 
-<!-- ================================================== 15 ================================================== -->
+<!-- ================================================== 16 ================================================== -->
 <section class="slide" data-demo="chips">
   <div class="s-head">
     <h2>Why GPUs matter</h2>
@@ -1429,7 +1445,7 @@
   </div>
 </section>
 
-<!-- ================================================== 16 ================================================== -->
+<!-- ================================================== 17 ================================================== -->
 <section class="slide" data-demo="synth">
   <div class="s-head">
     <h2>Put the whole system together</h2>
@@ -2108,15 +2124,23 @@ demos.nest = (() => {
   let cur = 'ai';
 
   function show(k){
-    if (SUB[cur].leave) SUB[cur].leave();
+    if (SUB[cur] && SUB[cur].leave) SUB[cur].leave();
     cur = k;
+    const all = k === 'all';
+    $('s1-nestcol').hidden = !all; $('s1-cardcol').hidden = all; $('s1-foot').style.visibility = all ? 'hidden' : '';
+    if (all){                                         // the summary: the boxes land one inside the other
+      boxes.forEach((b, i) => { b.hidden = false; b.classList.remove('on', 'grow-in'); void b.offsetWidth;
+        b.style.animationDelay = (i * 0.45) + 's'; b.classList.add('grow-in'); });
+      $('s1-head').innerHTML = 'Each one sits inside the last';
+      return;
+    }
     const c = CAT[k];
     const ORDER = ['ai', 'ml', 'dl'], lvl = ORDER.indexOf(k);
     boxes.forEach(b => {
       const bl = ORDER.indexOf(b.dataset.k), wasHidden = b.hidden;
       b.hidden = bl > lvl;
       b.classList.toggle('on', b.dataset.k === k);
-      if (wasHidden && !b.hidden){ b.classList.remove('grow-in'); void b.offsetWidth; b.classList.add('grow-in'); }
+      b.style.animationDelay = '';
     });
     $('s1-head').innerHTML = ['<span class="dim">Broadest:</span> Artificial Intelligence', '<span class="dim">More specific:</span> Machine Learning',
       '<span class="dim">Most specific:</span> Deep Learning'][lvl];
@@ -2131,11 +2155,11 @@ demos.nest = (() => {
     SUB[k].reset();
   }
   boxes.forEach(b => {
-    const hit = e => { e.stopPropagation(); const t = slides.findIndex(x => (x.dataset.demo === 'nest' ? 'ai' : x.dataset.k) === b.dataset.k && demoKey(slides.indexOf(x)) === 'nest'); if (t >= 0) goto(t); };
+    const hit = e => { e.stopPropagation(); const t = slides.findIndex(x => (x.dataset.demo === 'nest' ? 'ai' : x.dataset.k) === b.dataset.k); if (t >= 0) goto(t); };
     qs('.nlab', b).onclick = hit;
     b.onclick = hit;
   });
-  actBtn.onclick = () => SUB[cur].act();
+  actBtn.onclick = () => SUB[cur] && SUB[cur].act();
 
   show('ai');
   return {
@@ -2143,7 +2167,7 @@ demos.nest = (() => {
     enter(k){ if (k !== cur) show(k); },
     leave(){                                   // never leave the action button stuck mid-animation
       Object.values(SUB).forEach(d => d.leave && d.leave());
-      SUB[cur].reset();
+      if (SUB[cur]) SUB[cur].reset();
     }
   };
 })();
@@ -3760,22 +3784,22 @@ demos.synth = (() => {
 
   /* --- click any box: one line on what it is, and where the deck covered it --- */
   const EXPLAIN = {
-    train:    [14, 'Training data: the examples the parameters are fitted to. What goes in shapes what comes out.'],
-    params:   [5, 'Neural network: layers of parameters \u2014 adjustable numbers. At this stage they are still changing.'],
-    loss2:    [7, 'Prediction: the forward pass. The network produces its current best guess for a training example.'],
-    loss:     [7, 'Loss: a single number for how wrong that prediction was.'],
-    backprop: [7, 'Backpropagation: calculates how each parameter contributed to the loss. It does not change them itself.'],
-    update:   [7, 'Update parameters: the optimizer nudges every parameter toward lower loss. Then repeat, many times.'],
-    gpu:      [15, 'GPU compute: the loop is mostly parallel numerical work, repeated across enormous numbers of examples.'],
-    eval:     [14, 'Evaluate: test on held-out data it never trained on. Does the learned behavior generalize?'],
-    model:    [14, 'Trained model: training is over, so the parameters are fixed. Everything on the right uses it as-is.'],
-    msg:      [12, 'Your message: new information for this one request.'],
-    context:  [12, 'Conversation context: whatever the surrounding software chooses to send along \u2014 selected, summarized, or retrieved.'],
-    tokens:   [8, 'Tokens: message and context are split into numbered pieces the model can work with.'],
-    model2:   [12, 'Trained model: the same fixed parameters, run forward. No loss, no backprop.'],
-    probs:    [12, 'Next-token probabilities: a score for every possible next token. One gets chosen.'],
-    gen:      [12, 'Generated response: probable text, not guaranteed-true text.'],
-    infer:    [12, 'One token at a time: each chosen token is appended and the model runs again. Parameters never move.']
+    train:    [15, 'Training data: the examples the parameters are fitted to. What goes in shapes what comes out.'],
+    params:   [6, 'Neural network: layers of parameters \u2014 adjustable numbers. At this stage they are still changing.'],
+    loss2:    [8, 'Prediction: the forward pass. The network produces its current best guess for a training example.'],
+    loss:     [8, 'Loss: a single number for how wrong that prediction was.'],
+    backprop: [8, 'Backpropagation: calculates how each parameter contributed to the loss. It does not change them itself.'],
+    update:   [8, 'Update parameters: the optimizer nudges every parameter toward lower loss. Then repeat, many times.'],
+    gpu:      [16, 'GPU compute: the loop is mostly parallel numerical work, repeated across enormous numbers of examples.'],
+    eval:     [15, 'Evaluate: test on held-out data it never trained on. Does the learned behavior generalize?'],
+    model:    [15, 'Trained model: training is over, so the parameters are fixed. Everything on the right uses it as-is.'],
+    msg:      [13, 'Your message: new information for this one request.'],
+    context:  [13, 'Conversation context: whatever the surrounding software chooses to send along \u2014 selected, summarized, or retrieved.'],
+    tokens:   [9, 'Tokens: message and context are split into numbered pieces the model can work with.'],
+    model2:   [13, 'Trained model: the same fixed parameters, run forward. No loss, no backprop.'],
+    probs:    [13, 'Next-token probabilities: a score for every possible next token. One gets chosen.'],
+    gen:      [13, 'Generated response: probable text, not guaranteed-true text.'],
+    infer:    [13, 'One token at a time: each chosen token is appended and the model runs again. Parameters never move.']
   };
   let explaining = null;
   function explain(key){
