@@ -854,6 +854,14 @@
   .station .icon{font-size:24px;line-height:1}
   .station .name{font-size:16.5px;font-weight:700;letter-spacing:.03em}
   .station .sub{font-size:14px;color:var(--ink-dim);line-height:1.35}
+  .spbody{flex-direction:column;justify-content:center;gap:34px}
+  .stations.big{gap:18px;align-items:stretch}
+  .stations.big .station{flex:1;padding:26px 26px;border-radius:16px;gap:10px;transition:opacity .45s ease,transform .45s ease}
+  .stations.big .icon{font-size:40px} .stations.big .name{font-size:30px} .stations.big .sub{font-size:19px;line-height:1.4}
+  .stations.big .ar{align-self:center;font-size:34px;color:var(--ink-dim)}
+  .spq{font-size:30px;font-weight:750;line-height:1.2;transition:opacity .45s ease,transform .45s ease}
+  .spa{font-size:24px;color:var(--ink-dim);border-left:4px solid var(--hot);padding-left:14px;transition:opacity .45s ease,transform .45s ease}
+  .spbody .off{opacity:0;transform:translateY(10px)}
   .beasts{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
   .beast{
     width:60px;height:60px;border-radius:12px;border:1.5px solid var(--line);background:var(--sunk);
@@ -1494,44 +1502,22 @@
     <h2>Training &ne; testing &ne; using</h2>
     <p class="lead">Only one of these changes the weights.</p>
   </div>
-  <div class="body">
-    <div class="col grow">
-      <div class="stations" id="s4-stations">
-        <div class="station" data-st="train"><div class="icon">&#127947;</div><div class="name">Train</div>
-          <div class="sub">Examples it learns from<br><b>weights change</b></div></div>
-        <div class="ar" style="align-self:center;font-size:22px">&rarr;</div>
-        <div class="station" data-st="eval"><div class="icon">&#128221;</div><div class="name">Test</div>
-          <div class="sub">Examples it never saw<br>weights don't change</div></div>
-        <div class="ar" style="align-self:center;font-size:22px">&rarr;</div>
-        <div class="station" data-st="infer"><div class="icon">&#128640;</div><div class="name">Use</div>
-          <div class="sub">New input<br>weights don't change</div></div>
-      </div>
-
-      <div class="card grow" style="display:flex;gap:22px;align-items:center">
-        <div class="col" style="flex:0 0 330px;gap:9px">
-          <h3 style="margin:0">Training examples</h3>
-          <div class="beasts" id="s4-train"></div>
-        </div>
-        <div class="col" style="flex:0 0 150px;gap:9px">
-          <h3 style="margin:0">Held out</h3>
-          <div class="beasts"><div class="beast held" id="s4-held">?</div></div>
-        </div>
-        <div class="col grow" style="gap:13px;justify-content:center">
-          <div class="verdict" id="s4-verdict">Five labeled examples in. One new animal kept back.</div>
-          <div id="s4-qwrap" hidden>
-            <div class="big-line" style="font-size:22px">Why not just test it on the examples it trained on?</div>
-            <div class="vocab" id="s4-a" style="margin-top:9px;font-size:18px" hidden>Because memorizing training
-              examples <b>&ne;</b> generalizing to new ones.</div>
-          </div>
-          <div class="vocab" id="s4-of" style="font-size:17px" hidden><b>Overfitting:</b> <span>performing well on
-            training data but poorly on new data.</span></div>
-        </div>
-      </div>
+  <div class="body spbody">
+    <div class="stations big" id="s4-stations">
+      <div class="station" data-sp="0"><div class="icon">&#127947;</div><div class="name">Train</div>
+        <div class="sub">Examples it learns from<br><b>weights change</b></div></div>
+      <div class="ar">&rarr;</div>
+      <div class="station" data-sp="1"><div class="icon">&#128221;</div><div class="name">Test</div>
+        <div class="sub">Examples it never saw<br>weights don&rsquo;t change</div></div>
+      <div class="ar">&rarr;</div>
+      <div class="station" data-sp="2"><div class="icon">&#128640;</div><div class="name">Use</div>
+        <div class="sub">New input<br>weights don&rsquo;t change</div></div>
     </div>
+    <div class="spq" data-sp="3">Why not test it on the examples it already saw?</div>
+    <div class="spa" data-sp="4">Because remembering the examples isn&rsquo;t the same as understanding them.</div>
   </div>
   <div class="foot" style="gap:16px">
-    <button class="btn primary" id="s4-go">Train on the five examples</button>
-    <button class="btn ghost" data-reset>Reset</button>
+    <button class="btn primary" id="s4-go">Test &rarr;</button>
   </div>
   <details class="gd">
     <summary>Go deeper</summary>
@@ -1543,8 +1529,9 @@
   <div class="sn">
     <p class="say">&ldquo;Whenever someone says an AI is 95 percent accurate, ask: 95 percent on what? Doing well on the pictures it
       trained on says nothing about the real world.&rdquo;</p>
-    <p class="beat">Ask &ldquo;why not test it on the examples it already saw?&rdquo; out loud and wait. Someone will say memorizing.
-      Then reveal. This slide matters more than its size: it's the one they'll use when they read about benchmarks.</p>
+    <p class="beat">One card per click. Then ask the question out loud and wait for an answer before the reveal. Someone will say
+      &ldquo;it just memorized them&rdquo;; that's the answer. This slide matters more than its size: it's the one they'll use
+      when they read about benchmarks.</p>
   </div>
 </section>
 
@@ -4936,49 +4923,7 @@ demos.gen = (() => {
 })();
 
 /* ============================================================ 4 — train / evaluate / infer */
-demos.split = (() => {
-  const s = qs('.slide[data-demo=split]');
-  const stations = qsa('.station', s), trainRow = $('s4-train'), held = $('s4-held');
-  const verdict = $('s4-verdict'), go = $('s4-go');
-  const qwrap = $('s4-qwrap'), ans = $('s4-a'), over = $('s4-of');
-  const SET = [['\u{1F431}','cat'],['\u{1F431}','cat'],['\u{1F436}','dog'],['\u{1F431}','cat'],['\u{1F436}','dog']];
-  let phase = 0;
-
-  function light(which){ stations.forEach(el => el.classList.toggle('on', el.dataset.st === which)); }
-
-  let painted = -1;
-  function render(){
-    if (painted !== (phase >= 1)){                      // animate the tiles once, on first reveal
-      painted = phase >= 1;
-      trainRow.innerHTML = '';
-      SET.forEach(([e, lab], i) => {
-        const d = document.createElement('div');
-        d.className = 'beast' + (phase >= 1 ? ' reveal' : '');
-        d.style.animationDelay = (i * 0.07) + 's';
-        d.innerHTML = e + (phase >= 1 ? '<span class="tag">' + lab + '</span>' : '');
-        trainRow.appendChild(d);
-      });
-    }
-    if (held.dataset.p !== String(phase >= 2)){
-      held.dataset.p = String(phase >= 2);
-      held.className = 'beast held' + (phase >= 2 ? ' reveal' : '');
-      held.innerHTML = phase >= 2 ? '\u{1F415}<span class="tag">dog?</span>' : '?';
-    }
-    qwrap.hidden = phase < 2;
-    ans.hidden = phase < 3;
-    over.hidden = phase < 3;
-
-    if (phase === 0){ light(''); verdict.innerHTML = 'Five labeled examples in. One new animal kept back.'; go.textContent = 'Train on the five examples'; go.disabled = false; }
-    if (phase === 1){ light('train'); verdict.innerHTML = 'Trained. <b>Weights changed.</b> It labels all five correctly, 5 / 5. <i class="dim">Impressive?</i>'; go.textContent = 'Test on the one it never saw'; }
-    if (phase === 2){ light('eval'); verdict.innerHTML = 'A photo it never trained on. It predicts <b class="ok">dog — correct</b>. <i class="dim">That</i> is the number worth quoting.'; go.textContent = 'Reveal the answer'; }
-    if (phase === 3){ light('eval'); go.textContent = 'Use it on new input →'; }
-    if (phase === 4){ light('infer'); verdict.innerHTML = '<b>In use:</b> it labels new photos all day. The weights never move.'; go.textContent = 'Done'; go.disabled = true; }
-    go.classList.toggle('pulse', phase === 1 || phase === 2);
-  }
-  go.onclick = () => { phase = Math.min(4, phase + 1); render(); };
-  render();
-  return { reset(){ phase = 0; render(); } };
-})();
+demos.split = revealDemo('split', 'sp', 4, 's4-go', ['Test →', 'Use →', 'A question →', 'The answer →', 'Next slide →']);
 
 /* ============================================================ 5 — CPU vs GPU (conceptual) */
 demos.chips = (() => {
