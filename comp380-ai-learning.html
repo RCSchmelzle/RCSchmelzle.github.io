@@ -730,7 +730,15 @@
   /* limits */
   .lsl .body{gap:30px}
   .lsl .kcol{flex:0 0 400px}
-  .lnote{font-size:19px;line-height:1.4;border-left:4px solid var(--flag);padding:4px 0 4px 14px}
+  .lsl .kcol{gap:12px;padding-top:4px}
+  .lsl .kdesc{font-size:22px}
+  .lsl .klist{font-size:18px;gap:6px}
+  .lscale{display:flex;flex-direction:column;gap:6px}
+  .lscale .big{font-size:26px;font-weight:700;letter-spacing:-.01em}
+  .lscale .big b{color:var(--hot);font-weight:850}
+  .lscale canvas{width:400px;height:120px;display:block}
+  .lscale .sub{font-size:15px;color:var(--ink-dim);line-height:1.35}
+  .lnote{font-size:16px;line-height:1.4;border-left:4px solid var(--flag);padding:4px 0 4px 14px}
   .lnote b{color:var(--flag)}
   .lbox{flex:1;display:flex;gap:22px;align-items:center;background:var(--panel);border:1.5px solid var(--line);border-radius:16px;padding:16px 20px}
   #l-cv{width:328px;height:410px;border-radius:10px;display:block;flex:0 0 auto}
@@ -1162,12 +1170,16 @@
   </div>
   <div class="body">
     <div class="kcol">
-      <div class="kdesc">Works only under some conditions</div>
+      <div class="lscale">
+        <div class="big"><b>25</b> stages &middot; <b>2,913</b> checks</div>
+        <canvas id="l-all" width="800" height="240" aria-label="one dot for every check in the detector, grouped by stage"></canvas>
+        <div class="sub">One dot per check. Designed by people, then tested and refined over and over by trial and error.</div>
+      </div>
+      <div class="kdesc">And it still only works when:</div>
       <ul class="klist">
-        <li>Face looking straight at the camera</li>
-        <li>Head upright, not tilted</li>
-        <li>Even lighting</li>
-        <li>Nothing covering the face</li>
+        <li>The face looks at the camera, head upright</li>
+        <li>Lighting is even</li>
+        <li>Nothing covers the face</li>
       </ul>
       <div class="lnote">And even then, light-and-dark rules can work <b>unevenly across skin tones</b> and camera exposure.</div>
     </div>
@@ -1188,7 +1200,10 @@
     <span class="credit">Photo: Sally Ride, NASA (1984), public domain</span>
   </div>
   <div class="sn">
-    <p class="say">&ldquo;Those rules work, but only when the world cooperates.&rdquo;</p>
+    <p class="say">&ldquo;This detector is huge: 25 stages, 2,913 checks. People designed the kinds of checks, then it was tested
+      and refined over and over, trial and error on thousands of photos. And it still only works when the world cooperates.&rdquo;</p>
+    <p class="beat">Each dot on the left is one check; each color band is a stage. (Accuracy note: people designed the rectangle
+      shapes and the stage setup; a training algorithm, AdaBoost, picked which checks to keep and their thresholds.)</p>
     <p class="beat">Drag tilt: around 20 degrees it loses her. Raise the shadow from below: the eyes-darker-than-cheeks
       pattern breaks. Add a mask: gone. Sunglasses usually still work, since they only make the eyes darker.
       Worth pointing out: making the whole photo darker doesn't break it, because it compares areas to each other.</p>
@@ -3535,11 +3550,29 @@ demos.limits = (() => {
       : '<span style="color:var(--spill)">&#10007; No face found</span><small>the light-and-dark pattern no longer fits the rules</small>';
   }
   const kick = () => { if (!raf) raf = requestAnimationFrame(update); };
+  // every check in the cascade as a dot, filling in stage by stage
+  const dots = $('l-all').getContext('2d'), COLS = 100, PITCH = 8;
+  let fillRaf = 0;
+  function paintDots(upto){
+    const css = getComputedStyle(document.documentElement), hot = css.getPropertyValue('--hot').trim(), dim = css.getPropertyValue('--line').trim();
+    dots.clearRect(0, 0, 800, 240);
+    let n = 0;
+    Cascade.stages.forEach(([, weak], si) => weak.forEach(() => {
+      dots.fillStyle = n < upto ? hot : dim; dots.globalAlpha = n < upto ? (si % 2 ? 0.55 : 1) : 1;
+      dots.fillRect((n % COLS) * PITCH, Math.floor(n / COLS) * PITCH, 6, 6); n++; }));
+    dots.globalAlpha = 1;
+  }
+  function fillDots(){
+    cancelAnimationFrame(fillRaf); const t0 = performance.now(), total = 2913;
+    const tick = () => { const k = Math.min(1, (performance.now() - t0) / 1800); paintDots(Math.round(total * k * k)); if (k < 1) fillRaf = requestAnimationFrame(tick); };
+    tick();
+  }
+  paintDots(2913);
   [tilt, shade, mask, glasses].forEach(el => el.addEventListener('input', kick));
   P.onReady(kick);
   return {
     reset(){ tilt.value = 0; shade.value = 0; mask.checked = false; glasses.checked = false; kick(); },
-    enter: kick,
+    enter(){ kick(); fillDots(); },
     probe(set){ Object.assign(tilt, { value:set.tilt || 0 }); shade.value = set.shade || 0; mask.checked = !!set.mask; glasses.checked = !!set.glasses; compose(); return detectFaces(P.levelsFor(src)).length; }
   };
 })();
