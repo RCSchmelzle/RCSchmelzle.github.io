@@ -189,6 +189,14 @@
   .nestcol .nest.n-dl{padding:26px 30px;margin-top:6px}
   .nestcol .nest .nlab{font-size:24px;margin-bottom:0;cursor:pointer}
   .nestcol .nest > .nest{margin-top:20px}
+  .zoomlayer{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;gap:16px;padding:38px 52px 30px;background:var(--bg);
+    transition:opacity .3s ease}
+  .zoomlayer .body{flex:1;display:flex;transition:opacity .35s ease}
+  .zoomcard{position:absolute;border:2px solid var(--hot);background:var(--hot-soft);border-radius:14px;box-sizing:border-box;
+    transition:left .7s cubic-bezier(.6,0,.2,1),top .7s cubic-bezier(.6,0,.2,1),width .7s cubic-bezier(.6,0,.2,1),height .7s cubic-bezier(.6,0,.2,1),
+      border-radius .7s ease,background .7s ease,border-color .7s ease}
+  .zoomcard span{position:absolute;left:34px;top:30px;font-size:24px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--hot);
+    white-space:nowrap;transition:left .7s cubic-bezier(.6,0,.2,1),top .7s cubic-bezier(.6,0,.2,1),font-size .7s cubic-bezier(.6,0,.2,1),letter-spacing .7s ease,color .7s ease}
   .deflist{display:flex;flex-direction:column;gap:11px}
   .spread{flex:1;justify-content:space-between}
   .mid-v{justify-content:center}
@@ -206,7 +214,7 @@
 
   .cat-title{font-size:30px;font-weight:700;letter-spacing:-.015em;line-height:1.1}
   .cat-def{font-size:18px;color:var(--ink-dim);line-height:1.35;margin-top:4px}
-  .kcol{flex:0 0 320px;display:flex;flex-direction:column;justify-content:center;gap:18px}
+  .kcol{flex:0 0 320px;display:flex;flex-direction:column;justify-content:flex-start;gap:18px;padding-top:26px}
   .kdesc{font-size:30px;font-weight:800;line-height:1.15;color:var(--hot);letter-spacing:-.01em}
   .klist{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:12px;font-size:21px;line-height:1.3}
   .klist li::marker{color:var(--hot)}
@@ -1749,8 +1757,8 @@ demos.nest = (() => {
     for (const k in at) e.setAttribute(k, at[k]); return e; };
 
   const CAT = {
-    ai: { def:'Rules people write', list:['Algorithms &amp; heuristics', 'Search and scoring', 'Logic a person writes down', 'No data, no learning'],
-          ex:'✕ Tic-tac-toe', illus:'', take:'No learning: a person wrote the rules.' },
+    ai: { def:'Machines acting intelligently', list:['The umbrella: includes ML &amp; deep learning', 'Algorithms &amp; heuristics', 'Search and scoring', 'This example: rules a person wrote'],
+          ex:'✕ Tic-tac-toe', illus:'', take:'AI, but no learning: a person wrote the rules.' },
     ml: { def:'Learning from data', list:['Statistics', 'Datasets of examples', 'A few adjustable numbers', 'People choose the features'],
           ex:'\u{1F3E0} Overpriced house?', illus:'', take:'Learned from data.' },
     dl: { def:'Learning in layers', list:['Neural networks, many layers', 'Huge datasets', 'Lots of compute (GPUs)', 'Finds its own features'],
@@ -2245,12 +2253,35 @@ demos.nest = (() => {
       if (animate && !was && !b.hidden){ b.classList.remove('grow-in'); void b.offsetWidth; b.classList.add('grow-in'); }
     });
   }
+  // going forward into AI / ML / DL: the nested diagram reappears and that box expands to become the slide
+  let zoomTimers = [];
+  function zoomIn(k){
+    zoomTimers.forEach(clearTimeout); zoomTimers = []; qsa('.zoomlayer', s).forEach(x => x.remove());
+    const layer = document.createElement('div'); layer.className = 'zoomlayer';
+    layer.innerHTML = '<div class="s-head"><h2>&nbsp;</h2></div><div class="body"></div>';
+    const copy = $('s1-nestcol').cloneNode(true); copy.removeAttribute('id'); copy.hidden = false;
+    qsa('.nest', copy).forEach(b => { b.hidden = false; b.classList.toggle('on', b.dataset.k === k); b.classList.remove('grow-in'); b.style.animationDelay = ''; });
+    layer.querySelector('.body').appendChild(copy); s.appendChild(layer);
+    const box = qs(`.nest[data-k=${k}]`, copy), o = layer.getBoundingClientRect(), r = box.getBoundingClientRect(), sc = o.width / 1280;
+    const card = document.createElement('div'); card.className = 'zoomcard';
+    Object.assign(card.style, { left:(r.left - o.left) / sc + 'px', top:(r.top - o.top) / sc + 'px', width:r.width / sc + 'px', height:r.height / sc + 'px' });
+    const lab = document.createElement('span'); lab.textContent = { ai:'Artificial Intelligence', ml:'Machine Learning', dl:'Deep Learning' }[k];
+    card.appendChild(lab); layer.appendChild(card); box.style.visibility = 'hidden';
+    zoomTimers.push(setTimeout(() => {
+      layer.querySelector('.body').style.opacity = 0;
+      Object.assign(card.style, { left:'0px', top:'0px', width:'1280px', height:'720px', borderRadius:'0px', background:'var(--bg)', borderColor:'transparent' });
+      Object.assign(lab.style, { left:'52px', top:'40px', fontSize:'37px', letterSpacing:'-.01em', color:'var(--ink)' });
+    }, 350));
+    zoomTimers.push(setTimeout(() => { lab.style.transition = 'none'; lab.style.textTransform = 'none'; lab.innerHTML = $('s1-head').innerHTML; }, 1060));
+    zoomTimers.push(setTimeout(() => { layer.style.opacity = 0; }, 1150));
+    zoomTimers.push(setTimeout(() => layer.remove(), 1500));
+  }
   show('ai');
   return {
     reset(){ if (cur === 'all'){ intro = 0; paintIntro(false); } else show(cur); },
     enter(k){ if (k !== cur) show(k); },
     step(dir){ if (cur !== 'all') return false; const n = intro + dir; if (n < 0 || n > 3) return false; intro = n; paintIntro(dir > 0); return true; },
-    atStart(){ if (cur === 'all'){ intro = 0; paintIntro(false); } },
+    atStart(){ if (cur === 'all'){ intro = 0; paintIntro(false); } else zoomIn(cur); },
     atEnd(){ if (cur === 'all'){ intro = 3; paintIntro(false); } },
     leave(){                                   // never leave the action button stuck mid-animation
       Object.values(SUB).forEach(d => d.leave && d.leave());
