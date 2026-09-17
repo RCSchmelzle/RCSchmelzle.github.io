@@ -957,10 +957,10 @@
   </div>
   <div class="body">
     <div class="mparts">
-      <div class="mpart" data-p="1"><div class="n">1</div><div class="t">What counts as AI?</div><div class="d">Three words that get mixed up, and the one question that separates them: who writes the rules?</div></div>
-      <div class="mpart" data-p="2"><div class="n">2</div><div class="t">Rules by hand</div><div class="d">Finding a face with rules people wrote, and where those rules break.</div></div>
-      <div class="mpart" data-p="3"><div class="n">3</div><div class="t">Rules from examples</div><div class="d">Letting a network work out its own rules, one layer at a time.</div></div>
-      <div class="mpart" data-p="4"><div class="n">4</div><div class="t">Learning the rules</div><div class="d">Trial and error, the hardware it takes, and how you know it actually worked.</div></div>
+      <div class="mpart" data-p="1"><div class="n">1</div><div class="t">What counts as AI?</div><div class="d">Three words, one question: who writes the rules?</div></div>
+      <div class="mpart" data-p="2"><div class="n">2</div><div class="t">Rules by hand</div><div class="d">Finding a face with rules people wrote.</div></div>
+      <div class="mpart" data-p="3"><div class="n">3</div><div class="t">Rules from examples</div><div class="d">A network works out its own rules.</div></div>
+      <div class="mpart" data-p="4"><div class="n">4</div><div class="t">Learning the rules</div><div class="d">Trial and error, and how you know it worked.</div></div>
     </div>
   </div>
   <div class="sn">
@@ -1098,8 +1098,8 @@
   </div>
   <div class="body">
     <ul class="twob">
-      <li><b>Normal programming:</b> a person writes the rules ahead of time.</li>
-      <li><b>Machine learning:</b> a person sets up the framework, and the rules are worked out from examples.</li>
+      <li><b>Normal programming:</b> a person writes the rules.</li>
+      <li><b>Machine learning:</b> the rules are worked out from examples.</li>
     </ul>
   </div>
   <details class="gd">
@@ -1133,8 +1133,7 @@
       <div class="ecard"><div class="k">Drawing</div><div class="arrow">has</div><div class="v">Fundamentals</div><div class="d">shape, proportion, light and shadow</div></div>
       <div class="ecard face" data-es="1"><div class="k">Faces</div><div class="arrow">have</div><div class="v">?</div><div class="d">what tells you it's a face?</div></div>
     </div>
-    <div class="egoal" data-es="2">Whether a person writes them or a computer works them out, the goal is the same:
-      the <b>best rules</b>, the ones that work most often and fail least.</div>
+    <div class="egoal" data-es="2">Either way, the goal is the same: the <b>best rules</b>, the ones that work most often and fail least.</div>
   </div>
   <div class="foot">
     <button class="btn primary" id="e-go">And faces? &rarr;</button>
@@ -1164,8 +1163,8 @@
         <li>A darker line underneath</li>
         <li>Roughly symmetric</li>
       </ul>
-      <div class="pfalse" data-ps="4">Half of these aren't faces. Loose rules give <b>false alarms</b>. Seeing faces in
-        things has a name, <span class="hot">pareidolia</span>. The rules aren't exact, but our brains use them as a rough guide.</div>
+      <div class="pfalse" data-ps="4">Half of these aren't faces. Loose rules give <b>false alarms</b>: <span class="hot">pareidolia</span>.
+        Our brains use them as a rough guide anyway.</div>
     </div>
   </div>
   <div class="foot">
@@ -1190,8 +1189,8 @@
   <div class="body">
     <canvas id="hs-cv" width="400" height="500" aria-label="portrait with a detection window sliding over it"></canvas>
     <div class="hscol">
-      <div class="hslead" id="hs-lead">For decades this is how computers found faces: slide a box across the photo and
-        check whether the <b>dark</b> and <b>light</b> areas line up the way a face's do.</div>
+      <div class="hslead" id="hs-lead">For decades, this is how computers found faces: slide a box across the photo and
+        check whether the <b>dark</b> and <b>light</b> areas line up like a face.</div>
       <div class="hsstage" id="hs-s1">
         <div class="hshd"><span class="t">Stage 1</span><span class="d">9 quick checks</span><span class="r" id="hs-r1"></span></div>
         <div class="hstiles" id="hs-t1"></div>
@@ -1235,7 +1234,7 @@
       <div class="lscale">
         <div class="big"><b>25</b> stages &middot; <b>2,913</b> checks</div>
         <canvas id="l-all" width="800" height="240" aria-label="one dot for every check in the detector, grouped by stage"></canvas>
-        <div class="sub">One dot per check. Designed by people, then tested and refined over and over by trial and error.</div>
+        <div class="sub">One dot per check. Designed by people, refined by trial and error.</div>
       </div>
       <div class="kdesc">And it still only works when:</div>
       <ul class="klist">
@@ -1243,7 +1242,7 @@
         <li>Lighting is even</li>
         <li>Nothing covers the face</li>
       </ul>
-      <div class="lnote">And even then, light-and-dark rules can work <b>unevenly across skin tones</b> and camera exposure.</div>
+      <div class="lnote">Even then, light-and-dark rules can work <b>unevenly across skin tones</b>.</div>
     </div>
     <div class="lbox">
       <canvas id="l-cv" width="400" height="500" aria-label="portrait with adjustable tilt, shadow, and mask"></canvas>
@@ -1291,10 +1290,9 @@
     <div class="kcol">
       <div class="kdesc">A huge set of rules, defined by data</div>
       <ul class="klist">
-        <li>Not written by hand: learned from labeled examples</li>
-        <li>More examples: more angles, more lighting, more skin tones</li>
-        <li>More variety, more robust</li>
-        <li>Simple rules first (edges), then parts, then a face</li>
+        <li>Learned from labeled examples, not written by hand</li>
+        <li>More examples: more angles, lighting, skin tones</li>
+        <li>Edges first, then parts, then a face</li>
       </ul>
     </div>
     <div class="dsteps" id="f2-steps">
@@ -1326,7 +1324,7 @@
   <div class="s-head">
     <div class="s-eyebrow">Rules from examples</div>
     <h2>To a computer, a picture is just numbers</h2>
-    <p class="lead">A photo network is too big to draw, so the next slides use a small one that reads doodles. Same idea.</p>
+    <p class="lead">A face network is too big to draw, so we&rsquo;ll use a small one that reads doodles.</p>
   </div>
   <div class="body">
     <canvas class="vcv" id="v1-cv" width="1680" height="720" aria-label="a doodle, then zoomed in to its pixel values"></canvas>
@@ -1431,8 +1429,7 @@
   <div class="dinsp" id="d-insp" hidden></div>
   <div class="foot">
     <span class="illus real">Real trained model &middot; 5,173 weights</span>
-    <div class="caveat grow">It only knows five things. Draw a banana or a face and it still has to pick one of the five,
-      often very confidently.</div>
+    <div class="caveat grow">It only knows five things. Draw a banana and it still picks one of the five, confidently.</div>
   </div>
   <details class="gd">
     <summary>Go deeper</summary>
@@ -1519,8 +1516,7 @@
   <div class="s-head">
     <div class="s-eyebrow">Learning the rules</div>
     <h2>Why GPUs matter</h2>
-    <p class="lead">That loop runs millions of times over millions of pictures. It's a huge pile of simple arithmetic, and
-      most of it doesn't have to wait in line.</p>
+    <p class="lead">That loop runs millions of times. It's a huge pile of simple arithmetic, and most of it can happen at once.</p>
   </div>
   <div class="body">
     <div class="card" style="flex:1;display:flex;flex-direction:column;gap:11px">
@@ -1528,7 +1524,7 @@
         <div class="hdr"><span class="nm">CPU</span><span class="ct" id="s5-cpuct">0 / 100 done</span></div>
         <div class="ops" id="s5-cpu"></div>
         <div class="ticks">A few at a time. <b id="s5-cput">0</b> <span class="dim">conceptual ticks</span></div>
-        <div class="vocab dim" style="font-size:15px">Optimized for flexible, general-purpose computation.</div>
+        <div class="vocab dim" style="font-size:15px">A few flexible workers.</div>
       </div>
     </div>
     <div class="card" style="flex:1;display:flex;flex-direction:column;gap:11px">
@@ -1536,7 +1532,7 @@
         <div class="hdr"><span class="nm">GPU</span><span class="ct" id="s5-gpuct">0 / 100 done</span></div>
         <div class="ops" id="s5-gpu"></div>
         <div class="ticks">Many at once. <b id="s5-gput">0</b> <span class="dim">conceptual ticks</span></div>
-        <div class="vocab dim" style="font-size:15px">Can perform huge numbers of certain numerical operations in parallel.</div>
+        <div class="vocab dim" style="font-size:15px">Thousands of simple workers.</div>
       </div>
     </div>
     <div class="col" style="flex:0 0 268px">
@@ -1643,15 +1639,15 @@
   <div class="body">
     <div class="rcards">
       <div class="rcard" data-rs="1"><canvas id="rc-1" width="180" height="180"></canvas><div class="n">1</div><div class="t">Rules by hand</div>
-        <div class="d">People wrote checks like &ldquo;eyes darker than cheeks.&rdquo; It works until the angle or the light changes.</div></div>
+        <div class="d">Checks people wrote. They break when the angle or light changes.</div></div>
       <div class="rcard" data-rs="2"><canvas id="rc-2" width="180" height="180"></canvas><div class="n">2</div><div class="t">Rules from examples</div>
-        <div class="d">Show a network thousands of pictures and it works out its own checks: simple ones first, then combinations.</div></div>
+        <div class="d">A network works out its own checks from thousands of pictures.</div></div>
       <div class="rcard" data-rs="3"><svg viewBox="0 0 180 180" aria-hidden="true"><path d="M90 30a60 60 0 1 1-42 17" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round"/><path d="M40 20v40h40" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="n">3</div><div class="t">Learned by trial and error</div>
-        <div class="d">Guess, measure how wrong, adjust a little. Millions of times.</div></div>
+        <div class="d">Guess, measure how wrong, adjust. Millions of times.</div></div>
       <div class="rcard" data-rs="4"><svg viewBox="0 0 180 180" aria-hidden="true"><rect x="30" y="40" width="120" height="100" rx="12" fill="none" stroke="currentColor" stroke-width="10"/><circle cx="62" cy="72" r="10" fill="currentColor"/><path d="M40 130l35-40 25 25 20-15 20 30" fill="none" stroke="currentColor" stroke-width="10" stroke-linejoin="round"/><circle cx="140" cy="45" r="28" fill="var(--panel)" stroke="currentColor" stroke-width="8"/><text x="140" y="56" text-anchor="middle" font-size="34" font-weight="800" fill="currentColor">?</text></svg><div class="n">4</div><div class="t">Tested on new pictures</div>
-        <div class="d">The score that counts is on pictures it never trained on.</div></div>
+        <div class="d">The score that counts is on pictures it never saw.</div></div>
     </div>
-    <div class="rline" data-rs="5">The same recipe is behind face unlock, photo search, self-driving cars and reading medical scans.</div>
+    <div class="rline" data-rs="5">Same recipe: face unlock, photo search, self-driving cars, medical scans.</div>
   </div>
   <div class="foot">
     <button class="btn primary" id="rc-go">Rules by hand &rarr;</button>
@@ -1668,7 +1664,7 @@
   <div class="s-head">
     <div class="s-eyebrow">Beyond seeing</div>
     <h2>Once it knows the rules, it can make things</h2>
-    <p class="lead">Recognizing asks: does this picture fit the rules for &ldquo;cat&rdquo;? Generating turns that around: change the picture until it does.</p>
+    <p class="lead">Recognizing: does this picture fit the rules? Generating: change the picture until it does.</p>
   </div>
   <div class="body">
     <div class="gpanel">
@@ -1687,15 +1683,14 @@
     <div class="gtext" data-gs="2">
       <div class="gt1">Same loop, different target.</div>
       <div class="gt2">Training adjusted the <b>rules</b> to fit the pictures. Generating adjusts the <b>picture</b> to fit the rules.</div>
-      <div class="gt2">Chatbots do this with words: guess the next word, check it against the rules of language they learned, keep going.</div>
+      <div class="gt2">Chatbots do it with words: guess the next word, check it against the rules they learned, repeat.</div>
     </div>
   </div>
   <div class="foot">
     <button class="btn primary" id="ga-go">Make a cat &rarr;</button>
     <button class="btn ghost" data-reset>Reset</button>
     <span class="illus real">Scores from the real doodle network</span>
-    <div class="caveat grow">The path from noise to cat is a sketch of the idea. Real image generators take thousands of small,
-      learned steps.</div>
+    <div class="caveat grow">A sketch of the idea. Real image generators take thousands of small, learned steps.</div>
   </div>
   <div class="sn">
     <p class="say">&ldquo;Everything so far was about recognizing things that already exist. Once a network knows the rules for
@@ -2258,11 +2253,11 @@ demos.nest = (() => {
     for (const k in at) e.setAttribute(k, at[k]); return e; };
 
   const CAT = {
-    ai: { def:'A machine doing something that looks smart', list:['The umbrella term: the other two sit inside it', 'Can be nothing more than rules a person wrote', 'Doesn&rsquo;t have to learn anything', 'This one: tic-tac-toe with three written rules'],
+    ai: { def:'A machine doing something that looks smart', list:['The umbrella term', 'Can be just rules a person wrote', 'No learning needed'],
           ex:'✕ Tic-tac-toe', illus:'', take:'AI, but no learning: a person wrote the rules.' },
-    ml: { def:'Rules worked out from examples', list:['Give it examples that come with the right answer', 'It adjusts a few numbers until they fit', 'People still decide what gets measured', 'This one: a price line that fits the houses'],
+    ml: { def:'Rules worked out from examples', list:['Examples that come with answers', 'A few numbers, adjusted to fit them', 'People decide what gets measured'],
           ex:'\u{1F3E0} Overpriced house?', illus:'', take:'Nobody drew the line. It was learned from the dots.' },
-    dl: { def:'Learning in layers', list:['A neural network: layers of simple parts', 'Each layer builds on the one before', 'Needs many examples and a lot of computing', 'This one: two layers make a curve no single line could'],
+    dl: { def:'Learning in layers', list:['Layers of simple parts', 'Each layer builds on the last', 'Needs many examples and lots of computing'],
           ex:'\u{1F4B3} Card fraud?', illus:'', take:'Layers combine into a curve.' }
   };
 
@@ -2955,8 +2950,7 @@ demos.loop = (() => {
       <div class="wkey"><span>&#128167; <b>Water</b></span><span>the input</span>
         <span>&#9651; <b>Wedges</b></span><span>the model</span>
         <span>&#9719; <b>Knob settings</b></span><span>the weights: how far each wedge is tilted to one side</span></div>
-      <div class="vocab" style="font-size:18px"><b>Parameter</b> <span>(or <b>weight</b>): an adjustable number inside a model
-        that affects its output. Here, turning a knob slides a wedge and changes how the water splits.</span></div>
+      <div class="vocab" style="font-size:18px"><b>Parameter</b> <span>(or <b>weight</b>): an adjustable number inside a model. Here, a knob: turn it and the water splits differently.</span></div>
       <div class="defn-strip big-line" style="font-size:24px">Learning = changing parameters based on data.</div>`,
     () => `<div class="wtag fw">Forward pass</div>
       <div class="wline">Use the current weights to produce an output.</div>${table(W(1))}`,
@@ -2994,8 +2988,7 @@ demos.loop = (() => {
       </ol>
       <div class="wloop" style="--d:2.3s">Forward pass &rarr; Loss &rarr; Backprop &rarr; Update weights &#8635;</div>
       <div class="wtake" style="--d:2.6s">Training = repeatedly adjusting weights to reduce error.</div>
-      <div class="wsmall" style="--d:2.9s">We changed only a few weights here. Real neural networks can contain millions or
-        billions of adjustable parameters.</div>`
+      <div class="wsmall" style="--d:2.9s">Real networks: millions of weights, nudged a little at a time.</div>`
   ];
 
   /* ---------- a still frame of any state ---------- */
@@ -4902,7 +4895,7 @@ demos.genai = (() => {
   function show(ctx, img){ const d = ctx.createImageData(28, 28); for (let i = 0; i < 784; i++){ const v = Math.round(Math.max(0, Math.min(1, img[i])) * 255); d.data.set([v, v, v, 255], i * 4); } ctx.putImageData(d, 0, 0); }
   function score(k, img){ const p = M().forward(img).probs[cat()]; $('ga-bar' + k).style.width = Math.round(p * 100) + '%'; $('ga-pct' + k).textContent = Math.round(p * 100) + '%'; }
   function blend(t){ const c = M().sample('cat'), out = new Float32Array(784); const k = t * t;    // ease in: noise lingers, then the cat emerges
-    for (let i = 0; i < 784; i++) out[i] = noise[i] * (1 - k) * 0.9 + c[i] * k; return out; }
+    for (let i = 0; i < 784; i++) out[i] = noise[i] * (1 - k) + c[i] * k; return out; }
   let t0 = 0;
   function frame(now){
     raf = 0; if (!t0) t0 = now; t = Math.min(1, (now - t0) / 3200); const img = blend(t); show(cout, img); score(1, img);
@@ -4910,7 +4903,7 @@ demos.genai = (() => {
     if (t < 1) raf = requestAnimationFrame(frame); else btn.textContent = 'What changed? →';
   }
   function render(){
-    if (!noise){ noise = Float32Array.from({ length:784 }, () => rnd()); }
+    if (!noise){ noise = Float32Array.from({ length:784 }, () => rnd() * 0.3); }          // faint noise: the network scores it near chance
     const c = M().sample('cat'); show(cin, c); score(0, c);
     qsa('[data-gs]', s).forEach(el => el.classList.toggle('off', +el.dataset.gs > stage));
     if (stage === 0){ cancelAnimationFrame(raf); raf = 0; t = 0; t0 = 0; const img = blend(0); show(cout, img); score(1, img); $('ga-msg').textContent = 'Start from noise. Guess, score it against the rules, adjust, repeat.'; btn.textContent = 'Make a cat →'; }
