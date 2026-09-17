@@ -1661,7 +1661,7 @@
   <div style="margin-top:auto">
     <div class="t-eyebrow">Extras</div>
     <h1 class="t-title">Going deeper</h1>
-    <div class="t-sub">Three playable examples of AI, machine learning and deep learning; the full face detector; a spam filter start to finish; how chatbots generate text.</div>
+    <div class="t-sub">A playable deep-learning example; the full face detector; a spam filter start to finish; how chatbots generate text.</div>
   </div>
   <div class="t-foot"><span>Optional slides</span></div>
   <div class="sn">
@@ -1670,7 +1670,7 @@
 </section>
 
 <!-- ================================================== 26 ================================================== -->
-<section class="slide nestslide" data-demo="nest">
+<section class="slide nestslide aux" data-demo="nest">
   <div class="s-head">
     <div class="s-eyebrow">What counts as AI?</div>
     <h2 id="s1-head"></h2>
@@ -1758,16 +1758,6 @@
 </section>
 
 <!-- ================================================== 27 ================================================== -->
-<section class="slide" data-alias="nest" data-k="ml">
-  <div class="sn">
-    <p class="beat"><b>House prices.</b> Hit Learn. Nobody draws the line: it starts wrong and gets nudged until it fits the
-      dots. Point at the two numbers as they settle. That's what &ldquo;learned&rdquo; means here.</p>
-    <p class="beat">Then the line does a job: a house $25k above it is overpriced, $25k below is underpriced. Drag a house and
-      its label flips. Move a few and the line itself moves.</p>
-  </div>
-</section>
-
-<!-- ================================================== 28 ================================================== -->
 <section class="slide" data-alias="nest" data-k="dl">
   <div class="sn">
     <p class="beat"><b>Deep learning.</b> Hit Train. This one is real: 37 weights, trained in the browser on made-up card
@@ -1780,7 +1770,7 @@
   </div>
 </section>
 
-<!-- ================================================== 29 ================================================== -->
+<!-- ================================================== 28 ================================================== -->
 <section class="slide hsl" data-demo="haar">
   <div class="s-head">
     <div class="s-eyebrow">Seeing &middot; the classic way</div>
@@ -1817,7 +1807,7 @@
   </div>
 </section>
 
-<!-- ================================================== 30 ================================================== -->
+<!-- ================================================== 29 ================================================== -->
 <section class="slide fsl" data-demo="feat" data-stage="0">
   <div class="s-head">
     <div class="s-eyebrow">Step 1 &middot; Preprocess</div>
@@ -1877,7 +1867,7 @@
   </div>
 </section>
 
-<!-- ================================================== 31 ================================================== -->
+<!-- ================================================== 30 ================================================== -->
 <section class="slide bsl" data-demo="bend">
   <div class="s-head">
     <div class="s-eyebrow">Step 2 &middot; Training</div>
@@ -1948,7 +1938,7 @@
   </div>
 </section>
 
-<!-- ================================================== 32 ================================================== -->
+<!-- ================================================== 31 ================================================== -->
 <section class="slide isl" data-demo="infer">
   <div class="s-head">
     <div class="s-eyebrow">Step 3 &middot; Inference</div>
@@ -1997,7 +1987,7 @@
   </div>
 </section>
 
-<!-- ================================================== 33 ================================================== -->
+<!-- ================================================== 32 ================================================== -->
 <section class="slide rsl" data-demo="backwards">
   <div class="s-head">
     <div class="s-eyebrow">Step 4 &middot; Run it backwards</div>
@@ -2043,7 +2033,7 @@
   </div>
 </section>
 
-<!-- ================================================== 34 ================================================== -->
+<!-- ================================================== 33 ================================================== -->
 <section class="slide tsl" data-demo="gen">
   <div class="s-head">
     <h2>Generating text: the same idea, much bigger</h2>
@@ -2091,7 +2081,7 @@
   </div>
 </section>
 
-<!-- ================================================== 35 ================================================== -->
+<!-- ================================================== 34 ================================================== -->
 <section class="slide" data-demo="synth">
   <div class="s-head">
     <h2>Put the whole system together</h2>
@@ -2211,7 +2201,7 @@ const qs = (s, r) => (r || document).querySelector(s);
 const qsa = (s, r) => Array.from((r || document).querySelectorAll(s));
 
 /* ============================================================ deck shell */
-const slides = qsa('.slide');
+const slides = qsa('.slide:not(.aux)');            // .aux sections are shown only through an alias
 const stage = $('stage'), wrap = qs('.stage-wrap');
 const notes = $('notes'), notesBody = $('notesBody'), notesNum = $('notesNum');
 let idx = 0;
@@ -2253,7 +2243,7 @@ function goto(i){
   }
   idx = i;
   const shown = shownSlide(i);
-  slides.forEach(s => s.classList.toggle('active', s === shown));
+  qsa('.slide').forEach(s => s.classList.toggle('active', s === shown));
   { const d = demos[demoKey(i)]; if (d && d.enter) d.enter(slides[i].dataset.k || 'ai'); }
   dots.forEach((d, k) => { d.classList.toggle('on', k === i); d.classList.toggle('done', k < i); });
   $('cur').textContent = i + 1;
