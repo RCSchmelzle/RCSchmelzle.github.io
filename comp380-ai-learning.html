@@ -827,6 +827,7 @@
     gap:8px;align-items:center;text-align:center;transition:opacity .45s ease,transform .45s ease}
   .rcard canvas,.rcard svg{width:120px;height:120px;border-radius:10px;display:block;color:var(--hot)}
   .rcard canvas{box-shadow:0 0 0 1px var(--line)}
+  .rcard .rglyph{width:120px;height:120px;display:grid;place-items:center;font-size:104px;line-height:1;color:var(--hot);font-weight:700}
   .rcard .n{position:absolute;top:12px;left:14px;width:28px;height:28px;border-radius:50%;background:var(--hot);color:var(--on-hot);font-weight:800;font-size:15px;display:grid;place-items:center}
   .rcard .t{font-size:21px;font-weight:800;line-height:1.15;margin-top:4px}
   .rcard .d{font-size:15.5px;color:var(--ink-dim);line-height:1.4}
@@ -1602,13 +1603,13 @@
   <div class="body">
     <div class="rcards">
       <div class="rcard" data-rs="1"><canvas id="rc-1" width="180" height="180"></canvas><div class="n">1</div><div class="t">Programmatic: rules by hand</div>
-        <div class="d">Checks people wrote. They break when the angle or light changes.</div></div>
+        <div class="d">Written by people. Brittle.</div></div>
       <div class="rcard" data-rs="2"><canvas id="rc-2" width="180" height="180"></canvas><div class="n">2</div><div class="t">Learning: rules from examples</div>
-        <div class="d">A network works out its own checks from thousands of pictures.</div></div>
-      <div class="rcard" data-rs="3"><svg viewBox="0 0 180 180" aria-hidden="true"><path d="M90 30a60 60 0 1 1-42 17" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round"/><path d="M40 20v40h40" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="n">3</div><div class="t">Learned by trial and error</div>
-        <div class="d">Guess, measure how wrong, adjust. Millions of times.</div></div>
+        <div class="d">Worked out from thousands of pictures.</div></div>
+      <div class="rcard" data-rs="3"><div class="rglyph" aria-hidden="true">&#8635;</div><div class="n">3</div><div class="t">Learned by trial and error</div>
+        <div class="d">Guess, check, adjust. Repeat.</div></div>
       <div class="rcard" data-rs="4"><svg viewBox="0 0 180 180" aria-hidden="true"><rect x="30" y="40" width="120" height="100" rx="12" fill="none" stroke="currentColor" stroke-width="10"/><circle cx="62" cy="72" r="10" fill="currentColor"/><path d="M40 130l35-40 25 25 20-15 20 30" fill="none" stroke="currentColor" stroke-width="10" stroke-linejoin="round"/><circle cx="140" cy="45" r="28" fill="var(--panel)" stroke="currentColor" stroke-width="8"/><text x="140" y="56" text-anchor="middle" font-size="34" font-weight="800" fill="currentColor">?</text></svg><div class="n">4</div><div class="t">Tested on new pictures</div>
-        <div class="d">The score that counts is on pictures it never saw.</div></div>
+        <div class="d">Judged on pictures it never saw.</div></div>
     </div>
     <div class="rline" data-rs="5">Same recipe: face unlock, photo search, self-driving cars, medical scans.</div>
   </div>
