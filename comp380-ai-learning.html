@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>What Does It Mean for AI to Learn?</title>
+<title>How Does an AI Learn?</title>
 <style>
   :root{
     --bg:#f6f6f3; --panel:#ffffff; --sunk:#efefeb; --ink:#1c1e22; --ink-dim:#6f757e;
@@ -610,6 +610,17 @@
   .tcand .heat{height:22px;border-radius:5px}
   .heat.h2{background:#e8590c} .heat.h1{background:#f2b705} .heat.h0{background:#8fc1ec}
 
+  /* ---------- vision slides ---------- */
+  .vsl .body{flex-direction:column;align-items:stretch;gap:12px}
+  .vsl canvas.vcv{height:430px;width:auto;max-width:100%;align-self:center;display:block}
+  .vsl .body{justify-content:center}
+  .vrow{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--ink-dim)}
+  .vrow button{font:inherit;font-size:14px;font-weight:650;padding:4px 12px;border-radius:999px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+  .vrow button.on{border-color:var(--hot);background:var(--hot-soft);color:var(--hot)}
+  .vfilters{display:flex;gap:8px}
+  .vfilters canvas{width:34px;height:34px;image-rendering:pixelated;border-radius:5px;cursor:pointer;box-shadow:0 0 0 1px var(--line)}
+  .vfilters canvas.on{box-shadow:0 0 0 3px var(--hot)}
+
   /* ---------- S4: train / evaluate / inference ---------- */
   .stations{display:flex;align-items:stretch;gap:9px}
   .station{
@@ -739,7 +750,7 @@
 <section class="slide title">
   <div style="margin-top:auto">
     <div class="t-eyebrow">COMP 380 &middot; Technology, Ethics &amp; Culture</div>
-    <h1 class="t-title">What does it mean for AI to &ldquo;learn&rdquo;?</h1>
+    <h1 class="t-title">How does an AI learn?</h1>
   </div>
   <div class="t-foot"><span><b>Ryan Schmelzle</b></span></div>
   <div class="sn">
@@ -1256,6 +1267,72 @@
 </section>
 
 <!-- ================================================== 14 ================================================== -->
+<section class="slide vsl" data-demo="pix">
+  <div class="s-head">
+    <div class="s-eyebrow">Seeing</div>
+    <h2>To a computer, a picture is just numbers</h2>
+  </div>
+  <div class="body">
+    <canvas class="vcv" id="v1-cv" width="1680" height="720" aria-label="a doodle, then zoomed in to its pixel values"></canvas>
+    <div class="vrow">Picture: <span id="v1-pick" style="display:flex;gap:6px"></span></div>
+  </div>
+  <div class="foot">
+    <button class="btn primary" id="v1-go">Zoom in &rarr;</button>
+    <div class="caveat grow">0 = black, 255 = white. Nothing in those numbers says &ldquo;roof&rdquo; or &ldquo;door&rdquo;.</div>
+  </div>
+  <div class="sn">
+    <p class="say">&ldquo;You see a house. The network gets a grid of 784 numbers. That's it.&rdquo;</p>
+    <p class="beat">Zoom in, then show the numbers. The question for the next two slides: how do you get from these numbers to &ldquo;house&rdquo;?</p>
+  </div>
+</section>
+
+<!-- ================================================== 15 ================================================== -->
+<section class="slide vsl" data-demo="slide1">
+  <div class="s-head">
+    <div class="s-eyebrow">Seeing &middot; layer 1</div>
+    <h2>A filter slides across, looking for one small pattern</h2>
+  </div>
+  <div class="body">
+    <canvas class="vcv" id="v2-cv" width="1680" height="700" aria-label="a 3 by 3 filter sliding over a doodle, building a feature map"></canvas>
+    <div class="vrow">Filter: <span class="vfilters" id="v2-filters"></span>
+      <span style="margin-left:18px">Picture:</span> <span id="v2-pick" style="display:flex;gap:6px"></span></div>
+  </div>
+  <div class="foot">
+    <button class="btn primary" id="v2-go">Slide the filter</button>
+    <span class="illus real">Real learned filters</span>
+    <div class="caveat grow">Red squares reward ink, blue squares penalize it. Bright = &ldquo;my pattern is here.&rdquo;</div>
+  </div>
+  <div class="sn">
+    <p class="say">&ldquo;A filter is 9 weights. It checks every 3 &times; 3 patch of the picture and lights up where its pattern shows up.&rdquo;</p>
+    <p class="beat">Slide one, then click a few other filters: one finds vertical strokes, another horizontal ones, another the
+      edges of lines. Nobody designed these &mdash; they're the numbers training settled on.</p>
+  </div>
+</section>
+
+<!-- ================================================== 16 ================================================== -->
+<section class="slide vsl" data-demo="stack">
+  <div class="s-head">
+    <div class="s-eyebrow">Seeing &middot; low to high</div>
+    <h2>Each layer builds on the one before</h2>
+  </div>
+  <div class="body">
+    <canvas class="vcv" id="v3-cv" width="1680" height="520" aria-label="pixels, layer 1 maps, layer 2 maps, and the answer"></canvas>
+    <div class="vrow">Picture: <span id="v3-pick" style="display:flex;gap:6px"></span>
+      <span style="margin-left:18px">Hover a map to see which pixels it looks at.</span></div>
+  </div>
+  <div class="foot">
+    <button class="btn primary" id="v3-go">Layer 1 &rarr;</button>
+    <div class="caveat grow">Low layers find small, simple things. Higher layers combine them into bigger, more meaningful ones.</div>
+  </div>
+  <div class="sn">
+    <p class="say">&ldquo;Layer 1 finds strokes. Layer 2 looks at layer 1's maps, so it finds combinations of strokes &mdash;
+      corners, curves, a roof peak. The last layer combines those into an answer.&rdquo;</p>
+    <p class="beat">Hover a layer-1 cell: it only sees a 3 &times; 3 patch. Hover a layer-2 cell: it sees 8 &times; 8. Each
+      step up sees more of the picture, so it can recognize bigger things. Same idea in photo models, with dozens of layers.</p>
+  </div>
+</section>
+
+<!-- ================================================== 17 ================================================== -->
 <section class="slide" data-demo="draw">
   <div class="s-head">
     <h2>A real neural network: draw something</h2>
@@ -1322,7 +1399,7 @@
   </div>
 </section>
 
-<!-- ================================================== 15 ================================================== -->
+<!-- ================================================== 18 ================================================== -->
 <section class="slide" data-demo="split">
   <div class="s-head">
     <h2>Training &ne; testing &ne; using</h2>
@@ -1384,7 +1461,7 @@
   </div>
 </section>
 
-<!-- ================================================== 16 ================================================== -->
+<!-- ================================================== 19 ================================================== -->
 <section class="slide" data-demo="chips">
   <div class="s-head">
     <h2>Why GPUs matter</h2>
@@ -1445,7 +1522,7 @@
   </div>
 </section>
 
-<!-- ================================================== 17 ================================================== -->
+<!-- ================================================== 20 ================================================== -->
 <section class="slide" data-demo="synth">
   <div class="s-head">
     <h2>Put the whole system together</h2>
@@ -1545,7 +1622,7 @@
   <button class="btn nav" id="prev" aria-label="previous slide">&#8249;</button>
   <div class="dots" id="dots"></div>
   <div class="counter"><span id="cur">1</span> / <span id="total"></span></div>
-  <div class="deck-name">What Does It Mean for AI to Learn?</div>
+  <div class="deck-name">How Does an AI Learn?</div>
   <button class="btn ghost" id="notesBtn" aria-expanded="false">Speaker notes <span class="dim">(S)</span></button>
   <button class="btn ghost" id="fsBtn">Fullscreen <span class="dim">(F)</span></button>
   <button class="btn ghost" id="themeBtn" aria-label="toggle light or dark">Light / dark</button>
@@ -2776,7 +2853,199 @@ demos.draw = (() => {
   $('d-clear').onclick = clear;
 
   clear();
-  return { reset(){ closeInspector(); clear(); }, probsFor: loadSample, inspect };
+  return { reset(){ closeInspector(); clear(); }, probsFor: loadSample, inspect,
+           model:{ forward, classes:CL, sample:name => Float32Array.from(bytes(M.samples[name]), v => v / 255),
+                   filter1:k => W.conv1w.slice(k * 9, k * 9 + 9), bias1:k => W.conv1b[k] } };
+})();
+
+/* ============================================================ vision: shared drawing helpers */
+const Vision = (() => {
+  const m = () => demos.draw.model;
+  const MAGMA = [[0,0,4],[28,16,68],[79,18,123],[129,37,129],[181,54,122],[229,80,100],[251,135,97],[254,194,135],[252,253,191]];
+  const magma = t => { t = Math.max(0, Math.min(1, t)) * (MAGMA.length - 1); const i = Math.min(MAGMA.length - 2, Math.floor(t)), f = t - i;
+    return MAGMA[i].map((v, k) => v + (MAGMA[i + 1][k] - v) * f); };
+  // paint a size×size grid of values into a canvas region
+  function grid(g, vals, off, size, x, y, w, vmax, gray, upto = size * size){
+    const c = w / size;
+    for (let i = 0; i < size * size; i++){
+      const v = i < upto ? vals[off + i] / vmax : 0, col = gray ? [v * 255, v * 255, v * 255] : magma(v);
+      g.fillStyle = `rgb(${col.map(Math.round).join(',')})`; g.fillRect(x + (i % size) * c, y + Math.floor(i / size) * c, Math.ceil(c), Math.ceil(c));
+    }
+  }
+  function picker(host, onPick){
+    ['house', 'cat', 'bicycle', 'fish', 'tree'].forEach((name, i) => {
+      const b = document.createElement('button'); b.textContent = name; b.dataset.name = name;
+      b.onclick = () => { qsa('button', host).forEach(x => x.classList.toggle('on', x === b)); onPick(name); };
+      if (!i) b.classList.add('on'); host.appendChild(b);
+    });
+  }
+  return { m, magma, grid, picker };
+})();
+
+/* ============================================================ vision 1: a picture is numbers */
+demos.pix = (() => {
+  const s = qs('.slide[data-demo=pix]'), cv = $('v1-cv'), g = cv.getContext('2d'), btn = $('v1-go');
+  let name = 'house', stage = 0, img;
+  const BTN = ['Zoom in →', 'Show the numbers →', 'Next slide →'];
+  const PX = 840, PATCH = [9, 4];                               // top-left of the 8×8 zoom patch (column, row)
+  function draw(){
+    img = Vision.m().sample(name);
+    const css = getComputedStyle(s), ink = css.getPropertyValue('--ink').trim(), hot = css.getPropertyValue('--hot').trim();
+    g.clearRect(0, 0, PX * 2, PX);
+    const L = 20, size = 560, c = size / 28;
+    Vision.grid(g, img, 0, 28, L, 140, size, 1, true);
+    if (stage >= 1){
+      g.strokeStyle = 'rgba(128,128,128,.55)'; g.lineWidth = 1;
+      for (let i = 0; i <= 28; i++){ g.beginPath(); g.moveTo(L + i * c, 140); g.lineTo(L + i * c, 140 + size); g.moveTo(L, 140 + i * c); g.lineTo(L + size, 140 + i * c); g.stroke(); }
+      g.strokeStyle = hot; g.lineWidth = 5; g.strokeRect(L + PATCH[0] * c, 140 + PATCH[1] * c, 8 * c, 8 * c);
+    }
+    g.font = '700 30px system-ui, sans-serif'; g.fillStyle = ink; g.textAlign = 'center';
+    g.fillText(stage === 0 ? 'What you see' : '28 × 28 = 784 squares', L + size / 2, 110);
+    if (stage >= 1){
+      const X = 700, Y = 140, S = 560, cc = S / 8;
+      // guide lines from the patch to the zoom
+      g.strokeStyle = hot; g.lineWidth = 2; g.setLineDash([8, 8]);
+      g.beginPath(); g.moveTo(L + (PATCH[0] + 8) * c, 140 + PATCH[1] * c); g.lineTo(X, Y); g.moveTo(L + (PATCH[0] + 8) * c, 140 + (PATCH[1] + 8) * c); g.lineTo(X, Y + S); g.stroke(); g.setLineDash([]);
+      for (let r = 0; r < 8; r++) for (let q = 0; q < 8; q++){
+        const v = img[(PATCH[1] + r) * 28 + PATCH[0] + q], b = Math.round(v * 255);
+        g.fillStyle = `rgb(${b},${b},${b})`; g.fillRect(X + q * cc, Y + r * cc, cc, cc);
+        if (stage >= 2){ g.font = '700 26px ui-monospace, Menlo, Consolas, monospace'; g.fillStyle = v > 0.5 ? '#000' : '#fff';
+          g.fillText(b, X + q * cc + cc / 2, Y + r * cc + cc / 2 + 9); }
+      }
+      g.strokeStyle = hot; g.lineWidth = 5; g.strokeRect(X, Y, S, S);
+      g.fillStyle = ink; g.font = '700 30px system-ui, sans-serif';
+      g.fillText(stage >= 2 ? 'What the network gets' : 'Zoomed in', X + S / 2, 110);
+    }
+    btn.textContent = BTN[stage];
+    qsa('[data-v1]', s).forEach(el => el.classList.toggle('on', +el.dataset.v1 <= stage));
+  }
+  function step(dir){ const n = stage + dir; if (n < 0 || n > 2) return false; stage = n; draw(); return true; }
+  btn.onclick = () => { if (!step(1)) advance(1); };
+  Vision.picker($('v1-pick'), n => { name = n; draw(); });
+  return { reset(){ stage = 0; draw(); }, enter(){ draw(); }, step, atStart(){ stage = 0; draw(); }, atEnd(){ stage = 2; draw(); } };
+})();
+
+/* ============================================================ vision 2: a filter slides across */
+demos.slide1 = (() => {
+  const s = qs('.slide[data-demo=slide1]'), cv = $('v2-cv'), g = cv.getContext('2d'), btn = $('v2-go'), fpick = $('v2-filters');
+  let name = 'house', k = 0, pos = 0, raf = 0, playing = false, out;
+  const W = 1680, H = 700;
+  const thumbs = Array.from({ length:8 }, (_, i) => {
+    const c = document.createElement('canvas'); c.width = c.height = 3; c.title = 'filter ' + (i + 1);
+    c.onclick = () => { k = i; pos = 0; paintThumbs(); play(); }; fpick.appendChild(c); return c; });
+  const tint = (w, mx) => { const a = Math.min(1, Math.abs(w) / mx); return w >= 0 ? [255, 255 - 215 * a, 255 - 215 * a] : [255 - 212 * a, 255 - 147 * a, 255 - 79 * a]; };
+  function paintThumbs(){
+    thumbs.forEach((c, i) => { const f = Vision.m().filter1(i), mx = Math.max(...Array.from(f, Math.abs)), x = c.getContext('2d');
+      f.forEach((w, j) => { x.fillStyle = `rgb(${tint(w, mx).map(Math.round)})`; x.fillRect(j % 3, Math.floor(j / 3), 1, 1); });
+      c.classList.toggle('on', i === k); });
+  }
+  function draw(){
+    raf = 0;
+    const css = getComputedStyle(s), ink = css.getPropertyValue('--ink').trim(), hot = css.getPropertyValue('--hot').trim(), dim = css.getPropertyValue('--ink-dim').trim();
+    const img = Vision.m().sample(name); out = Vision.m().forward(img);
+    const a1 = out.a1, mx = Math.max(1e-6, ...a1.slice(k * 784, (k + 1) * 784));
+    g.clearRect(0, 0, W, H);
+    const S = 520, c = S / 28, IX = 30, IY = 150, OX = 1130;
+    g.font = '700 30px system-ui, sans-serif'; g.fillStyle = ink; g.textAlign = 'center';
+    g.fillText('The drawing', IX + S / 2, 110); g.fillText('What filter ' + (k + 1) + ' found', OX + S / 2, 110);
+    Vision.grid(g, img, 0, 28, IX, IY, S, 1, true);
+    Vision.grid(g, a1, k * 784, 28, OX, IY, S, mx, false, pos);
+    g.strokeStyle = 'rgba(128,128,128,.6)'; g.lineWidth = 2; g.strokeRect(OX, IY, S, S); g.strokeRect(IX, IY, S, S);
+    // the 3×3 window on the drawing, and the cell it produces
+    const px = pos % 28, py = Math.floor(pos / 28);
+    if (pos < 784){
+      g.strokeStyle = hot; g.lineWidth = 5; g.strokeRect(IX + (px - 1) * c, IY + (py - 1) * c, 3 * c, 3 * c);
+      g.strokeRect(OX + px * c, IY + py * c, c, c);
+      g.setLineDash([8, 8]); g.lineWidth = 2; g.beginPath(); g.moveTo(IX + (px + 2) * c, IY + (py + 0.5) * c);
+      g.lineTo(700, 400); g.moveTo(980, 400); g.lineTo(OX + px * c, IY + (py + 0.5) * c); g.stroke(); g.setLineDash([]);
+    }
+    // the filter itself, big, in the middle
+    const f = Vision.m().filter1(k), fm = Math.max(...Array.from(f, Math.abs)), FX = 700, FY = 270, FS = 270;
+    f.forEach((w, j) => { g.fillStyle = `rgb(${tint(w, fm).map(Math.round)})`; g.fillRect(FX + (j % 3) * FS / 3, FY + Math.floor(j / 3) * FS / 3, FS / 3, FS / 3); });
+    g.strokeStyle = ink; g.lineWidth = 3; g.strokeRect(FX, FY, FS, FS);
+    g.fillStyle = ink; g.font = '700 28px system-ui, sans-serif'; g.fillText('Filter ' + (k + 1), FX + FS / 2, FY - 22);
+    g.font = '500 22px system-ui, sans-serif'; g.fillStyle = dim; g.fillText('9 learned weights', FX + FS / 2, FY + FS + 40);
+    if (playing){ pos = Math.min(784, pos + 4); if (pos >= 784){ playing = false; btn.textContent = 'Replay'; } else raf = requestAnimationFrame(draw); }
+  }
+  function play(){ cancelAnimationFrame(raf); pos = 0; playing = true; btn.textContent = 'Sliding…'; raf = requestAnimationFrame(draw); }
+  btn.onclick = play;
+  Vision.picker($('v2-pick'), n => { name = n; play(); });
+  function reset(){ cancelAnimationFrame(raf); playing = false; k = 0; pos = 0; paintThumbs(); btn.textContent = 'Slide the filter'; draw(); }
+  return { reset, enter(){ paintThumbs(); if (!playing && pos === 0) draw(); }, leave(){ cancelAnimationFrame(raf); raf = 0; if (playing){ playing = false; pos = 784; btn.textContent = 'Replay'; } } };
+})();
+
+/* ============================================================ vision 3: low to high */
+demos.stack = (() => {
+  const s = qs('.slide[data-demo=stack]'), cv = $('v3-cv'), g = cv.getContext('2d'), btn = $('v3-go');
+  let name = 'house', stage = 0, hover = null, t0 = 0, raf = 0;
+  const W = 1680, H = 520;
+  const COL = { img:[20, 150, 290], l1:[400, 150, 420], l2:[910, 150, 330], out:[1320, 150, 350] };
+  const BTN = ['Layer 1 →', 'Layer 2 →', 'The answer →', 'Next slide →'];
+  function draw(){
+    raf = 0;
+    const css = getComputedStyle(s), ink = css.getPropertyValue('--ink').trim(), hot = css.getPropertyValue('--hot').trim(), dim = css.getPropertyValue('--ink-dim').trim();
+    const M = Vision.m(), img = M.sample(name), out = M.forward(img), el = performance.now() - t0;
+    const fade = n => stage < n ? 0 : stage > n ? 1 : Math.min(1, el / 450);
+    g.clearRect(0, 0, W, H);
+    const head = (x, w, a, b, c) => { g.textAlign = 'center'; g.fillStyle = ink; g.font = '800 32px system-ui, sans-serif'; g.fillText(a, x + w / 2, 46);
+      g.fillStyle = dim; g.font = '600 23px system-ui, sans-serif'; g.fillText(b, x + w / 2, 82); g.fillStyle = hot; g.font = '700 23px system-ui, sans-serif'; g.fillText(c, x + w / 2, 116); };
+    // image
+    head(COL.img[0], COL.img[2], 'Pixels', '784 numbers', 'sees 1 pixel');
+    Vision.grid(g, img, 0, 28, COL.img[0], COL.img[1], COL.img[2], 1, true);
+    // layer 1: 8 maps, 2×4
+    const tiles = [];
+    const layer = (key, a, maps, size, n, cols, gap, label, sub, sees) => {
+      if (!fade(n)) return;
+      g.globalAlpha = fade(n);
+      const [x, y, w] = COL[key], tw = (w - gap * (cols - 1)) / cols, mx = Math.max(1e-6, ...a);
+      head(x, w, label, sub, sees);
+      for (let i = 0; i < maps; i++){ const tx = x + (i % cols) * (tw + gap), ty = y + Math.floor(i / cols) * (tw + gap);
+        Vision.grid(g, a, i * size * size, size, tx, ty, tw, mx, false); tiles.push({ key, tx, ty, tw, size, i }); }
+      g.globalAlpha = 1;
+    };
+    layer('l1', out.a1, 8, 28, 1, 4, 10, 'Layer 1', 'strokes & edges', 'sees 3 × 3 pixels');
+    layer('l2', out.a2, 16, 14, 2, 4, 10, 'Layer 2', 'corners, curves, parts', 'sees 8 × 8 pixels');
+    if (fade(3)){
+      g.globalAlpha = fade(3);
+      const [x, y, w] = COL.out; head(x, w, 'Answer', 'the whole object', 'sees everything');
+      const order = out.probs.map((p, i) => [p, i]).sort((a, b) => b[0] - a[0]);
+      order.forEach(([p, i], r) => { const yy = y + 30 + r * 64;
+        g.textAlign = 'left'; g.font = (r ? '600 ' : '800 ') + '28px system-ui, sans-serif'; g.fillStyle = r ? dim : ink; g.fillText(M.classes[i], x, yy + 22);
+        g.fillStyle = 'rgba(128,128,128,.2)'; g.fillRect(x + 140, yy, 150, 30); g.fillStyle = r ? dim : hot; g.fillRect(x + 140, yy, 150 * p, 30);
+        g.font = '600 24px system-ui, sans-serif'; g.fillStyle = dim; g.fillText(Math.round(p * 100) + '%', x + 300, yy + 23); });
+      g.globalAlpha = 1;
+    }
+    // arrows between columns
+    g.strokeStyle = dim; g.lineWidth = 4; g.fillStyle = dim;
+    [[COL.img, 1], [COL.l1, 2], [COL.l2, 3]].forEach(([c, n]) => { if (!fade(n)) return; g.globalAlpha = fade(n);
+      const x0 = c[0] + c[2] + 16, x1 = x0 + 40, y = c[1] + 100; g.beginPath(); g.moveTo(x0, y); g.lineTo(x1, y); g.stroke();
+      g.beginPath(); g.moveTo(x1 + 12, y); g.lineTo(x1 - 4, y - 11); g.lineTo(x1 - 4, y + 11); g.fill(); g.globalAlpha = 1; });
+    // hovering a map cell shows which pixels it can see
+    if (hover){
+      const { key, cell } = hover, c = COL.img[2] / 28;
+      const [cx, cy] = key === 'l1' ? [cell[0] - 1, cell[1] - 1] : [cell[0] * 2 - 2, cell[1] * 2 - 2];
+      const span = key === 'l1' ? 3 : 8;
+      g.strokeStyle = hot; g.lineWidth = 5; g.strokeRect(COL.img[0] + cx * c, COL.img[1] + cy * c, span * c, span * c);
+      const t = tiles.find(q => q.key === key && q.i === hover.i);
+      if (t){ const tc = t.tw / t.size; g.strokeRect(t.tx + cell[0] * tc, t.ty + cell[1] * tc, tc, tc); }
+    }
+    btn.textContent = BTN[stage];
+    state.tiles = tiles;
+    if (el < 500) raf = requestAnimationFrame(draw);
+  }
+  const state = { tiles:[] };
+  cv.addEventListener('pointermove', e => {
+    const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height;
+    const t = state.tiles.find(q => x >= q.tx && x < q.tx + q.tw && y >= q.ty && y < q.ty + q.tw);
+    hover = t ? { key:t.key, i:t.i, cell:[Math.floor((x - t.tx) / t.tw * t.size), Math.floor((y - t.ty) / t.tw * t.size)] } : null;
+    t0 = -1e9; if (!raf) raf = requestAnimationFrame(draw);
+  });
+  cv.addEventListener('pointerleave', () => { hover = null; t0 = -1e9; if (!raf) raf = requestAnimationFrame(draw); });
+  function go(n){ stage = n; t0 = performance.now(); cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
+  function step(dir){ const n = stage + dir; if (n < 0 || n > 3) return false; go(n); return true; }
+  btn.onclick = () => { if (!step(1)) advance(1); };
+  Vision.picker($('v3-pick'), n => { name = n; t0 = -1e9; draw(); });
+  return { reset(){ go(0); }, enter(){ t0 = -1e9; draw(); }, step, atStart(){ go(0); }, atEnd(){ stage = 3; t0 = -1e9; draw(); } };
 })();
 
 /* ============================================================ 6 — layers bend space (flat, 3D circle, 3D spam) */
@@ -3784,15 +4053,15 @@ demos.synth = (() => {
 
   /* --- click any box: one line on what it is, and where the deck covered it --- */
   const EXPLAIN = {
-    train:    [15, 'Training data: the examples the parameters are fitted to. What goes in shapes what comes out.'],
+    train:    [18, 'Training data: the examples the parameters are fitted to. What goes in shapes what comes out.'],
     params:   [6, 'Neural network: layers of parameters \u2014 adjustable numbers. At this stage they are still changing.'],
     loss2:    [8, 'Prediction: the forward pass. The network produces its current best guess for a training example.'],
     loss:     [8, 'Loss: a single number for how wrong that prediction was.'],
     backprop: [8, 'Backpropagation: calculates how each parameter contributed to the loss. It does not change them itself.'],
     update:   [8, 'Update parameters: the optimizer nudges every parameter toward lower loss. Then repeat, many times.'],
-    gpu:      [16, 'GPU compute: the loop is mostly parallel numerical work, repeated across enormous numbers of examples.'],
-    eval:     [15, 'Evaluate: test on held-out data it never trained on. Does the learned behavior generalize?'],
-    model:    [15, 'Trained model: training is over, so the parameters are fixed. Everything on the right uses it as-is.'],
+    gpu:      [19, 'GPU compute: the loop is mostly parallel numerical work, repeated across enormous numbers of examples.'],
+    eval:     [18, 'Evaluate: test on held-out data it never trained on. Does the learned behavior generalize?'],
+    model:    [18, 'Trained model: training is over, so the parameters are fixed. Everything on the right uses it as-is.'],
     msg:      [13, 'Your message: new information for this one request.'],
     context:  [13, 'Conversation context: whatever the surrounding software chooses to send along \u2014 selected, summarized, or retrieved.'],
     tokens:   [9, 'Tokens: message and context are split into numbered pieces the model can work with.'],
