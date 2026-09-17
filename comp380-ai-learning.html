@@ -1348,8 +1348,7 @@
   </div>
   <div class="body">
     <canvas class="vcv" id="v3-cv" width="1680" height="520" aria-label="pixels, layer 1 maps, layer 2 maps, and the answer"></canvas>
-    <div class="vrow">Picture: <span id="v3-pick" style="display:flex;gap:6px"></span>
-      <span style="margin-left:18px">Hover a map to see which pixels it looks at.</span></div>
+    <div class="vrow">Picture: <span id="v3-pick" style="display:flex;gap:6px"></span></div>
   </div>
   <div class="foot">
     <button class="btn primary" id="v3-go">Layer 1 &rarr;</button>
@@ -1358,8 +1357,9 @@
   <div class="sn">
     <p class="say">&ldquo;Layer 1 responds to simple local patterns. Layer 2 looks at layer 1's maps, so it responds to combinations of them.
       The last layer turns those into an answer.&rdquo;</p>
-    <p class="beat">Hover a layer-1 cell: it sees a 3&times;3 patch. Hover a layer-2 cell: 8&times;8. Each step up sees more of the picture.
-      Photo models do the same with dozens of layers, and what each layer picks up is messier than &ldquo;edges, then parts&rdquo;.</p>
+    <p class="beat">The sketches stand in for what each layer tends to pick up; the real maps are too busy to read from a seat. A layer-1
+      cell sees a 3&times;3 patch; a layer-2 cell sees 8&times;8. Each step up sees more of the picture. Photo models do the same with dozens of
+      layers, and what each layer picks up is messier than &ldquo;lines, then parts&rdquo;.</p>
   </div>
 </section>
 
@@ -4052,19 +4052,19 @@ demos.stack = (() => {
     // image
     head(COL.img[0], COL.img[2], 'Pixels', '784 numbers', 'sees 1 pixel');
     Vision.grid(g, img, 0, 28, COL.img[0], COL.img[1], COL.img[2], 1, true);
-    // layer 1: 8 maps, 2×4
-    const tiles = [];
-    const layer = (key, a, maps, size, n, cols, gap, label, sub, sees) => {
+    // layers 1 and 2: a sketch of the kind of thing each one responds to (the real maps are too busy to read from a seat)
+    const panel = (key, n, label, sub, sees, glyphs) => {
       if (!fade(n)) return;
       g.globalAlpha = fade(n);
-      const [x, y, w] = COL[key], tw = (w - gap * (cols - 1)) / cols, mx = Math.max(1e-6, ...a);
-      head(x, w, label, sub, sees);
-      for (let i = 0; i < maps; i++){ const tx = x + (i % cols) * (tw + gap), ty = y + Math.floor(i / cols) * (tw + gap);
-        Vision.grid(g, a, i * size * size, size, tx, ty, tw, mx, false); tiles.push({ key, tx, ty, tw, size, i }); }
+      const [x, y, w] = COL[key], h = 290; head(x, w, label, sub, sees);
+      g.fillStyle = 'rgba(128,128,128,.10)'; g.fillRect(x, y, w, h); g.strokeStyle = dim; g.lineWidth = 2; g.strokeRect(x, y, w, h);
+      g.strokeStyle = hot; g.lineWidth = 10; g.lineCap = 'round'; g.lineJoin = 'round';
+      glyphs.forEach(pts => { g.beginPath(); pts.forEach(([px, py], i) => i ? g.lineTo(x + px * w, y + py * h) : g.moveTo(x + px * w, y + py * h)); g.stroke(); });
       g.globalAlpha = 1;
     };
-    layer('l1', out.a1, 8, 28, 1, 4, 10, 'Layer 1', 'simple local patterns', 'sees 3 × 3 pixels');
-    layer('l2', out.a2, 16, 14, 2, 4, 10, 'Layer 2', 'combinations of those', 'sees 8 × 8 pixels');
+    const arc = (cx, cy, r, a0, a1) => Array.from({ length:13 }, (_, i) => { const t = a0 + (a1 - a0) * i / 12; return [cx + r * Math.cos(t), cy + r * 1.4 * Math.sin(t)]; });
+    panel('l1', 1, 'Layer 1', 'simple lines', 'sees 3 × 3 pixels', [[[0.18, 0.22], [0.18, 0.78]], [[0.4, 0.3], [0.85, 0.3]], [[0.5, 0.82], [0.85, 0.45]]]);
+    panel('l2', 2, 'Layer 2', 'lines combined', 'sees 8 × 8 pixels', [[[0.12, 0.2], [0.12, 0.56], [0.42, 0.56]], [[0.55, 0.5], [0.75, 0.18], [0.95, 0.5]], arc(0.7, 0.86, 0.18, Math.PI, 2 * Math.PI)]);
     if (fade(3)){
       g.globalAlpha = fade(3);
       const [x, y, w] = COL.out; head(x, w, 'Answer', 'the whole object', 'sees everything');
@@ -4080,27 +4080,9 @@ demos.stack = (() => {
     [[COL.img, 1], [COL.l1, 2], [COL.l2, 3]].forEach(([c, n]) => { if (!fade(n)) return; g.globalAlpha = fade(n);
       const x0 = c[0] + c[2] + 16, x1 = x0 + 40, y = c[1] + 100; g.beginPath(); g.moveTo(x0, y); g.lineTo(x1, y); g.stroke();
       g.beginPath(); g.moveTo(x1 + 12, y); g.lineTo(x1 - 4, y - 11); g.lineTo(x1 - 4, y + 11); g.fill(); g.globalAlpha = 1; });
-    // hovering a map cell shows which pixels it can see
-    if (hover){
-      const { key, cell } = hover, c = COL.img[2] / 28;
-      const [cx, cy] = key === 'l1' ? [cell[0] - 1, cell[1] - 1] : [cell[0] * 2 - 2, cell[1] * 2 - 2];
-      const span = key === 'l1' ? 3 : 8;
-      g.strokeStyle = hot; g.lineWidth = 5; g.strokeRect(COL.img[0] + cx * c, COL.img[1] + cy * c, span * c, span * c);
-      const t = tiles.find(q => q.key === key && q.i === hover.i);
-      if (t){ const tc = t.tw / t.size; g.strokeRect(t.tx + cell[0] * tc, t.ty + cell[1] * tc, tc, tc); }
-    }
     btn.textContent = BTN[stage];
-    state.tiles = tiles;
     if (el < 500) raf = requestAnimationFrame(draw);
   }
-  const state = { tiles:[] };
-  cv.addEventListener('pointermove', e => {
-    const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height;
-    const t = state.tiles.find(q => x >= q.tx && x < q.tx + q.tw && y >= q.ty && y < q.ty + q.tw);
-    hover = t ? { key:t.key, i:t.i, cell:[Math.floor((x - t.tx) / t.tw * t.size), Math.floor((y - t.ty) / t.tw * t.size)] } : null;
-    t0 = -1e9; if (!raf) raf = requestAnimationFrame(draw);
-  });
-  cv.addEventListener('pointerleave', () => { hover = null; t0 = -1e9; if (!raf) raf = requestAnimationFrame(draw); });
   function go(n){ stage = n; t0 = performance.now(); cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
   function step(dir){ const n = stage + dir; if (n < 0 || n > 3) return false; go(n); return true; }
   btn.onclick = () => { if (!step(1)) advance(1); };
