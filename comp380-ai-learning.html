@@ -1266,7 +1266,7 @@
 <section class="slide dsl" data-demo="dface">
   <div class="s-head">
     <div class="s-eyebrow">Learning approaches</div>
-    <h2>What if the rules came from examples?</h2>
+    <h2>What if the computer could learn the rules itself, from examples?</h2>
   </div>
   <div class="body">
     <div class="kcol">
@@ -1868,7 +1868,7 @@
 </section>
 
 <!-- ================================================== 30 ================================================== -->
-<section class="slide bsl" data-demo="bend">
+<section class="slide bsl aux" data-demo="bend">
   <div class="s-head">
     <div class="s-eyebrow">Step 2 &middot; Training</div>
     <h2>Weights: what do they do?</h2>
@@ -1943,7 +1943,7 @@
   <div class="s-head">
     <div class="s-eyebrow">Step 3 &middot; Inference</div>
     <h2>How is this used?</h2>
-    <p class="lead">A new email arrives: is it spam? Training is over and the weights are locked; the network just <b>uses</b> what it learned.</p>
+    <p class="lead">A new email arrives. The weights are locked. Spam or not?</p>
   </div>
   <div class="body">
     <canvas id="i-cv" width="880" height="880" aria-label="the learned curved boundary among the training emails, and a new email"></canvas>
@@ -1974,8 +1974,7 @@
   </div>
   <div class="foot">
     <span class="illus real">&#128274; Weights locked &middot; inference only</span>
-    <div class="caveat grow">The percentage is the network's confidence, not a guarantee. It can be very sure and still wrong &mdash;
-      like the copycat spams that look exactly like real mail.</div>
+    <div class="caveat grow">Confidence, not a guarantee.</div>
   </div>
   <div class="sn">
     <p class="say">&ldquo;This is what happens every time an email actually hits your inbox. No learning &mdash; just the frozen network,
@@ -1992,7 +1991,7 @@
   <div class="s-head">
     <div class="s-eyebrow">Step 4 &middot; Run it backwards</div>
     <h2>Can you sneak past the filter?</h2>
-    <p class="lead">The weights stay locked. This time the <b>email</b> is what gets adjusted, a little at a time, until the filter calls it safe.</p>
+    <p class="lead">Weights still locked. Now the <b>email</b> gets adjusted until the filter says safe.</p>
   </div>
   <div class="body">
     <canvas id="r-cv" width="880" height="880" aria-label="a spam email sliding across the learned boundary as its features change"></canvas>
@@ -2012,16 +2011,14 @@
         <div class="bar"><i id="r-bar"></i></div>
         <div class="verdict" id="r-verdict"></div>
       </div>
-      <div class="rnote">The training loop, turned around: training adjusted the
-        <b>weights</b> to fit the emails; this adjusts the <b>email</b> to fit the model. Spammers do exactly this.</div>
+      <div class="rnote">Training adjusted the <b>weights</b> to fit the emails. This adjusts the <b>email</b> to fit the filter.</div>
     </div>
   </div>
   <div class="foot">
     <button class="btn primary" id="r-go">Make it pass &rarr;</button>
     <button class="btn ghost" data-reset>Reset</button>
     <span class="illus real">&#128274; Weights locked</span>
-    <div class="caveat grow">A lower score doesn't make it a safer email. The scam is exactly the same; only the three things the
-      filter looks at changed.</div>
+    <div class="caveat grow">Same scam. Only the three numbers changed.</div>
   </div>
   <div class="sn">
     <p class="say">&ldquo;What if you were the spammer? The filter is trained and locked. Can you get past it?&rdquo;</p>
@@ -2036,41 +2033,41 @@
 <!-- ================================================== 33 ================================================== -->
 <section class="slide tsl" data-demo="gen">
   <div class="s-head">
-    <h2>Generating text: the same idea, much bigger</h2>
-    <p class="lead">An LLM does inference too. Its question is just different: not &ldquo;spam or not?&rdquo; but <b>&ldquo;which token comes next?&rdquo;</b></p>
+    <h2>Generating text</h2>
+    <p class="lead">Same idea, bigger question: <b>which word comes next?</b></p>
   </div>
   <div class="body">
     <div class="tleft">
     <table class="tcmp">
-      <thead><tr><th></th><th>Spam filter</th><th>LLM</th></tr></thead>
+      <thead><tr><th></th><th>Spam filter</th><th>Chatbot</th></tr></thead>
       <tbody>
-        <tr><th>Each input is</th><td>3 numbers (3 axes)</td><td>thousands of numbers per token</td></tr>
-        <tr><th>The question</th><td>Spam or not?</td><td>Which token comes next? scored for every token it knows (~100,000)</td></tr>
-        <tr><th>The output</th><td>one probability</td><td>a probability for every token, adding up to 100%</td></tr>
-        <tr><th>Training loss</th><td>high when it calls spam &ldquo;safe&rdquo; (or the reverse)</td><td>high when it gave little probability to the word that actually came next</td></tr>
+        <tr><th>Input</th><td>3 numbers</td><td>thousands of numbers per word</td></tr>
+        <tr><th>Question</th><td>Spam or not?</td><td>Which word comes next?</td></tr>
+        <tr><th>Output</th><td>one probability</td><td>a probability for every word</td></tr>
+        <tr><th>Wrong when</th><td>it calls spam safe</td><td>it didn&rsquo;t expect the word that came next</td></tr>
       </tbody>
     </table>
-      <div class="ttie">Training showed it billions of real sentences; every time it put little probability on the word that
-        actually came next, the loss went up and the weights got nudged.</div>
+      <div class="ttie">Trained on billions of sentences: guess the next word, check, adjust.</div>
     </div>
     <div class="tgen">
-      <div class="prompt">Like 20 questions: each axis asks &ldquo;does this word fit <i>this part</i> of the text?&rdquo; &mdash; hot or cold.
-        Click a word, or let it pick.</div>
+      <div class="prompt">Click a word, or let it pick.</div>
       <div class="sent" id="t-sent"></div>
       <div class="theads" id="t-heads"></div>
       <div class="cand tcand" id="t-cand"></div>
       <div style="display:flex;gap:8px;align-items:center"><button class="btn" id="t-pick">Let it pick</button>
         <span class="dim" style="font-size:13.5px"><span style="color:#e8590c">&#9632;</span> hot &nbsp; <span style="color:#f2b705">&#9632;</span> warm &nbsp; <span style="color:#8fc1ec">&#9632;</span> cold</span></div>
-      <div class="illus" style="align-self:flex-start">Illustrative &mdash; real axes number in the thousands and don't come with names</div>
+      <div class="illus" style="align-self:flex-start">Illustrative</div>
     </div>
   </div>
   <div class="foot">
     <button class="btn ghost" data-reset>Reset</button>
-    <div class="caveat grow">A model that has learned what normal emails sound like can also write scam emails that don't sound
-      like scams, and none of the spam filter's three features would catch them.</div>
+    <div class="caveat grow">A model that writes normal-sounding email can write normal-sounding scams.</div>
   </div>
   <div class="sn">
     <p class="say">&ldquo;Last slide we changed three numbers. To actually write an email, you need a model whose output is words.&rdquo;</p>
+    <p class="beat">Vocabulary if wanted: the pieces are called tokens, not quite words; a big model scores about 100,000 of them at every step
+      and the probabilities add up to 100%. Each coloured axis plays 20 questions with the text so far: hot or cold for this word. Real
+      axes number in the thousands and don't have names.</p>
     <p class="beat">Walk the table row by row: same inference, same training loop, just a far bigger question. Then build the
       sentence: each click is one full inference, and the chosen token is appended before it predicts again.</p>
     <p class="beat">Play it like 20 questions: each coloured axis is one question about the text so far (is it personal? about a
