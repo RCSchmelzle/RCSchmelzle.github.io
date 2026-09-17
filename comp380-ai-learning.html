@@ -183,13 +183,11 @@
   .nest.grow-in{animation:pop .45s ease-out both}
   .nest.on>.nlab{color:var(--hot)}
   .nest.n-dl>.nlab{margin-bottom:0}
-  .nest .nex{display:none}
   .nestcol{flex:1;align-items:center;justify-content:center}
   .nestcol .nest.n-ai{width:760px;padding:30px 34px}
   .nestcol .nest.n-ml{padding:26px 30px;margin-top:6px}
   .nestcol .nest.n-dl{padding:26px 30px;margin-top:6px}
   .nestcol .nest .nlab{font-size:24px;margin-bottom:0;cursor:pointer}
-  .nestcol .nest .nex{display:inline;margin-left:14px;font-size:18px;color:var(--ink-dim)}
   .nestcol .nest > .nest{margin-top:20px}
   .deflist{display:flex;flex-direction:column;gap:11px}
   .spread{flex:1;justify-content:space-between}
@@ -208,6 +206,10 @@
 
   .cat-title{font-size:30px;font-weight:700;letter-spacing:-.015em;line-height:1.1}
   .cat-def{font-size:18px;color:var(--ink-dim);line-height:1.35;margin-top:4px}
+  .kcol{flex:0 0 320px;display:flex;flex-direction:column;justify-content:center;gap:18px}
+  .kdesc{font-size:30px;font-weight:800;line-height:1.15;color:var(--hot);letter-spacing:-.01em}
+  .klist{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:12px;font-size:21px;line-height:1.3}
+  .klist li::marker{color:var(--hot)}
   .ex-line{display:flex;align-items:center;gap:12px}
   .ex-line .ex{font-size:21px;font-weight:650}
   .demo-area{min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center}
@@ -761,6 +763,15 @@
 </section>
 
 <!-- ================================================== 2 ================================================== -->
+<section class="slide" data-alias="nest" data-k="all">
+  <div class="sn">
+    <p class="say">&ldquo;AI is the broadest term. Machine learning is one way we build AI. Deep learning is one
+      approach to machine learning. So ChatGPT is AI, but AI does not mean ChatGPT.&rdquo;</p>
+    <p class="beat">Each click adds the next box inside the last.</p>
+  </div>
+</section>
+
+<!-- ================================================== 3 ================================================== -->
 <section class="slide" data-demo="nest">
   <div class="s-head">
     <h2 id="s1-head"></h2>
@@ -769,21 +780,24 @@
 
     <!-- ---------- left: the persistent hierarchy ---------- -->
     <div class="col mid-v nestcol" id="s1-nestcol" hidden>
-      <div class="nest n-ai" data-k="ai"><span class="nlab">Artificial Intelligence</span><span class="nex">tic-tac-toe</span>
-        <div class="nest n-ml" data-k="ml"><span class="nlab">Machine Learning</span><span class="nex">house prices</span>
-          <div class="nest n-dl" data-k="dl"><span class="nlab">Deep Learning</span><span class="nex">card fraud</span>
+      <div class="nest n-ai" data-k="ai"><span class="nlab">Artificial Intelligence</span>
+        <div class="nest n-ml" data-k="ml"><span class="nlab">Machine Learning</span>
+          <div class="nest n-dl" data-k="dl"><span class="nlab">Deep Learning</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ---------- right: only the selected category ---------- -->
+    <!-- ---------- left: what matters, in bullets ---------- -->
+    <div class="kcol" id="s1-bullets">
+      <div class="kdesc" id="s1-def"></div>
+      <ul class="klist" id="s1-list"></ul>
+    </div>
+
+    <!-- ---------- right: the example, self-contained ---------- -->
     <div class="col grow" id="s1-cardcol">
       <div class="card grow" style="display:flex;flex-direction:column;gap:12px;min-height:0">
-        <div>
-          <div class="cat-title" id="s1-title" hidden></div>
-          <div class="cat-def" id="s1-def"></div>
-        </div>
+        <div class="cat-title" id="s1-title" hidden></div>
         <div class="ex-line">
           <span class="ex" id="s1-ex"></span>
           <span class="illus" id="s1-illus"></span>
@@ -846,7 +860,7 @@
   </div>
 </section>
 
-<!-- ================================================== 3 ================================================== -->
+<!-- ================================================== 4 ================================================== -->
 <section class="slide" data-alias="nest" data-k="ml">
   <div class="sn">
     <p class="beat"><b>House prices</b> &mdash; hit Learn. Nobody draws the line: it starts wrong and gets nudged until it
@@ -857,7 +871,7 @@
   </div>
 </section>
 
-<!-- ================================================== 4 ================================================== -->
+<!-- ================================================== 5 ================================================== -->
 <section class="slide" data-alias="nest" data-k="dl">
   <div class="sn">
     <p class="beat"><b>Deep learning</b> &mdash; hit Train. This is real: 37 weights, trained by backpropagation right in the
@@ -866,16 +880,6 @@
       separate it; stacking layers of neurons can. Point at the small
       squares: each is one neuron, showing which part of the plane it responds to (blue = on, orange = the opposite).
       Layer 1 learns simple straight cuts; layer 2 combines them into curves. Click the chart to add a purchase and it re-learns. Real models have billions of weights. Stop there &mdash; how weights get adjusted is slide 8.</p>
-  </div>
-</section>
-
-<!-- ================================================== 5 ================================================== -->
-<section class="slide" data-alias="nest" data-k="all">
-  <div class="sn">
-    <p class="say">&ldquo;AI is the broadest term. Machine learning is one way we build AI. Deep learning is one
-      approach to machine learning. So ChatGPT is AI, but AI does not mean ChatGPT.&rdquo;</p>
-    <p class="beat">Point at each example as its box lands: rules someone wrote &rarr; two numbers learned from data &rarr;
-      lots of numbers, in layers.</p>
     <p class="beat">Ramp into slide 6: we specify the procedure &rarr; learn a couple of parameters &rarr; learn enormous
       numbers of interconnected ones.</p>
   </div>
@@ -1750,11 +1754,11 @@ demos.nest = (() => {
     for (const k in at) e.setAttribute(k, at[k]); return e; };
 
   const CAT = {
-    ai: { title:'Artificial Intelligence', def:'Computers doing tasks that seem intelligent.',
+    ai: { def:'Rules people write', list:['Algorithms &amp; heuristics', 'Search and scoring', 'Logic a person writes down', 'No data, no learning'],
           ex:'✕ Tic-tac-toe', illus:'', take:'No learning: a person wrote the rules.' },
-    ml: { title:'Machine Learning', def:'AI that learns from data.',
+    ml: { def:'Learning from data', list:['Statistics', 'Datasets of examples', 'A few adjustable numbers', 'People choose the features'],
           ex:'\u{1F3E0} Overpriced house?', illus:'', take:'Learned from data.' },
-    dl: { title:'Deep Learning', def:'Learning with layered neural networks.',
+    dl: { def:'Learning in layers', list:['Neural networks, many layers', 'Huge datasets', 'Lots of compute (GPUs)', 'Finds its own features'],
           ex:'\u{1F4B3} Card fraud?', illus:'', take:'Layers combine into a curve.' }
   };
 
@@ -2204,11 +2208,10 @@ demos.nest = (() => {
     if (SUB[cur] && SUB[cur].leave) SUB[cur].leave();
     cur = k;
     const all = k === 'all';
-    $('s1-nestcol').hidden = !all; $('s1-cardcol').hidden = all; $('s1-foot').style.visibility = all ? 'hidden' : '';
-    if (all){                                         // the summary: the boxes land one inside the other
-      boxes.forEach((b, i) => { b.hidden = false; b.classList.remove('on', 'grow-in'); void b.offsetWidth;
-        b.style.animationDelay = (i * 0.45) + 's'; b.classList.add('grow-in'); });
-      $('s1-head').innerHTML = 'Each one sits inside the last';
+    $('s1-nestcol').hidden = !all; $('s1-cardcol').hidden = all; $('s1-bullets').hidden = all; $('s1-foot').style.visibility = all ? 'hidden' : '';
+    if (all){                                         // the intro: boxes are added one inside the other, a click at a time
+      $('s1-head').innerHTML = 'We hear a lot about AI, machine learning and deep learning. <span class="dim">What do they mean?</span>';
+      paintIntro(false);
       return;
     }
     const c = CAT[k];
@@ -2224,6 +2227,7 @@ demos.nest = (() => {
     dms.forEach(d => d.classList.toggle('on', d.dataset.d === k));
     titleEl.textContent = '';                 // the slide heading already names it
     defEl.textContent = c.def;
+    $('s1-list').innerHTML = c.list.map(x => `<li>${x}</li>`).join('');
     exEl.textContent = c.ex;
     takeEl.textContent = c.take;
     illusEl.textContent = c.illus;
@@ -2238,10 +2242,21 @@ demos.nest = (() => {
   });
   actBtn.onclick = () => SUB[cur] && SUB[cur].act();
 
+  let intro = 0;                                    // how many boxes the intro has added so far
+  function paintIntro(animate){
+    boxes.forEach((b, i) => {
+      const was = !b.hidden;
+      b.hidden = i >= intro; b.classList.remove('on'); b.style.animationDelay = '';
+      if (animate && !was && !b.hidden){ b.classList.remove('grow-in'); void b.offsetWidth; b.classList.add('grow-in'); }
+    });
+  }
   show('ai');
   return {
-    reset(){ show(cur); },
+    reset(){ if (cur === 'all'){ intro = 0; paintIntro(false); } else show(cur); },
     enter(k){ if (k !== cur) show(k); },
+    step(dir){ if (cur !== 'all') return false; const n = intro + dir; if (n < 0 || n > 3) return false; intro = n; paintIntro(dir > 0); return true; },
+    atStart(){ if (cur === 'all'){ intro = 0; paintIntro(false); } },
+    atEnd(){ if (cur === 'all'){ intro = 3; paintIntro(false); } },
     leave(){                                   // never leave the action button stuck mid-animation
       Object.values(SUB).forEach(d => d.leave && d.leave());
       if (SUB[cur]) SUB[cur].reset();
