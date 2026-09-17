@@ -1047,12 +1047,12 @@
   </div>
   <div class="body">
     <div class="ecards">
-      <div class="ecard" data-es="0"><div class="k">Sentences</div><div class="arrow">have</div><div class="v">Grammar</div><div class="d">who did what, in what order</div></div>
-      <div class="ecard" data-es="1"><div class="k">Cooking</div><div class="arrow">has</div><div class="v">Recipes</div><div class="d">amounts, steps, timing</div></div>
-      <div class="ecard" data-es="2"><div class="k">A basketball shot</div><div class="arrow">has</div><div class="v">Form</div><div class="d">how hard, the arc, the follow-through</div></div>
-      <div class="ecard face" data-es="3"><div class="k">Faces</div><div class="arrow">have</div><div class="v">?</div><div class="d">what tells you it's a face?</div></div>
+      <div class="ecard" data-es="1"><div class="k">Sentences</div><div class="arrow">have</div><div class="v">Grammar</div><div class="d">who did what, in what order</div></div>
+      <div class="ecard" data-es="2"><div class="k">Cooking</div><div class="arrow">has</div><div class="v">Recipes</div><div class="d">amounts, steps, timing</div></div>
+      <div class="ecard" data-es="3"><div class="k">A basketball shot</div><div class="arrow">has</div><div class="v">Form</div><div class="d">how hard, the arc, the follow-through</div></div>
+      <div class="ecard face" data-es="4"><div class="k">Faces</div><div class="arrow">have</div><div class="v">?</div><div class="d">what tells you it's a face?</div></div>
     </div>
-    <div class="egoal" data-es="4">Either way, the goal is the same: the <b>best rules</b>, the ones that work most often and fail least.</div>
+    <div class="egoal" data-es="5">Either way, the goal is the same: the <b>best rules</b>, the ones that work most often and fail least.</div>
   </div>
   <div class="foot">
     <button class="btn primary" id="e-go">And faces? &rarr;</button>
@@ -3614,7 +3614,7 @@ function revealDemo(key, attr, max, btnId, labels){
   render();
   return { reset(){ stage = 0; render(); }, step, atStart(){ stage = 0; render(); }, atEnd(){ stage = max; render(); } };
 }
-demos.everyday = revealDemo('everyday', 'es', 4, 'e-go', ['Cooking →', 'Basketball →', 'And faces? →', 'What\'s the goal? →', 'Next slide →']);
+demos.everyday = revealDemo('everyday', 'es', 5, 'e-go', ['Sentences →', 'Cooking →', 'Basketball →', 'And faces? →', 'What\'s the goal? →', 'Next slide →']);
 demos.trial = revealDemo('trial', 'ts', 1);
 
 /* ============================================================ rules as rectangles: the face at 24×24 with one check drawn on each */
