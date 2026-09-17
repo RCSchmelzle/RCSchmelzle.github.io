@@ -338,6 +338,9 @@
   .cmp-simple thead th{font-size:18px}
   .cmp-simple tr.q td{background:var(--hot-soft);color:var(--hot);font-size:20px;font-weight:800;letter-spacing:.06em;
     text-transform:uppercase;padding:14px}
+  .twob{margin:auto 0;padding-left:1.1em;display:flex;flex-direction:column;gap:46px;font-size:40px;line-height:1.25;max-width:1080px}
+  .twob li::marker{color:var(--hot)}
+  .twob b{color:var(--hot)}
   .pipe-title{font-size:15px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);text-align:center;margin-bottom:8px}
   .pipe.dimmed{opacity:.42}
   .pipe{transition:opacity .22s}
@@ -888,21 +891,13 @@
 <!-- ================================================== 6 ================================================== -->
 <section class="slide" data-demo="rules">
   <div class="s-head">
-    <h2>Algorithmic programming vs. machine learning</h2>
-    <p class="lead">Same goal &mdash; get the right answer. Completely different place the &ldquo;rules&rdquo; come from.</p>
+    <h2>How is machine learning different from normal programming?</h2>
   </div>
   <div class="body">
-    <div class="cmp-wrap">
-      <table class="cmp cmp-simple">
-        <thead>
-          <tr><th>Algorithmic programming</th><th>Machine learning</th></tr>
-        </thead>
-        <tbody>
-          <tr class="q"><td colspan="2">Who writes the rules?</td></tr>
-          <tr><td><b>A programmer</b>, step by step</td><td><b>Training</b> finds them from examples</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <ul class="twob">
+      <li><b>Normal programming</b> is defined by a programmer: the rules are written ahead of time by people.</li>
+      <li><b>Machine learning</b> is given a framework, then works out the rules on its own from examples.</li>
+    </ul>
   </div>
   <details class="gd">
     <summary>Go deeper</summary>
